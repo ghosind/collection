@@ -66,6 +66,15 @@ func (set *HashSet[T]) ContainsAll(c ...T) bool {
 	return true
 }
 
+// ForEach performs the given handler for each elements in the set until all elements have been processed or the handler returns an error.
+func (set *HashSet[T]) ForEach(handler func(e T) error) {
+	for e := range set.data {
+		if err := handler(e); err != nil {
+			break
+		}
+	}
+}
+
 // IsEmpty returns true if this set contains no elements.
 func (set *HashSet[T]) IsEmpty() bool {
 	return set.Size() == 0
