@@ -1,4 +1,4 @@
-package set
+package collection
 
 // HashSet is a set implementation that uses a Golang builtin map to store its elements.
 type HashSet[T comparable] struct {

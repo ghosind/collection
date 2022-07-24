@@ -1,8 +1,6 @@
-package set
-
-import "github.com/ghosind/collection"
+package collection
 
 // Set is a collection interface that contains no duplicate elements.
 type Set[T comparable] interface {
-	collection.Collection[T]
+	Collection[T]
 }
