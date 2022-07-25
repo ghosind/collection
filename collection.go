@@ -1,7 +1,7 @@
 package collection
 
 // Collection is the root interface for this collections framework hierarchy.
-type Collection[T comparable] interface {
+type Collection[T any] interface {
 	// Add adds the specified element to this collection.
 	Add(e T) bool
 
