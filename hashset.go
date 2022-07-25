@@ -1,29 +1,24 @@
 package collection
 
 // HashSet is a set implementation that uses a Golang builtin map to store its elements.
-type HashSet[T comparable] struct {
-	Set[T]
-
-	data map[T]struct{}
-}
+type HashSet[T comparable] map[T]struct{}
 
 // NewHashSet creates a new HashSet.
 func NewHashSet[T comparable]() *HashSet[T] {
 	set := new(HashSet[T])
-
-	set.data = make(map[T]struct{})
+	*set = make(map[T]struct{})
 
 	return set
 }
 
 // Add adds the specified element to this set.
 func (set *HashSet[T]) Add(e T) bool {
-	_, found := set.data[e]
+	_, found := (*set)[e]
 	if found {
 		return false
 	}
 
-	set.data[e] = struct{}{}
+	(*set)[e] = struct{}{}
 	return true
 }
 
@@ -32,9 +27,9 @@ func (set *HashSet[T]) AddAll(c ...T) bool {
 	isChanged := false
 
 	for _, e := range c {
-		_, found := set.data[e]
+		_, found := (*set)[e]
 		if !found {
-			set.data[e] = struct{}{}
+			(*set)[e] = struct{}{}
 			isChanged = true
 		}
 	}
@@ -44,12 +39,12 @@ func (set *HashSet[T]) AddAll(c ...T) bool {
 
 // Clear removes all of the elements from this set.
 func (set *HashSet[T]) Clear() {
-	set.data = make(map[T]struct{})
+	*set = make(map[T]struct{})
 }
 
 // Contains returns true if this set contains the specified element.
 func (set *HashSet[T]) Contains(e T) bool {
-	_, found := set.data[e]
+	_, found := (*set)[e]
 
 	return found
 }
@@ -57,7 +52,7 @@ func (set *HashSet[T]) Contains(e T) bool {
 // ContainsAll returns true if this set contains all of the specified elements.
 func (set *HashSet[T]) ContainsAll(c ...T) bool {
 	for _, e := range c {
-		_, found := set.data[e]
+		_, found := (*set)[e]
 		if !found {
 			return false
 		}
@@ -68,7 +63,7 @@ func (set *HashSet[T]) ContainsAll(c ...T) bool {
 
 // ForEach performs the given handler for each elements in the set until all elements have been processed or the handler returns an error.
 func (set *HashSet[T]) ForEach(handler func(e T) error) {
-	for e := range set.data {
+	for e := range *set {
 		if err := handler(e); err != nil {
 			break
 		}
@@ -82,12 +77,12 @@ func (set *HashSet[T]) IsEmpty() bool {
 
 // Remove removes the specified element from this set.
 func (set *HashSet[T]) Remove(e T) bool {
-	_, found := set.data[e]
+	_, found := (*set)[e]
 	if !found {
 		return false
 	}
 
-	delete(set.data, e)
+	delete(*set, e)
 	return true
 }
 
@@ -96,10 +91,10 @@ func (set *HashSet[T]) RemoveAll(c ...T) bool {
 	isChanged := false
 
 	for _, e := range c {
-		_, found := set.data[e]
+		_, found := (*set)[e]
 		if found {
 			isChanged = true
-			delete(set.data, e)
+			delete(*set, e)
 		}
 	}
 
@@ -108,14 +103,14 @@ func (set *HashSet[T]) RemoveAll(c ...T) bool {
 
 // Size returns the number of elements in this set.
 func (set *HashSet[T]) Size() int {
-	return len(set.data)
+	return len(*set)
 }
 
 // ToSlice returns a slice containing all of the elements in this set.
 func (set *HashSet[T]) ToSlice() []T {
 	slice := make([]T, 0, set.Size())
 
-	for e := range set.data {
+	for e := range *set {
 		slice = append(slice, e)
 	}
 
