@@ -42,6 +42,18 @@ func (set *HashSet[T]) Clear() {
 	*set = make(map[T]struct{})
 }
 
+// Clone returns a copy of this set.
+func (set *HashSet[T]) Clone() *HashSet[T] {
+	newSet := new(HashSet[T])
+	*newSet = make(map[T]struct{}, set.Size())
+
+	for e := range *set {
+		(*newSet)[e] = struct{}{}
+	}
+
+	return newSet
+}
+
 // Contains returns true if this set contains the specified element.
 func (set *HashSet[T]) Contains(e T) bool {
 	_, found := (*set)[e]
