@@ -1,5 +1,7 @@
 package collection
 
+import "github.com/ghosind/utils"
+
 // HashSet is a set implementation that uses a Golang builtin map to store its elements.
 type HashSet[T comparable] map[T]struct{}
 
@@ -66,6 +68,27 @@ func (set *HashSet[T]) ContainsAll(c ...T) bool {
 	for _, e := range c {
 		_, found := (*set)[e]
 		if !found {
+			return false
+		}
+	}
+
+	return true
+}
+
+// Equals compares set with the object pass from parameter.
+func (set *HashSet[T]) Equals(o any) bool {
+	if !utils.IsSameRawType(set, o) {
+		return false
+	}
+
+	s := utils.GetElem(o).(HashSet[T])
+	if s.Size() != set.Size() {
+		return false
+	}
+
+	for k := range *set {
+		_, ok := s[k]
+		if !ok {
 			return false
 		}
 	}
