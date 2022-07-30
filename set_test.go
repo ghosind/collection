@@ -51,6 +51,9 @@ func testSetContains[T comparable](t *testing.T, set Set[T], data []T) {
 
 func testSetToSlice[T comparable](t *testing.T, set Set[T]) {
 	slice := set.ToSlice()
+	if len(slice) != set.Size() {
+		t.Errorf("len(slice) is %d, expect %d", len(slice), set.Size())
+	}
 	for _, e := range slice {
 		if !set.Contains(e) {
 			t.Errorf("set.ToSlice() returned %v, but set.Contains(%v) returned false", slice, e)
