@@ -112,6 +112,21 @@ func (set *HashSet[T]) IsEmpty() bool {
 	return set.Size() == 0
 }
 
+// Iter returns a channel of all elements in this set.
+func (set *HashSet[T]) Iter() <-chan T {
+	ch := make(chan T)
+
+	go func() {
+		for e := range *set {
+			ch <- e
+		}
+
+		close(ch)
+	}()
+
+	return ch
+}
+
 // Remove removes the specified element from this set.
 func (set *HashSet[T]) Remove(e T) bool {
 	_, found := (*set)[e]

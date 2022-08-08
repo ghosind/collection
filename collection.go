@@ -26,6 +26,9 @@ type Collection[T any] interface {
 	// IsEmpty returns true if this collection contains no elements.
 	IsEmpty() bool
 
+	// Iter returns a channel of all elements in this collection.
+	Iter() <-chan T
+
 	// Remove removes the specified element from this collection.
 	Remove(e T) bool
 

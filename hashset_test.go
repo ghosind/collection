@@ -80,3 +80,25 @@ func TestHashSetForEach(t *testing.T) {
 		t.Error("set.ForEach returns no error, expect \"some error\"")
 	}
 }
+
+func TestHashSetIter(t *testing.T) {
+	set := NewHashSet[int]()
+	set.Add(1)
+	set.Add(2)
+	set.Add(3)
+
+	records := map[int]int{}
+
+	for e := range set.Iter() {
+		records[e]++
+	}
+
+	if len(records) != set.Size() {
+		t.Errorf("len(records) is %d, expect %d", len(records), set.Size())
+	}
+	for k, v := range records {
+		if v != 1 {
+			t.Errorf("records[%d] is %d, expect 1", k, v)
+		}
+	}
+}
