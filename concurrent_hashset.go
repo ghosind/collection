@@ -53,7 +53,7 @@ func (set *ConcurrentHashSet[T]) Clone() *ConcurrentHashSet[T] {
 	defer set.mutex.RUnlock()
 
 	newSet := new(ConcurrentHashSet[T])
-	*newSet.data = *set.data.Clone()
+	newSet.data = set.data.Clone()
 
 	return newSet
 }
