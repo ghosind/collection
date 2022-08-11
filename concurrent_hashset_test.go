@@ -2,6 +2,8 @@ package collection
 
 import (
 	"errors"
+	"math/rand"
+	"sync"
 	"testing"
 
 	"github.com/ghosind/utils"
@@ -60,4 +62,36 @@ func TestConcurrentHashSetForEach(t *testing.T) {
 	}); err == nil {
 		t.Error("set.ForEach returns no error, expect \"some error\"")
 	}
+}
+
+func TestConcurrentHashSetWithConcurrent(t *testing.T) {
+	set := NewConcurrentHashSet[int]()
+	n := 100
+
+	vals := rand.Perm(n)
+	wg := sync.WaitGroup{}
+
+	wg.Add(n)
+	for _, val := range vals {
+		go func(v int) {
+			defer wg.Done()
+			set.Add(v)
+		}(val)
+	}
+	wg.Wait()
+
+	if set.Size() != len(vals) {
+		t.Errorf("set.Size() should be %d, but %d", len(vals), set.Size())
+	}
+
+	wg.Add(n)
+	for _, val := range vals {
+		go func(v int) {
+			defer wg.Done()
+			if !set.Contains(v) {
+				t.Errorf("set should contains %d", v)
+			}
+		}(val)
+	}
+	wg.Wait()
 }
