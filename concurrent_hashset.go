@@ -17,7 +17,6 @@ type ConcurrentHashSet[T comparable] struct {
 // NewConcurrentHashSet creates and returns am empty ConcurrentHashSet with the specified type.
 func NewConcurrentHashSet[T comparable]() *ConcurrentHashSet[T] {
 	set := new(ConcurrentHashSet[T])
-	set.mutex = sync.RWMutex{}
 	set.data = NewHashSet[T]()
 
 	return set
