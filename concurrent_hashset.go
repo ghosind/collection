@@ -79,7 +79,7 @@ func (set *ConcurrentHashSet[T]) Equals(o any) bool {
 		return false
 	}
 
-	s := utils.GetElem(o).(ConcurrentHashSet[T])
+	s := o.(*ConcurrentHashSet[T])
 	set.mutex.RLock()
 	s.mutex.RLock()
 	defer set.mutex.RUnlock()
