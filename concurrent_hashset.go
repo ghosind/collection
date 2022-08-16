@@ -75,7 +75,7 @@ func (set *ConcurrentHashSet[T]) ContainsAll(c ...T) bool {
 
 // Equals compares set with the object pass from parameter.
 func (set *ConcurrentHashSet[T]) Equals(o any) bool {
-	if !utils.IsSameRawType(set, o) {
+	if !utils.IsSameType(set, o) {
 		return false
 	}
 
