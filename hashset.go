@@ -81,13 +81,13 @@ func (set *HashSet[T]) Equals(o any) bool {
 		return false
 	}
 
-	s := utils.GetElem(o).(HashSet[T])
+	s := o.(*HashSet[T])
 	if s.Size() != set.Size() {
 		return false
 	}
 
 	for k := range *set {
-		_, ok := s[k]
+		_, ok := (*s)[k]
 		if !ok {
 			return false
 		}
