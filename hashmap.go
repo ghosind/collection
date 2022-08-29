@@ -1,5 +1,11 @@
 package collection
 
+import (
+	"reflect"
+
+	"github.com/ghosind/utils"
+)
+
 // HashMap is a Golang builtin map wrapper.
 type HashMap[K comparable, V any] map[K]V
 
@@ -21,6 +27,27 @@ func (m *HashMap[K, V]) ContainsKey(k K) bool {
 	_, ok := (*m)[k]
 
 	return ok
+}
+
+// Equals compares this map with the object pass from parameter.
+func (m *HashMap[K, V]) Equals(o any) bool {
+	if !utils.IsSameType(m, o) {
+		return false
+	}
+
+	om := o.(*HashMap[K, V])
+	for k, v := range *m {
+		val, ok := (*om)[k]
+		if !ok {
+			return false
+		}
+
+		if !reflect.DeepEqual(v, val) {
+			return false
+		}
+	}
+
+	return true
 }
 
 // ForEach performs the given handler for each key-value pairs in the map until all pairs have
