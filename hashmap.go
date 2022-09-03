@@ -22,6 +22,18 @@ func (m *HashMap[K, V]) Clear() {
 	*m = make(HashMap[K, V])
 }
 
+// Clone returns a copy of this map.
+func (m *HashMap[K, V]) Clone() *HashMap[K, V] {
+	newMap := new(HashMap[K, V])
+	*newMap = make(map[K]V, len(*m))
+
+	for k, v := range *m {
+		(*newMap)[k] = v
+	}
+
+	return newMap
+}
+
 // ContainsKey returns true if this map contains a key-value pair with the specified key.
 func (m *HashMap[K, V]) ContainsKey(k K) bool {
 	_, ok := (*m)[k]
