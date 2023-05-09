@@ -4,6 +4,9 @@ type Map[K comparable, V any] interface {
 	// Clear removes all key-value pairs in this map.
 	Clear()
 
+	// Clone returns a copy of this map.
+	Clone() Map[K, V]
+
 	// ContainsKey returns true if this map contains a key-value pair with the specified key.
 	ContainsKey(k K) bool
 

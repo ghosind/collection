@@ -23,7 +23,7 @@ func (m *HashMap[K, V]) Clear() {
 }
 
 // Clone returns a copy of this map.
-func (m *HashMap[K, V]) Clone() *HashMap[K, V] {
+func (m *HashMap[K, V]) Clone() Map[K, V] {
 	newMap := new(HashMap[K, V])
 	*newMap = make(map[K]V, len(*m))
 

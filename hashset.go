@@ -45,7 +45,7 @@ func (set *HashSet[T]) Clear() {
 }
 
 // Clone returns a copy of this set.
-func (set *HashSet[T]) Clone() *HashSet[T] {
+func (set *HashSet[T]) Clone() Set[T] {
 	newSet := new(HashSet[T])
 	*newSet = make(map[T]struct{}, set.Size())
 

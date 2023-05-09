@@ -47,12 +47,12 @@ func (set *ConcurrentHashSet[T]) Clear() {
 }
 
 // Clone returns a copy of this set.
-func (set *ConcurrentHashSet[T]) Clone() *ConcurrentHashSet[T] {
+func (set *ConcurrentHashSet[T]) Clone() Set[T] {
 	set.mutex.RLock()
 	defer set.mutex.RUnlock()
 
 	newSet := new(ConcurrentHashSet[T])
-	newSet.data = set.data.Clone()
+	newSet.data = set.data.Clone().(*HashSet[T])
 
 	return newSet
 }
