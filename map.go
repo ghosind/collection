@@ -20,8 +20,15 @@ type Map[K comparable, V any] interface {
 	// Get returns the value which associated to the specified key.
 	Get(k K) (V, bool)
 
+	// GetDefault returns the value associated with the specified key, and returns the default value
+	// if this map contains no pair with the key.
+	GetDefault(k K, defaultVal V) V
+
 	// IsEmpty returns true if this map is empty.
 	IsEmpty() bool
+
+	// Keys returns a slice that contains all the keys in this map.
+	Keys() []K
 
 	// Put associate the specified value with the specified key in this map.
 	Put(k K, v V) V
@@ -29,6 +36,12 @@ type Map[K comparable, V any] interface {
 	// Remove removes the key-value pair with the specified key.
 	Remove(k K) V
 
+	// Replace replaces the value for the specified key only if it is currently in this map.
+	Replace(k K, v V) (V, bool)
+
 	// Size returns the number of key-value pairs in this map.
 	Size() int
+
+	// Values returns a slice that contains all the values in this map.
+	Values() []V
 }

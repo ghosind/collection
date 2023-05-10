@@ -80,9 +80,30 @@ func (m *HashMap[K, V]) Get(k K) (V, bool) {
 	return v, ok
 }
 
+// GetDefault returns the value associated with the specified key, and returns the default value if
+// this map contains no pair with the key.
+func (m *HashMap[K, V]) GetDefault(k K, defaultVal V) V {
+	v, ok := (*m)[k]
+	if !ok {
+		return defaultVal
+	}
+
+	return v
+}
+
 // IsEmpty returns true if this map is empty.
 func (m *HashMap[K, V]) IsEmpty() bool {
 	return m.Size() == 0
+}
+
+// Keys returns a slice that contains all the keys in this map.
+func (m *HashMap[K, V]) Keys() []K {
+	keys := make([]K, 0, len(*m))
+	for k := range *m {
+		keys = append(keys, k)
+	}
+
+	return keys
 }
 
 // Put associate the specified value with the specified key in this map.
@@ -101,7 +122,30 @@ func (m *HashMap[K, V]) Remove(k K) V {
 	return old
 }
 
+// Replace replaces the value for the specified key only if it is currently in this map.
+func (m *HashMap[K, V]) Replace(k K, v V) (V, bool) {
+	old, ok := (*m)[k]
+	if !ok {
+		return old, false // zero value
+	}
+
+	(*m)[k] = v
+
+	return old, true
+}
+
 // Size returns the number of key-value pairs in this map.
 func (m *HashMap[K, V]) Size() int {
 	return len(*m)
+}
+
+// Values returns a slice that contains all the values in this map.
+func (m *HashMap[K, V]) Values() []V {
+	arr := make([]V, 0, len(*m))
+
+	for _, v := range *m {
+		arr = append(arr, v)
+	}
+
+	return arr
 }

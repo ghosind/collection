@@ -44,6 +44,19 @@ func testMapGet(t *testing.T, m Map[int, int], data []int) {
 			}
 		}
 	}
+
+	for i := 0; i < len(data)*2; i++ {
+		v := m.GetDefault(i, i+1)
+		if i < len(data) {
+			if v != data[i] {
+				t.Errorf("HashMap.GetDefault(%d) returns %d, expect %d", i, v, data[i])
+			}
+		} else {
+			if v != i+1 {
+				t.Errorf("HashMap.GetDefault(%d) returns %d, expect %d", i, v, i+1)
+			}
+		}
+	}
 }
 
 func testMapContains(t *testing.T, m Map[int, int], data []int) {
