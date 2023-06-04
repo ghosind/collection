@@ -1,5 +1,6 @@
 package collection
 
+// Map is a object that maps keys to values, and it cannot contain duplicate key.
 type Map[K comparable, V any] interface {
 	// Clear removes all key-value pairs in this map.
 	Clear()

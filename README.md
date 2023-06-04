@@ -22,6 +22,10 @@ This package provides the following data structure interfaces and implementation
 
     - [`ConcurrentHashSet`](https://pkg.go.dev/github.com/ghosind/collection#ConcurrentHashSet): The thread safe implementation of Set based on Go built-in map structure.
 
+- `Map`: A object that maps keys to values, and it cannot contain duplicate key.
+
+    - [`HashMap`](https://pkg.go.dev/github.com/ghosind/collection#HashMap): The implementation of Map based on Go built-in map structure.
+
 ## Installation
 
 You can install this package by the following command.
