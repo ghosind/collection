@@ -1,4 +1,4 @@
-package collection
+package dict
 
 import (
 	"math/rand"

@@ -1,8 +1,9 @@
-package collection
+package set
 
 import (
 	"sync"
 
+	"github.com/ghosind/collection"
 	"github.com/ghosind/utils"
 )
 
@@ -47,7 +48,7 @@ func (set *ConcurrentHashSet[T]) Clear() {
 }
 
 // Clone returns a copy of this set.
-func (set *ConcurrentHashSet[T]) Clone() Set[T] {
+func (set *ConcurrentHashSet[T]) Clone() collection.Set[T] {
 	set.mutex.RLock()
 	defer set.mutex.RUnlock()
 

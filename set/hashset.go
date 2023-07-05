@@ -1,6 +1,9 @@
-package collection
+package set
 
-import "github.com/ghosind/utils"
+import (
+	"github.com/ghosind/collection"
+	"github.com/ghosind/utils"
+)
 
 // HashSet is a set implementation that uses a Golang builtin map to store its elements.
 type HashSet[T comparable] map[T]struct{}
@@ -45,7 +48,7 @@ func (set *HashSet[T]) Clear() {
 }
 
 // Clone returns a copy of this set.
-func (set *HashSet[T]) Clone() Set[T] {
+func (set *HashSet[T]) Clone() collection.Set[T] {
 	newSet := new(HashSet[T])
 	*newSet = make(map[T]struct{}, set.Size())
 

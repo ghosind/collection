@@ -1,6 +1,10 @@
-package collection
+package set
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/ghosind/collection"
+)
 
 type testStruct struct {
 	v int
@@ -11,7 +15,7 @@ var strData = []string{"a", "b", "c", "d", "e", "f", "g"}
 var structData = []testStruct{{1}, {2}, {3}, {4}, {5}, {6}, {7}}
 var pointerData = []*testStruct{{1}, {2}, {3}, {4}, {5}, {6}, {7}}
 
-func testSetAdd[T comparable](t *testing.T, set Set[T], e T) {
+func testSetAdd[T comparable](t *testing.T, set collection.Set[T], e T) {
 	if ok := set.Add(e); !ok {
 		t.Errorf("set.Add(%v) returned false", e)
 	}
@@ -21,7 +25,7 @@ func testSetAdd[T comparable](t *testing.T, set Set[T], e T) {
 	}
 }
 
-func testSetAddAll[T comparable](t *testing.T, set Set[T], c ...T) {
+func testSetAddAll[T comparable](t *testing.T, set collection.Set[T], c ...T) {
 	if ok := set.AddAll(c...); !ok {
 		t.Errorf("set.AddAll(%v) returned false", c)
 	}
@@ -31,7 +35,7 @@ func testSetAddAll[T comparable](t *testing.T, set Set[T], c ...T) {
 	}
 }
 
-func testSetContains[T comparable](t *testing.T, set Set[T], data []T) {
+func testSetContains[T comparable](t *testing.T, set collection.Set[T], data []T) {
 	if found := set.Contains(data[0]); !found {
 		t.Errorf("set.Contains(%v) returned false", data[0])
 	}
@@ -49,7 +53,7 @@ func testSetContains[T comparable](t *testing.T, set Set[T], data []T) {
 	}
 }
 
-func testSetToSlice[T comparable](t *testing.T, set Set[T]) {
+func testSetToSlice[T comparable](t *testing.T, set collection.Set[T]) {
 	slice := set.ToSlice()
 	if len(slice) != set.Size() {
 		t.Errorf("len(slice) is %d, expect %d", len(slice), set.Size())
@@ -61,7 +65,7 @@ func testSetToSlice[T comparable](t *testing.T, set Set[T]) {
 	}
 }
 
-func testSetRemove[T comparable](t *testing.T, set Set[T], data []T) {
+func testSetRemove[T comparable](t *testing.T, set collection.Set[T], data []T) {
 	if isEmpty := set.IsEmpty(); isEmpty {
 		t.Errorf("set.IsEmpty() returned true")
 	}
@@ -84,7 +88,7 @@ func testSetRemove[T comparable](t *testing.T, set Set[T], data []T) {
 	}
 }
 
-func testSetRemoveAll[T comparable](t *testing.T, set Set[T], data []T) {
+func testSetRemoveAll[T comparable](t *testing.T, set collection.Set[T], data []T) {
 	if ok := set.RemoveAll(data[0:2]...); !ok {
 		t.Errorf("set.RemoveAll(%v) returned false", data[0:2])
 	}
@@ -93,14 +97,14 @@ func testSetRemoveAll[T comparable](t *testing.T, set Set[T], data []T) {
 	}
 }
 
-func testSetClear[T comparable](t *testing.T, set Set[T]) {
+func testSetClear[T comparable](t *testing.T, set collection.Set[T]) {
 	set.Clear()
 	if isEmpty := set.IsEmpty(); !isEmpty {
 		t.Errorf("set.IsEmpty() returned false")
 	}
 }
 
-func testSet[T comparable](t *testing.T, set Set[T], data []T) {
+func testSet[T comparable](t *testing.T, set collection.Set[T], data []T) {
 	if set == nil {
 		t.Errorf("set is nil")
 	}
@@ -114,7 +118,7 @@ func testSet[T comparable](t *testing.T, set Set[T], data []T) {
 	testSetClear(t, set)
 }
 
-func testSetForEachAndIter(t *testing.T, set Set[int]) {
+func testSetForEachAndIter(t *testing.T, set collection.Set[int]) {
 	set.Add(1)
 	set.Add(2)
 	set.Add(3)

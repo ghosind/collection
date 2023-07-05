@@ -1,9 +1,10 @@
-package collection
+package dict
 
 import (
 	"reflect"
 	"sync"
 
+	"github.com/ghosind/collection"
 	"github.com/ghosind/utils"
 )
 
@@ -31,7 +32,7 @@ func (m *ConcurrentHashMap[K, V]) Clear() {
 }
 
 // Clone returns a copy of this map.
-func (m *ConcurrentHashMap[K, V]) Clone() Map[K, V] {
+func (m *ConcurrentHashMap[K, V]) Clone() collection.Map[K, V] {
 	newMap := NewConcurrentHashMap[K, V]()
 
 	for k, v := range *m.data {

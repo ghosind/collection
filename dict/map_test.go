@@ -1,11 +1,14 @@
-package collection
+package dict
 
 import (
 	"math/rand"
 	"testing"
+
+	"github.com/ghosind/collection"
+	"github.com/ghosind/collection/set"
 )
 
-func testMapPut(t *testing.T, m Map[int, int], data []int) {
+func testMapPut(t *testing.T, m collection.Map[int, int], data []int) {
 	for i := 0; i < len(data)/2; i++ {
 		m.Put(i, data[i])
 	}
@@ -28,7 +31,7 @@ func testMapPut(t *testing.T, m Map[int, int], data []int) {
 	}
 }
 
-func testMapGet(t *testing.T, m Map[int, int], data []int) {
+func testMapGet(t *testing.T, m collection.Map[int, int], data []int) {
 	for i := 0; i < len(data)*2; i++ {
 		v, ok := m.Get(i)
 		if i < len(data) {
@@ -59,7 +62,7 @@ func testMapGet(t *testing.T, m Map[int, int], data []int) {
 	}
 }
 
-func testMapContains(t *testing.T, m Map[int, int], data []int) {
+func testMapContains(t *testing.T, m collection.Map[int, int], data []int) {
 	for i := 0; i < len(data)*2; i++ {
 		isContains := m.ContainsKey(i)
 		if i < len(data) {
@@ -74,7 +77,7 @@ func testMapContains(t *testing.T, m Map[int, int], data []int) {
 	}
 }
 
-func testMapForEach(t *testing.T, m Map[int, int], data []int) {
+func testMapForEach(t *testing.T, m collection.Map[int, int], data []int) {
 	n := 0
 	err := m.ForEach(func(k, v int) error {
 		n++
@@ -93,7 +96,7 @@ func testMapForEach(t *testing.T, m Map[int, int], data []int) {
 	}
 }
 
-func testMapRemove(t *testing.T, m Map[int, int], data []int) {
+func testMapRemove(t *testing.T, m collection.Map[int, int], data []int) {
 	for i := 0; i < len(data)*2; i += 2 {
 		old := m.Remove(i)
 		if i < len(data) {
@@ -106,7 +109,7 @@ func testMapRemove(t *testing.T, m Map[int, int], data []int) {
 	}
 }
 
-func testMapClear(t *testing.T, m Map[int, int]) {
+func testMapClear(t *testing.T, m collection.Map[int, int]) {
 	if m.IsEmpty() {
 		t.Error("Map.IsEmpty() return true, expect false")
 	}
@@ -118,7 +121,7 @@ func testMapClear(t *testing.T, m Map[int, int]) {
 	}
 }
 
-func testMapKeys(t *testing.T, m Map[int, int]) {
+func testMapKeys(t *testing.T, m collection.Map[int, int]) {
 	keys := m.Keys()
 	if len(keys) != m.Size() {
 		t.Errorf("Map.Keys() return an array contains %d element, expect %d", len(keys), m.Size())
@@ -131,13 +134,13 @@ func testMapKeys(t *testing.T, m Map[int, int]) {
 	}
 }
 
-func testMapValues(t *testing.T, m Map[int, int]) {
+func testMapValues(t *testing.T, m collection.Map[int, int]) {
 	vals := m.Values()
 	if len(vals) != m.Size() {
 		t.Errorf("Map.Values() return an array contains %d element, expect %d", len(vals), m.Size())
 	}
 
-	valSet := NewHashSet[int]()
+	valSet := set.NewHashSet[int]()
 	valSet.AddAll(vals...)
 
 	m.ForEach(func(_, v int) error {
@@ -148,7 +151,7 @@ func testMapValues(t *testing.T, m Map[int, int]) {
 	})
 }
 
-func testMapReplace(t *testing.T, m Map[int, int], data []int) {
+func testMapReplace(t *testing.T, m collection.Map[int, int], data []int) {
 	for i := 0; i < len(data)/2; i++ {
 		m.Put(i, data[i])
 	}
@@ -178,7 +181,7 @@ func testMapReplace(t *testing.T, m Map[int, int], data []int) {
 	}
 }
 
-func testMap(t *testing.T, m Map[int, int]) {
+func testMap(t *testing.T, m collection.Map[int, int]) {
 	data := rand.Perm(10)
 
 	if !m.IsEmpty() {

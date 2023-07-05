@@ -1,8 +1,9 @@
-package collection
+package dict
 
 import (
 	"reflect"
 
+	"github.com/ghosind/collection"
 	"github.com/ghosind/utils"
 )
 
@@ -23,7 +24,7 @@ func (m *HashMap[K, V]) Clear() {
 }
 
 // Clone returns a copy of this map.
-func (m *HashMap[K, V]) Clone() Map[K, V] {
+func (m *HashMap[K, V]) Clone() collection.Map[K, V] {
 	newMap := new(HashMap[K, V])
 	*newMap = make(map[K]V, len(*m))
 
