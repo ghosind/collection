@@ -14,17 +14,19 @@ Generics collections framework for Golang.
 
 This package provides the following data structure interfaces and implementations:
 
-- `Collection`: The root interface of most of the structures in this package.
+- `Collection`: The root interface of most of the structures in this package (without `Dictionary`).
 
 - `Set`: A collection interface that contains no duplicate elements.
 
-    - [`HashSet`](https://pkg.go.dev/github.com/ghosind/collection#HashSet): The implementation of Set based on Go built-in map structure.
+    - [`HashSet`](https://pkg.go.dev/github.com/ghosind/collection/set#HashSet): The implementation of Set based on Go built-in map structure.
 
-    - [`ConcurrentHashSet`](https://pkg.go.dev/github.com/ghosind/collection#ConcurrentHashSet): The thread safe implementation of Set based on Go built-in map structure.
+    - [`ConcurrentHashSet`](https://pkg.go.dev/github.com/ghosind/collection/set#ConcurrentHashSet): The thread safe implementation of Set based on Go built-in map structure.
 
-- `Map`: A object that maps keys to values, and it cannot contain duplicate key.
+- `Dictionary`: A object that maps keys to values, and it cannot contain duplicate key.
 
-    - [`HashMap`](https://pkg.go.dev/github.com/ghosind/collection#HashMap): The implementation of Map based on Go built-in map structure.
+    - [`HashDictionary`](https://pkg.go.dev/github.com/ghosind/collection/dict#ConcurrentHashDictionary): The implementation of Dictionary based on Go built-in map structure.
+
+    - [`ConcurrencyHashDictionary`](https://pkg.go.dev/github.com/ghosind/collection/dict#ConcurrencyHashDictionary): The thread safe implementation of HashDictionary.
 
 ## Installation
 
@@ -47,11 +49,26 @@ import "github.com/ghosind/collection"
 Create a string set, add and test elements in the set.
 
 ```go
-fruits := collection.NewHashSet[string]()
+// import "github.com/ghosind/collection/set"
+
+fruits := set.NewHashSet[string]()
 
 fruits.Add("Apple")
 fruits.Add("Banana")
 
 log.Print(fruits.Contains("Banana")) // true
 log.Print(fruits.Contains("Lemon"))
+```
+
+### HashDictionary Examples
+
+```go
+// import "github.com/ghosind/collection/dict"
+
+languages := dict.NewHashDictionary[string, int]()
+
+languages.Put("C", 1972)
+languages.Put("Go", 2007)
+
+log.Print(languages.GetDefault("C", 0)) // 1972
 ```
