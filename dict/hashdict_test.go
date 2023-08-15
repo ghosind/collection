@@ -1,43 +1,54 @@
 package dict
 
 import (
+	"errors"
 	"math/rand"
 	"testing"
+
+	"github.com/ghosind/go-assert"
+	"github.com/ghosind/utils"
 )
 
 func TestHashDictionary(t *testing.T) {
-	testDictionary(t, NewHashDictionary[int, int]())
+	a := assert.New(t)
+
+	testDictionary(a, NewHashDictionary[int, int]())
 }
 
 func TestHashDictionaryCloneAndEquals(t *testing.T) {
+	a := assert.New(t)
+
 	data := rand.Perm(10)
 	m := NewHashDictionary[int, int]()
 
-	testDictionaryPut(t, m, data)
+	testDictionaryPut(a, m, data)
 
 	newDictionary := m.Clone()
-	if !m.Equals(newDictionary) {
-		t.Errorf("HashDictionary.Equals(newDictionary) returns false, expect true")
-	}
+	a.TrueNow(m.Equals(newDictionary))
 
 	newDictionary.ForEach(func(k, v int) error {
 		newDictionary.Put(k, v+1)
 		return nil
 	})
-	if m.Equals(newDictionary) {
-		t.Errorf("HashDictionary.Equals(1) returns true, expect false")
-	}
+	a.NotTrueNow(m.Equals(newDictionary))
 
 	newDictionary.Clear()
-	if m.Equals(newDictionary) {
-		t.Errorf("HashDictionary.Equals(newDictionary) returns true, expect false")
-	}
+	a.NotTrueNow(m.Equals(newDictionary))
+	a.NotTrueNow(m.Equals(NewHashDictionary[string, int]()))
+	a.NotTrueNow(m.Equals(1))
+}
 
-	if m.Equals(NewHashDictionary[string, int]()) {
-		t.Errorf("HashDictionary.Equals(NewHashDictionary[string, int]()) returns true, expect false")
-	}
+func TestHashDictionaryForEach(t *testing.T) {
+	a := assert.New(t)
 
-	if m.Equals(1) {
-		t.Errorf("HashDictionary.Equals(1) returns true, expect false")
-	}
+	dict := NewHashDictionary[int, int]()
+
+	dict.Put(1, 1)
+	dict.Put(2, 2)
+	dict.Put(3, 3)
+	dict.Put(5, 5)
+	err := dict.ForEach(func(k, v int) error {
+		return utils.Conditional(k == 5, errors.New("some error"), nil)
+	})
+	a.NotNilNow(err)
 }

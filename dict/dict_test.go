@@ -2,19 +2,17 @@ package dict
 
 import (
 	"math/rand"
-	"testing"
 
 	"github.com/ghosind/collection"
 	"github.com/ghosind/collection/set"
+	"github.com/ghosind/go-assert"
 )
 
-func testDictionaryPut(t *testing.T, m collection.Dictionary[int, int], data []int) {
+func testDictionaryPut(a *assert.Assertion, m collection.Dictionary[int, int], data []int) {
 	for i := 0; i < len(data)/2; i++ {
 		m.Put(i, data[i])
 	}
-	if m.Size() != len(data)/2 {
-		t.Errorf("Dictionary.Size() returns %d, expect %d", m.Size(), len(data)/2)
-	}
+	a.EqualNow(m.Size(), len(data)/2)
 
 	for i, v := range data {
 		old := m.Put(i, v)
@@ -22,136 +20,99 @@ func testDictionaryPut(t *testing.T, m collection.Dictionary[int, int], data []i
 		if i < len(data)/2 {
 			expect = data[i]
 		}
-		if old != expect {
-			t.Errorf("Dictionary.Put returns %d, expect %d", old, expect)
-		}
+		a.EqualNow(old, expect)
 	}
-	if m.Size() != len(data) {
-		t.Errorf("Dictionary.Size() returns %d, expect %d", m.Size(), len(data))
-	}
+	a.EqualNow(m.Size(), len(data))
 }
 
-func testDictionaryGet(t *testing.T, m collection.Dictionary[int, int], data []int) {
+func testDictionaryGet(a *assert.Assertion, m collection.Dictionary[int, int], data []int) {
 	for i := 0; i < len(data)*2; i++ {
 		v, ok := m.Get(i)
 		if i < len(data) {
-			if !ok {
-				t.Errorf("Dictionary not contains key %d, expect contains", i)
-			}
-			if v != data[i] {
-				t.Errorf("Dictionary.Get(%d) returns %d, expect %d", i, v, data[i])
-			}
+			a.TrueNow(ok)
+
+			a.EqualNow(v, data[i])
 		} else {
-			if ok {
-				t.Errorf("Dictionary contains key %d, expect not", i)
-			}
+			a.NotTrueNow(ok)
 		}
 	}
 
 	for i := 0; i < len(data)*2; i++ {
 		v := m.GetDefault(i, i+1)
 		if i < len(data) {
-			if v != data[i] {
-				t.Errorf("Dictionary.GetDefault(%d) returns %d, expect %d", i, v, data[i])
-			}
+			a.EqualNow(v, data[i])
 		} else {
-			if v != i+1 {
-				t.Errorf("Dictionary.GetDefault(%d) returns %d, expect %d", i, v, i+1)
-			}
+			a.EqualNow(v, i+1)
 		}
 	}
 }
 
-func testDictionaryContains(t *testing.T, m collection.Dictionary[int, int], data []int) {
+func testDictionaryContains(a *assert.Assertion, m collection.Dictionary[int, int], data []int) {
 	for i := 0; i < len(data)*2; i++ {
 		isContains := m.ContainsKey(i)
 		if i < len(data) {
-			if !isContains {
-				t.Errorf("Dictionary.Contains(%d) return false, expect true", i)
-			}
+			a.TrueNow(isContains)
 		} else {
-			if isContains {
-				t.Errorf("Dictionary.Contains(%d) return true, expect false", i)
-			}
+			a.NotTrueNow(isContains)
 		}
 	}
 }
 
-func testDictionaryForEach(t *testing.T, m collection.Dictionary[int, int], data []int) {
+func testDictionaryForEach(a *assert.Assertion, m collection.Dictionary[int, int], data []int) {
 	n := 0
 	err := m.ForEach(func(k, v int) error {
 		n++
-		if data[k] != v {
-			t.Errorf("")
-		}
+		a.EqualNow(v, data[k])
 
 		return nil
 	})
-	if err != nil {
-		t.Errorf("Dictionary.ForEach returns %v, expect nil", err)
-	}
+	a.NilNow(err)
 
-	if n != m.Size() {
-		t.Errorf("Dictionary.ForEach run handler %d times, expect %d", n, m.Size())
-	}
+	a.EqualNow(n, m.Size())
 }
 
-func testDictionaryRemove(t *testing.T, m collection.Dictionary[int, int], data []int) {
+func testDictionaryRemove(a *assert.Assertion, m collection.Dictionary[int, int], data []int) {
 	for i := 0; i < len(data)*2; i += 2 {
 		old := m.Remove(i)
 		if i < len(data) {
-			if old != data[i] {
-				t.Errorf("Dictionary.Remove(%d) returns %d, expect %d", i, old, data[i]+1)
-			}
-		} else if old != 0 {
-			t.Errorf("Dictionary.Remove(%d) returns %d, expect 0", i, old)
+			a.EqualNow(old, data[i])
+		} else {
+			a.EqualNow(old, 0)
 		}
 	}
 }
 
-func testDictionaryClear(t *testing.T, m collection.Dictionary[int, int]) {
-	if m.IsEmpty() {
-		t.Error("Dictionary.IsEmpty() return true, expect false")
-	}
+func testDictionaryClear(a *assert.Assertion, m collection.Dictionary[int, int]) {
+	a.NotTrueNow(m.IsEmpty())
 
 	m.Clear()
 
-	if !m.IsEmpty() {
-		t.Error("Dictionary.IsEmpty() return false, expect true")
-	}
+	a.TrueNow(m.IsEmpty())
 }
 
-func testDictionaryKeys(t *testing.T, m collection.Dictionary[int, int]) {
+func testDictionaryKeys(a *assert.Assertion, m collection.Dictionary[int, int]) {
 	keys := m.Keys()
-	if len(keys) != m.Size() {
-		t.Errorf("Dictionary.Keys() return an array contains %d element, expect %d", len(keys), m.Size())
-	}
+	a.EqualNow(len(keys), m.Size())
 
 	for _, k := range keys {
-		if !m.ContainsKey(k) {
-			t.Errorf("key %d not in Dictionary", k)
-		}
+		a.TrueNow(m.ContainsKey(k))
 	}
 }
 
-func testDictionaryValues(t *testing.T, m collection.Dictionary[int, int]) {
+func testDictionaryValues(a *assert.Assertion, m collection.Dictionary[int, int]) {
 	vals := m.Values()
-	if len(vals) != m.Size() {
-		t.Errorf("Dictionary.Values() return an array contains %d element, expect %d", len(vals), m.Size())
-	}
+	a.EqualNow(len(vals), m.Size())
 
 	valSet := set.NewHashSet[int]()
 	valSet.AddAll(vals...)
 
 	m.ForEach(func(_, v int) error {
-		if !valSet.Contains(v) {
-			t.Errorf("Dictionary.Values() not contains %dd", v)
-		}
+		a.TrueNow(valSet.Contains(v))
 		return nil
 	})
 }
 
-func testDictionaryReplace(t *testing.T, m collection.Dictionary[int, int], data []int) {
+func testDictionaryReplace(a *assert.Assertion, m collection.Dictionary[int, int], data []int) {
 	for i := 0; i < len(data)/2; i++ {
 		m.Put(i, data[i])
 	}
@@ -159,50 +120,44 @@ func testDictionaryReplace(t *testing.T, m collection.Dictionary[int, int], data
 	for i := 0; i < len(data); i++ {
 		old, ok := m.Replace(i, data[i]+1)
 		if i < len(data)/2 {
-			if !ok {
-				t.Errorf("Dictionary.Replace(%d, ?) no old value found, expect return old value", i)
-			} else if old != data[i] {
-				t.Errorf("Dictionary.Replace(%d, ?) return old value %d, expect %d", i, old, data[i])
-			}
-		} else if ok {
-			t.Errorf("Dictionary.Replace(%d, ?) found old value, expect no old value", i)
+			a.TrueNow(ok)
+
+			a.EqualNow(old, data[i])
+		} else {
+			a.NotTrueNow(ok)
 		}
 	}
 
 	for i := 0; i < len(data); i++ {
 		v := m.GetDefault(i, 0)
 		if i < len(data)/2 {
-			if v != data[i]+1 {
-				t.Errorf("Dictionary.Get(%d) return %d, expect %d", i, v, data[i]+1)
-			}
-		} else if v != 0 {
-			t.Errorf("Dictionary.Get(%d) return %d, expect 0", i, v)
+			a.EqualNow(v, data[i]+1)
+		} else {
+			a.EqualNow(v, 0)
 		}
 	}
 }
 
-func testDictionary(t *testing.T, m collection.Dictionary[int, int]) {
+func testDictionary(a *assert.Assertion, m collection.Dictionary[int, int]) {
 	data := rand.Perm(10)
 
-	if !m.IsEmpty() {
-		t.Error("Dictionary.IsEmpty() return false, expect true")
-	}
+	a.TrueNow(m.IsEmpty(), "Dictionary.IsEmpty() return false, expect true")
 
-	testDictionaryPut(t, m, data)
+	testDictionaryPut(a, m, data)
 
-	testDictionaryGet(t, m, data)
+	testDictionaryGet(a, m, data)
 
-	testDictionaryContains(t, m, data)
+	testDictionaryContains(a, m, data)
 
-	testDictionaryForEach(t, m, data)
+	testDictionaryForEach(a, m, data)
 
-	testDictionaryKeys(t, m)
+	testDictionaryKeys(a, m)
 
-	testDictionaryValues(t, m)
+	testDictionaryValues(a, m)
 
-	testDictionaryRemove(t, m, data)
+	testDictionaryRemove(a, m, data)
 
-	testDictionaryClear(t, m)
+	testDictionaryClear(a, m)
 
-	testDictionaryReplace(t, m, data)
+	testDictionaryReplace(a, m, data)
 }
