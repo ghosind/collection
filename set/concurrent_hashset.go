@@ -4,7 +4,6 @@ import (
 	"sync"
 
 	"github.com/ghosind/collection"
-	"github.com/ghosind/utils"
 )
 
 // ConcurrentHashSet is a thread-safe set implementation that uses a Golang builtin map to store
@@ -76,11 +75,11 @@ func (set *ConcurrentHashSet[T]) ContainsAll(c ...T) bool {
 
 // Equals compares set with the object pass from parameter.
 func (set *ConcurrentHashSet[T]) Equals(o any) bool {
-	if !utils.IsSameType(set, o) {
+	s, ok := o.(*ConcurrentHashSet[T])
+	if !ok {
 		return false
 	}
 
-	s := o.(*ConcurrentHashSet[T])
 	set.mutex.RLock()
 	s.mutex.RLock()
 	defer set.mutex.RUnlock()

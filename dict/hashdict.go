@@ -4,7 +4,6 @@ import (
 	"reflect"
 
 	"github.com/ghosind/collection"
-	"github.com/ghosind/utils"
 )
 
 // HashDictionary is a Golang builtin map wrapper.
@@ -43,11 +42,15 @@ func (m *HashDictionary[K, V]) ContainsKey(k K) bool {
 
 // Equals compares this dictionary with the object pass from parameter.
 func (m *HashDictionary[K, V]) Equals(o any) bool {
-	if !utils.IsSameType(m, o) {
+	om, ok := o.(*HashDictionary[K, V])
+	if !ok {
 		return false
 	}
 
-	om := o.(*HashDictionary[K, V])
+	if m.Size() != om.Size() {
+		return false
+	}
+
 	for k, v := range *m {
 		val, ok := (*om)[k]
 		if !ok {

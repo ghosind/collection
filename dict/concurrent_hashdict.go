@@ -5,7 +5,6 @@ import (
 	"sync"
 
 	"github.com/ghosind/collection"
-	"github.com/ghosind/utils"
 )
 
 // ConcurrentHashDictionary is the thread-safe hash dictionary implementation.
@@ -54,11 +53,15 @@ func (m *ConcurrentHashDictionary[K, V]) ContainsKey(k K) bool {
 
 // Equals compares this dictionary with the object pass from parameter.
 func (m *ConcurrentHashDictionary[K, V]) Equals(o any) bool {
-	if !utils.IsSameType(m, o) {
+	om, ok := o.(*ConcurrentHashDictionary[K, V])
+	if !ok {
 		return false
 	}
 
-	om := o.(*ConcurrentHashDictionary[K, V])
+	if m.Size() != om.Size() {
+		return false
+	}
+
 	m.mutex.RLock()
 	om.mutex.RLock()
 	defer m.mutex.RUnlock()

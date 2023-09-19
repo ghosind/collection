@@ -2,7 +2,6 @@ package set
 
 import (
 	"github.com/ghosind/collection"
-	"github.com/ghosind/utils"
 )
 
 // HashSet is a set implementation that uses a Golang builtin map to store its elements.
@@ -79,11 +78,11 @@ func (set *HashSet[T]) ContainsAll(c ...T) bool {
 
 // Equals compares set with the object pass from parameter.
 func (set *HashSet[T]) Equals(o any) bool {
-	if !utils.IsSameType(set, o) {
+	s, ok := o.(*HashSet[T])
+	if !ok {
 		return false
 	}
 
-	s := o.(*HashSet[T])
 	if s.Size() != set.Size() {
 		return false
 	}
