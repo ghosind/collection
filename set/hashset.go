@@ -10,10 +10,9 @@ type HashSet[T comparable] map[T]struct{}
 
 // NewHashSet creates a new HashSet.
 func NewHashSet[T comparable]() *HashSet[T] {
-	set := new(HashSet[T])
-	*set = make(map[T]struct{})
+	set := make(HashSet[T])
 
-	return set
+	return &set
 }
 
 // Add adds the specified element to this set.

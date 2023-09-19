@@ -12,10 +12,9 @@ type HashDictionary[K comparable, V any] map[K]V
 
 // NewHashDictionary creates a new HashDictionary.
 func NewHashDictionary[K comparable, V any]() *HashDictionary[K, V] {
-	m := new(HashDictionary[K, V])
-	*m = make(map[K]V)
+	d := make(HashDictionary[K, V])
 
-	return m
+	return &d
 }
 
 // Clear removes all key-value pairs in this dictionary.
