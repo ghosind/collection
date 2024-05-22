@@ -8,7 +8,7 @@ import (
 	"github.com/ghosind/go-assert"
 )
 
-func testDictionaryPut(a *assert.Assertion, m collection.Dictionary[int, int], data []int) {
+func testDictPut(a *assert.Assertion, m collection.Dict[int, int], data []int) {
 	for i := 0; i < len(data)/2; i++ {
 		m.Put(i, data[i])
 	}
@@ -25,7 +25,7 @@ func testDictionaryPut(a *assert.Assertion, m collection.Dictionary[int, int], d
 	a.EqualNow(m.Size(), len(data))
 }
 
-func testDictionaryGet(a *assert.Assertion, m collection.Dictionary[int, int], data []int) {
+func testDictGet(a *assert.Assertion, m collection.Dict[int, int], data []int) {
 	for i := 0; i < len(data)*2; i++ {
 		v, ok := m.Get(i)
 		if i < len(data) {
@@ -47,7 +47,7 @@ func testDictionaryGet(a *assert.Assertion, m collection.Dictionary[int, int], d
 	}
 }
 
-func testDictionaryContains(a *assert.Assertion, m collection.Dictionary[int, int], data []int) {
+func testDictContains(a *assert.Assertion, m collection.Dict[int, int], data []int) {
 	for i := 0; i < len(data)*2; i++ {
 		isContains := m.ContainsKey(i)
 		if i < len(data) {
@@ -58,7 +58,7 @@ func testDictionaryContains(a *assert.Assertion, m collection.Dictionary[int, in
 	}
 }
 
-func testDictionaryForEach(a *assert.Assertion, m collection.Dictionary[int, int], data []int) {
+func testDictForEach(a *assert.Assertion, m collection.Dict[int, int], data []int) {
 	n := 0
 	err := m.ForEach(func(k, v int) error {
 		n++
@@ -71,7 +71,7 @@ func testDictionaryForEach(a *assert.Assertion, m collection.Dictionary[int, int
 	a.EqualNow(n, m.Size())
 }
 
-func testDictionaryRemove(a *assert.Assertion, m collection.Dictionary[int, int], data []int) {
+func testDictRemove(a *assert.Assertion, m collection.Dict[int, int], data []int) {
 	for i := 0; i < len(data)*2; i += 2 {
 		old := m.Remove(i)
 		if i < len(data) {
@@ -82,7 +82,7 @@ func testDictionaryRemove(a *assert.Assertion, m collection.Dictionary[int, int]
 	}
 }
 
-func testDictionaryClear(a *assert.Assertion, m collection.Dictionary[int, int]) {
+func testDictClear(a *assert.Assertion, m collection.Dict[int, int]) {
 	a.NotTrueNow(m.IsEmpty())
 
 	m.Clear()
@@ -90,7 +90,7 @@ func testDictionaryClear(a *assert.Assertion, m collection.Dictionary[int, int])
 	a.TrueNow(m.IsEmpty())
 }
 
-func testDictionaryKeys(a *assert.Assertion, m collection.Dictionary[int, int]) {
+func testDictKeys(a *assert.Assertion, m collection.Dict[int, int]) {
 	keys := m.Keys()
 	a.EqualNow(len(keys), m.Size())
 
@@ -99,7 +99,7 @@ func testDictionaryKeys(a *assert.Assertion, m collection.Dictionary[int, int]) 
 	}
 }
 
-func testDictionaryValues(a *assert.Assertion, m collection.Dictionary[int, int]) {
+func testDictValues(a *assert.Assertion, m collection.Dict[int, int]) {
 	vals := m.Values()
 	a.EqualNow(len(vals), m.Size())
 
@@ -112,7 +112,7 @@ func testDictionaryValues(a *assert.Assertion, m collection.Dictionary[int, int]
 	})
 }
 
-func testDictionaryReplace(a *assert.Assertion, m collection.Dictionary[int, int], data []int) {
+func testDictReplace(a *assert.Assertion, m collection.Dict[int, int], data []int) {
 	for i := 0; i < len(data)/2; i++ {
 		m.Put(i, data[i])
 	}
@@ -138,26 +138,26 @@ func testDictionaryReplace(a *assert.Assertion, m collection.Dictionary[int, int
 	}
 }
 
-func testDictionary(a *assert.Assertion, m collection.Dictionary[int, int]) {
+func testDict(a *assert.Assertion, m collection.Dict[int, int]) {
 	data := rand.Perm(10)
 
-	a.TrueNow(m.IsEmpty(), "Dictionary.IsEmpty() return false, expect true")
+	a.TrueNow(m.IsEmpty(), "Dict.IsEmpty() return false, expect true")
 
-	testDictionaryPut(a, m, data)
+	testDictPut(a, m, data)
 
-	testDictionaryGet(a, m, data)
+	testDictGet(a, m, data)
 
-	testDictionaryContains(a, m, data)
+	testDictContains(a, m, data)
 
-	testDictionaryForEach(a, m, data)
+	testDictForEach(a, m, data)
 
-	testDictionaryKeys(a, m)
+	testDictKeys(a, m)
 
-	testDictionaryValues(a, m)
+	testDictValues(a, m)
 
-	testDictionaryRemove(a, m, data)
+	testDictRemove(a, m, data)
 
-	testDictionaryClear(a, m)
+	testDictClear(a, m)
 
-	testDictionaryReplace(a, m, data)
+	testDictReplace(a, m, data)
 }

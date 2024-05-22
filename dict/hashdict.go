@@ -7,9 +7,13 @@ import (
 )
 
 // HashDictionary is a Golang builtin map wrapper.
+//
+// Deprecated: Use HashDict instead
 type HashDictionary[K comparable, V any] map[K]V
 
 // NewHashDictionary creates a new HashDictionary.
+//
+// Deprecated: Use NewHashDict instead.
 func NewHashDictionary[K comparable, V any]() *HashDictionary[K, V] {
 	d := make(HashDictionary[K, V])
 
@@ -22,7 +26,7 @@ func (m *HashDictionary[K, V]) Clear() {
 }
 
 // Clone returns a copy of this dictionary.
-func (m *HashDictionary[K, V]) Clone() collection.Dictionary[K, V] {
+func (m *HashDictionary[K, V]) Clone() collection.Dict[K, V] {
 	newDict := new(HashDictionary[K, V])
 	*newDict = make(map[K]V, len(*m))
 

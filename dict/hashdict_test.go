@@ -12,7 +12,7 @@ import (
 func TestHashDictionary(t *testing.T) {
 	a := assert.New(t)
 
-	testDictionary(a, NewHashDictionary[int, int]())
+	testDict(a, NewHashDictionary[int, int]())
 }
 
 func TestHashDictionaryCloneAndEquals(t *testing.T) {
@@ -21,7 +21,7 @@ func TestHashDictionaryCloneAndEquals(t *testing.T) {
 	data := rand.Perm(10)
 	m := NewHashDictionary[int, int]()
 
-	testDictionaryPut(a, m, data)
+	testDictPut(a, m, data)
 
 	newDictionary := m.Clone()
 	a.TrueNow(m.Equals(newDictionary))

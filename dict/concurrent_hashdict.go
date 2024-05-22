@@ -8,6 +8,8 @@ import (
 )
 
 // ConcurrentHashDictionary is the thread-safe hash dictionary implementation.
+//
+// Deprecated: Use SyncDict instead.
 type ConcurrentHashDictionary[K comparable, V any] struct {
 	data *HashDictionary[K, V]
 
@@ -15,6 +17,8 @@ type ConcurrentHashDictionary[K comparable, V any] struct {
 }
 
 // NewConcurrentHashDictionary creates a new ConcurrentHashDictionary.
+//
+// Deprecated: Use NewSyncDict instead.
 func NewConcurrentHashDictionary[K comparable, V any]() *ConcurrentHashDictionary[K, V] {
 	newDict := new(ConcurrentHashDictionary[K, V])
 	newDict.data = NewHashDictionary[K, V]()
@@ -31,7 +35,7 @@ func (m *ConcurrentHashDictionary[K, V]) Clear() {
 }
 
 // Clone returns a copy of this dictionary.
-func (m *ConcurrentHashDictionary[K, V]) Clone() collection.Dictionary[K, V] {
+func (m *ConcurrentHashDictionary[K, V]) Clone() collection.Dict[K, V] {
 	newDict := NewConcurrentHashDictionary[K, V]()
 
 	for k, v := range *m.data {

@@ -12,7 +12,7 @@ import (
 func TestConcurrentHashDictionary(t *testing.T) {
 	a := assert.New(t)
 
-	testDictionary(a, NewConcurrentHashDictionary[int, int]())
+	testDict(a, NewConcurrentHashDictionary[int, int]())
 }
 
 func TestConcurrentHashDictionaryCloneAndEquals(t *testing.T) {
@@ -21,7 +21,7 @@ func TestConcurrentHashDictionaryCloneAndEquals(t *testing.T) {
 	data := rand.Perm(10)
 
 	map1 := NewConcurrentHashDictionary[int, int]()
-	testDictionaryPut(a, map1, data)
+	testDictPut(a, map1, data)
 
 	a.NotTrueNow(map1.Equals(1))
 
