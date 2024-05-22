@@ -1,12 +1,12 @@
 package collection
 
 // Dictionary is a object that maps keys to values, and it cannot contain duplicate key.
-type Dictionary[K comparable, V any] interface {
+type Dict[K comparable, V any] interface {
 	// Clear removes all key-value pairs in this dictionary.
 	Clear()
 
 	// Clone returns a copy of this dictionary.
-	Clone() Dictionary[K, V]
+	Clone() Dict[K, V]
 
 	// ContainsKey returns true if this dictionary contains a key-value pair with the specified key.
 	ContainsKey(k K) bool
