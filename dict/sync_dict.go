@@ -87,7 +87,7 @@ func (e *syncEntry[T]) tryExpungeLocked() bool {
 }
 
 // NewSyncDict creates a new SyncDict.
-func NewSyncDict[K comparable, V any]() collection.Dict[K, V] {
+func NewSyncDict[K comparable, V any]() *SyncDict[K, V] {
 	d := new(SyncDict[K, V])
 
 	d.expunged = new(V)

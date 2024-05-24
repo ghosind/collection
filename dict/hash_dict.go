@@ -10,7 +10,7 @@ import (
 type HashDict[K comparable, V any] map[K]V
 
 // NewHashDict creates a new HashDict.
-func NewHashDict[K comparable, V any]() collection.Dict[K, V] {
+func NewHashDict[K comparable, V any]() *HashDict[K, V] {
 	d := make(HashDict[K, V])
 
 	return (&d)
