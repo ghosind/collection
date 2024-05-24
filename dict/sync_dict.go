@@ -202,11 +202,8 @@ func (d *SyncDict[K, V]) Clear() {
 	defer d.mu.Unlock()
 	read := d.loadReadOnly()
 	if read.amended {
-		read = d.loadReadOnly()
-		if read.amended {
-			d.dirty = nil
-			d.misses = 0
-		}
+		d.dirty = nil
+		d.misses = 0
 	}
 	read = syncReadOnly[K, V]{m: make(map[K]*syncEntry[V])}
 	copyRead := read
