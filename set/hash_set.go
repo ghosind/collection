@@ -5,7 +5,7 @@ import (
 )
 
 // HashSet is a set implementation that uses a Golang builtin map to store its elements.
-type HashSet[T comparable] map[T]struct{}
+type HashSet[T comparable] map[T]empty
 
 // NewHashSet creates a new HashSet.
 func NewHashSet[T comparable]() *HashSet[T] {
@@ -21,7 +21,7 @@ func (set *HashSet[T]) Add(e T) bool {
 		return false
 	}
 
-	(*set)[e] = struct{}{}
+	(*set)[e] = empty{}
 	return true
 }
 
@@ -32,7 +32,7 @@ func (set *HashSet[T]) AddAll(c ...T) bool {
 	for _, e := range c {
 		_, found := (*set)[e]
 		if !found {
-			(*set)[e] = struct{}{}
+			(*set)[e] = empty{}
 			isChanged = true
 		}
 	}
@@ -42,16 +42,16 @@ func (set *HashSet[T]) AddAll(c ...T) bool {
 
 // Clear removes all of the elements from this set.
 func (set *HashSet[T]) Clear() {
-	*set = make(map[T]struct{})
+	*set = make(map[T]empty)
 }
 
 // Clone returns a copy of this set.
 func (set *HashSet[T]) Clone() collection.Set[T] {
 	newSet := new(HashSet[T])
-	*newSet = make(map[T]struct{}, set.Size())
+	*newSet = make(map[T]empty, set.Size())
 
 	for e := range *set {
-		(*newSet)[e] = struct{}{}
+		(*newSet)[e] = empty{}
 	}
 
 	return newSet
