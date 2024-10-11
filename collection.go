@@ -2,6 +2,8 @@ package collection
 
 // Collection is the root interface for this collections framework hierarchy.
 type Collection[T any] interface {
+	Iterable[T]
+
 	// Add adds the specified element to this collection.
 	Add(e T) bool
 
@@ -23,9 +25,6 @@ type Collection[T any] interface {
 
 	// IsEmpty returns true if this collection contains no elements.
 	IsEmpty() bool
-
-	// Iter returns a channel of all elements in this collection.
-	Iter() <-chan T
 
 	// Remove removes the specified element from this collection.
 	Remove(e T) bool

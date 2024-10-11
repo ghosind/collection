@@ -83,16 +83,9 @@ func testSetForEachAndIter(a *assert.Assertion, set collection.Set[int]) {
 	set.Add(2)
 	set.Add(3)
 
+	testSetIter(a, set)
+
 	records := map[int]int{}
-
-	for e := range set.Iter() {
-		records[e]++
-	}
-
-	a.EqualNow(len(records), set.Size())
-	for _, v := range records {
-		a.EqualNow(v, 1)
-	}
 
 	err := set.ForEach(func(e int) error {
 		records[e]++
@@ -102,6 +95,6 @@ func testSetForEachAndIter(a *assert.Assertion, set collection.Set[int]) {
 
 	a.Equal(len(records), set.Size())
 	for _, v := range records {
-		a.EqualNow(v, 2)
+		a.EqualNow(v, 1)
 	}
 }

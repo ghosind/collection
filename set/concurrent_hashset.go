@@ -118,24 +118,6 @@ func (set *ConcurrentHashSet[T]) IsEmpty() bool {
 	return set.Size() == 0
 }
 
-// Iter returns a channel of all elements in this set.
-func (set *ConcurrentHashSet[T]) Iter() <-chan T {
-	ch := make(chan T)
-
-	go func() {
-		set.mutex.RLock()
-		defer set.mutex.RUnlock()
-
-		for e := range *set.data {
-			ch <- e
-		}
-
-		close(ch)
-	}()
-
-	return ch
-}
-
 // Remove removes the specified element from this set.
 func (set *ConcurrentHashSet[T]) Remove(e T) bool {
 	set.mutex.Lock()
