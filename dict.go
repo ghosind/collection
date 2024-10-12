@@ -2,6 +2,8 @@ package collection
 
 // Dictionary is a object that maps keys to values, and it cannot contain duplicate key.
 type Dict[K comparable, V any] interface {
+	Iterable2[K, V]
+
 	// Clear removes all key-value pairs in this dictionary.
 	Clear()
 

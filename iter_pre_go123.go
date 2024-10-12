@@ -6,3 +6,6 @@ type Iterable[T any] interface {
 	// Iter returns a channel of all elements in this collection.
 	Iter() <-chan T
 }
+
+type Iterable2[K comparable, V any] interface {
+}
