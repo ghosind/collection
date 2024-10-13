@@ -151,6 +151,8 @@ func testDict(a *assert.Assertion, m collection.Dict[int, int]) {
 
 	testDictForEach(a, m, data)
 
+	testDictIter(a, m, data)
+
 	testDictKeys(a, m)
 
 	testDictValues(a, m)
