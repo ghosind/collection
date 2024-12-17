@@ -9,8 +9,8 @@ func (d *SyncDict[K, V]) Iter() iter.Seq2[K, V] {
 	return func(yield func(K, V) bool) {
 		read := d.loadPresentReadOnly()
 
-		for k, e := range read.m {
-			v, ok := e.load(d.zero)
+		for k, e := range read.M {
+			v, ok := e.Load(d.zero)
 			if !ok {
 				continue
 			}
