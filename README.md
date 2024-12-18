@@ -20,13 +20,13 @@ This package provides the following data structure interfaces and implementation
 
     - [`HashSet`](https://pkg.go.dev/github.com/ghosind/collection/set#HashSet): The implementation of Set based on Go built-in map structure.
 
-    - [`ConcurrentHashSet`](https://pkg.go.dev/github.com/ghosind/collection/set#ConcurrentHashSet): The thread safe implementation of Set based on Go built-in map structure.
+    - [`SyncSet`](https://pkg.go.dev/github.com/ghosind/collection/set#SyncSet): The thread safe implementation of Set based on `sync.Map`.
 
-- `Dictionary`: A object that maps keys to values, and it cannot contain duplicate key.
+- `Dict`: A object that maps keys to values, and it cannot contain duplicate key.
 
-    - [`HashDictionary`](https://pkg.go.dev/github.com/ghosind/collection/dict#ConcurrentHashDictionary): The implementation of Dictionary based on Go built-in map structure.
+    - [`HashDict`](https://pkg.go.dev/github.com/ghosind/collection/dict#HashDict): The implementation of Dictionary based on Go built-in map structure.
 
-    - [`ConcurrencyHashDictionary`](https://pkg.go.dev/github.com/ghosind/collection/dict#ConcurrencyHashDictionary): The thread safe implementation of HashDictionary.
+    - [`SyncDict`](https://pkg.go.dev/github.com/ghosind/collection/dict#SyncDict): The thread safe implementation of dictionary based on `sync.Map`.
 
 ## Installation
 
@@ -65,10 +65,14 @@ log.Print(fruits.Contains("Lemon"))
 ```go
 // import "github.com/ghosind/collection/dict"
 
-languages := dict.NewHashDictionary[string, int]()
+languages := dict.NewHashDict[string, int]()
 
 languages.Put("C", 1972)
 languages.Put("Go", 2007)
 
 log.Print(languages.GetDefault("C", 0)) // 1972
 ```
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
