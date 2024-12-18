@@ -8,6 +8,8 @@ import (
 
 // ConcurrentHashSet is a thread-safe set implementation that uses a Golang builtin map to store
 // its elements.
+//
+// Deprecated: Use the SyncSet instead.
 type ConcurrentHashSet[T comparable] struct {
 	data *HashSet[T]
 
@@ -15,6 +17,8 @@ type ConcurrentHashSet[T comparable] struct {
 }
 
 // NewConcurrentHashSet creates and returns am empty ConcurrentHashSet with the specified type.
+//
+// Deprecated: Use the NewSyncSet instead.
 func NewConcurrentHashSet[T comparable]() *ConcurrentHashSet[T] {
 	set := new(ConcurrentHashSet[T])
 	set.data = NewHashSet[T]()
