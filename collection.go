@@ -32,6 +32,13 @@ type Collection[T any] interface {
 	// RemoveAll removes all of the elements in the specified collection from this collection.
 	RemoveAll(c ...T) bool
 
+	// RemoveIf removes all of the elements of this collection that satisfy the given predicate.
+	RemoveIf(f func(T) bool) bool
+
+	// RetainAll retains only the elements in this collection that are contained in the specified
+	// collection.
+	RetainAll(c ...T) bool
+
 	// Size returns the number of elements in this collection.
 	Size() int
 
