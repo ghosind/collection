@@ -268,6 +268,50 @@ func (s *SyncSet[T]) RemoveAll(c ...T) bool {
 	return isChanged
 }
 
+// RemoveIf removes all of the elements of this collection that satisfy the given predicate.
+func (s *SyncSet[T]) RemoveIf(filter func(T) bool) bool {
+	read := s.loadPresentReadOnly()
+	isChanged := false
+
+	for k, e := range read.M {
+		_, ok := e.Load(emptyZero)
+		if !ok {
+			continue
+		}
+		if filter(k) {
+			if _, ok := e.Delete(); ok {
+				isChanged = true
+			}
+		}
+	}
+
+	return isChanged
+}
+
+// RetainAll retains only the elements in this collection that are contained in the specified
+// collection.
+func (s *SyncSet[T]) RetainAll(c ...T) bool {
+	read := s.loadReadOnly()
+	isChanged := false
+
+	cSet := NewHashSet[T]()
+	cSet.AddAll(c...)
+
+	for k, e := range read.M {
+		_, ok := e.Load(emptyZero)
+		if !ok {
+			continue
+		}
+		if !cSet.Contains(k) {
+			if _, ok := e.Delete(); ok {
+				isChanged = true
+			}
+		}
+	}
+
+	return isChanged
+}
+
 // Size returns the number of elements in this collection.
 func (s *SyncSet[T]) Size() int {
 	read := s.loadPresentReadOnly()

@@ -139,6 +139,36 @@ func (set *HashSet[T]) RemoveAll(c ...T) bool {
 	return isChanged
 }
 
+// RemoveIf removes all of the elements of this set that satisfy the given predicate.
+func (set *HashSet[T]) RemoveIf(filter func(T) bool) bool {
+	isChanged := false
+
+	for e := range *set {
+		if filter(e) {
+			delete(*set, e)
+			isChanged = true
+		}
+	}
+
+	return isChanged
+}
+
+// RetainAll retains only the elements in this set that are contained in the specified collection.
+func (set *HashSet[T]) RetainAll(c ...T) bool {
+	cSet := NewHashSet[T]()
+	cSet.AddAll(c...)
+	isChanged := false
+
+	for e := range *set {
+		if !cSet.Contains(e) {
+			delete(*set, e)
+			isChanged = true
+		}
+	}
+
+	return isChanged
+}
+
 // Size returns the number of elements in this set.
 func (set *HashSet[T]) Size() int {
 	return len(*set)
