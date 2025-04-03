@@ -3,19 +3,18 @@
 package set
 
 import (
-	"github.com/ghosind/collection"
 	"github.com/ghosind/go-assert"
 )
 
-func testSetIter(a *assert.Assertion, set collection.Set[int]) {
-	records := map[int]int{}
+func testSetIter(a *assert.Assertion, constructor setTestConstructor) {
+	set1 := constructor()
+	set1.AddAll(testNums1...)
 
-	for e := range set.Iter() {
-		records[e]++
+	set2 := constructor()
+
+	for e := range set1.Iter() {
+		set2.Add(e)
 	}
 
-	a.EqualNow(len(records), set.Size())
-	for _, v := range records {
-		a.EqualNow(v, 1)
-	}
+	a.TrueNow(set1.Equals(set2))
 }
