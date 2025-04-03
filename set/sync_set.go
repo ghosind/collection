@@ -116,13 +116,13 @@ func (s *SyncSet[T]) Clear() {
 // Contains returns true if this collection contains the specified element.
 func (s *SyncSet[T]) Contains(e T) bool {
 	read := s.loadReadOnly()
-	_, ok := read.M[e]
+	entry, ok := read.M[e]
 	if !ok && read.Amended {
 		s.mu.Lock()
 		read = s.loadReadOnly()
-		_, ok = read.M[e]
+		entry, ok = read.M[e]
 		if !ok && read.Amended {
-			_, ok = s.dirty[e]
+			entry, ok = s.dirty[e]
 			s.missLocked()
 		}
 		s.mu.Unlock()
@@ -130,7 +130,8 @@ func (s *SyncSet[T]) Contains(e T) bool {
 	if !ok {
 		return false
 	}
-	return true
+	_, ok = entry.Load(emptyZero)
+	return ok
 }
 
 // ContainsAll returns true if this collection contains all of the elements in the specified
