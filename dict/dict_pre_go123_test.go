@@ -3,10 +3,9 @@
 package dict
 
 import (
-	"github.com/ghosind/collection"
 	"github.com/ghosind/go-assert"
 )
 
-func testDictIter(a *assert.Assertion, m collection.Dict[int, int], data []int) {
+func testDictIter(a *assert.Assertion, constructor dictTestConstructor) {
 	// Do nothing
 }

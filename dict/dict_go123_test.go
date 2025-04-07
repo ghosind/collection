@@ -3,17 +3,17 @@
 package dict
 
 import (
-	"github.com/ghosind/collection"
 	"github.com/ghosind/go-assert"
 )
 
-func testDictIter(a *assert.Assertion, m collection.Dict[int, int], data []int) {
-	n := 0
-
-	for k, v := range m.Iter() {
-		n++
-		a.EqualNow(v, data[k])
+func testDictIter(a *assert.Assertion, constructor dictTestConstructor) {
+	d := constructor()
+	for k, v := range testDataEn {
+		d.Put(k, v)
 	}
+	a.EqualNow(d.Size(), len(testDataEn))
 
-	a.EqualNow(n, m.Size())
+	for k, v := range d.Iter() {
+		a.EqualNow(v, testDataEn[k])
+	}
 }
