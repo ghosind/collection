@@ -38,18 +38,18 @@ func testSetAdd(a *assert.Assertion, constructor setTestConstructor) {
 		last = n
 	}
 
-	a.EqualNow(set1.Size(), 10)
+	a.EqualNow(set1.Size(), len(testNums1))
 
 	// Add should not add duplicates
 	set1.Add(last)
-	a.EqualNow(set1.Size(), 10)
+	a.EqualNow(set1.Size(), len(testNums1))
 }
 
 func testSetAddAll(a *assert.Assertion, constructor setTestConstructor) {
 	set1 := constructor()
 
 	set1.AddAll(testNums1...)
-	a.EqualNow(set1.Size(), 10)
+	a.EqualNow(set1.Size(), len(testNums1))
 	for _, n := range testNums1 {
 		a.TrueNow(set1.Contains(n))
 	}
@@ -58,7 +58,7 @@ func testSetAddAll(a *assert.Assertion, constructor setTestConstructor) {
 func testSetClear(a *assert.Assertion, constructor setTestConstructor) {
 	set1 := constructor()
 	set1.AddAll(testNums1...)
-	a.EqualNow(set1.Size(), 10)
+	a.EqualNow(set1.Size(), len(testNums1))
 	set1.Clear()
 	a.EqualNow(set1.Size(), 0)
 	a.NotTrueNow(set1.Contains(testNums1[len(testNums1)-1]))
@@ -154,12 +154,12 @@ func testSetIsEmpty(a *assert.Assertion, constructor setTestConstructor) {
 func testSetRemove(a *assert.Assertion, constructor setTestConstructor) {
 	set := constructor()
 	set.AddAll(testNums1...)
-	a.EqualNow(set.Size(), 10)
+	a.EqualNow(set.Size(), len(testNums1))
 
 	// Remove non-existing element should not change the size
 	ret := set.Remove(0)
 	a.NotTrueNow(ret)
-	a.EqualNow(set.Size(), 10)
+	a.EqualNow(set.Size(), len(testNums1))
 	a.NotTrueNow(set.Contains(0))
 
 	for _, n := range testNums1 {
@@ -174,7 +174,7 @@ func testSetRemove(a *assert.Assertion, constructor setTestConstructor) {
 func testSetRemoveAll(a *assert.Assertion, constructor setTestConstructor) {
 	set := constructor()
 	set.AddAll(testNums1...)
-	a.EqualNow(set.Size(), 10)
+	a.EqualNow(set.Size(), len(testNums1))
 
 	set.RemoveAll(testNums1...)
 	a.EqualNow(set.Size(), 0)
@@ -189,7 +189,7 @@ func testSetSize(a *assert.Assertion, constructor setTestConstructor) {
 	a.EqualNow(set.Size(), 0)
 
 	set.AddAll(testNums1...)
-	a.EqualNow(set.Size(), 10)
+	a.EqualNow(set.Size(), len(testNums1))
 
 	set.Clear()
 	a.EqualNow(set.Size(), 0)
@@ -199,7 +199,7 @@ func testSetToSlice(a *assert.Assertion, constructor setTestConstructor) {
 	set := constructor()
 	set.AddAll(testNums1...)
 	slice := set.ToSlice()
-	a.EqualNow(len(slice), 10)
+	a.EqualNow(len(slice), len(testNums1))
 
 	for _, n := range slice {
 		a.TrueNow(set.Contains(n))
