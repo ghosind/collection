@@ -1,100 +1,207 @@
 package set
 
 import (
+	"errors"
+
 	"github.com/ghosind/collection"
 	"github.com/ghosind/go-assert"
 )
 
-type testStruct struct {
-	v int
+type setTestConstructor func() collection.Set[int]
+
+var testNums1 = []int{47, 11, 42, 13, 37, 23, 31, 29, 17, 19}
+var testNums2 = []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+
+func testSet(a *assert.Assertion, constructor setTestConstructor) {
+	testSetAdd(a, constructor)
+	testSetAddAll(a, constructor)
+	testSetClear(a, constructor)
+	testSetClone(a, constructor)
+	testSetContains(a, constructor)
+	testSetContainsAll(a, constructor)
+	testSetEquals(a, constructor)
+	testSetForEach(a, constructor)
+	testSetIsEmpty(a, constructor)
+	testSetIter(a, constructor)
+	testSetRemove(a, constructor)
+	testSetRemoveAll(a, constructor)
+	testSetSize(a, constructor)
+	testSetToSlice(a, constructor)
 }
 
-var intData = []int{1, 2, 3, 4, 5, 6, 7}
-var strData = []string{"a", "b", "c", "d", "e", "f", "g"}
-var structData = []testStruct{{1}, {2}, {3}, {4}, {5}, {6}, {7}}
-var pointerData = []*testStruct{{1}, {2}, {3}, {4}, {5}, {6}, {7}}
+func testSetAdd(a *assert.Assertion, constructor setTestConstructor) {
+	set1 := constructor()
+	last := 0
+	for _, n := range testNums1 {
+		set1.Add(n)
+		a.TrueNow(set1.Contains(n))
+		last = n
+	}
 
-func testSetAdd[T comparable](a *assert.Assertion, set collection.Set[T], e T) {
-	a.TrueNow(set.Add(e))
+	a.EqualNow(set1.Size(), len(testNums1))
 
-	a.NotTrueNow(set.Add(e))
+	// Add should not add duplicates
+	set1.Add(last)
+	a.EqualNow(set1.Size(), len(testNums1))
 }
 
-func testSetAddAll[T comparable](a *assert.Assertion, set collection.Set[T], c ...T) {
-	a.TrueNow(set.AddAll(c...))
+func testSetAddAll(a *assert.Assertion, constructor setTestConstructor) {
+	set1 := constructor()
 
-	a.NotTrueNow(set.AddAll(c...))
-}
-
-func testSetContains[T comparable](a *assert.Assertion, set collection.Set[T], data []T) {
-	a.TrueNow(set.Contains(data[0]))
-
-	a.NotTrueNow(set.Contains(data[len(data)-1]))
-
-	a.TrueNow(set.ContainsAll(data[0 : len(data)-1]...))
-
-	a.NotTrueNow(set.ContainsAll(data...))
-}
-
-func testSetToSlice[T comparable](a *assert.Assertion, set collection.Set[T]) {
-	slice := set.ToSlice()
-	a.EqualNow(len(slice), set.Size())
-
-	for _, e := range slice {
-		a.TrueNow(set.Contains(e))
+	set1.AddAll(testNums1...)
+	a.EqualNow(set1.Size(), len(testNums1))
+	for _, n := range testNums1 {
+		a.TrueNow(set1.Contains(n))
 	}
 }
 
-func testSetRemove[T comparable](a *assert.Assertion, set collection.Set[T], data []T) {
+func testSetClear(a *assert.Assertion, constructor setTestConstructor) {
+	set1 := constructor()
+	set1.AddAll(testNums1...)
+	a.EqualNow(set1.Size(), len(testNums1))
+	set1.Clear()
+	a.EqualNow(set1.Size(), 0)
+	a.NotTrueNow(set1.Contains(testNums1[len(testNums1)-1]))
+}
+
+func testSetClone(a *assert.Assertion, constructor setTestConstructor) {
+	set1 := constructor()
+	set1.AddAll(testNums1...)
+	set2 := set1.Clone()
+	a.NotEqualNow(set1, set2)
+	a.TrueNow(set1.Equals(set2))
+}
+
+func testSetContains(a *assert.Assertion, constructor setTestConstructor) {
+	set := constructor()
+	set.AddAll(testNums1...)
+
+	// Check that all elements are in the set
+	for _, n := range testNums1 {
+		a.TrueNow(set.Contains(n))
+	}
+
+	// Check that a non-existing element is not in the set
+	a.NotTrueNow(set.Contains(0))
+}
+
+func testSetContainsAll(a *assert.Assertion, constructor setTestConstructor) {
+	set := constructor()
+
+	set.AddAll(testNums1...)
+	a.TrueNow(set.ContainsAll(testNums1...))
+
+	nums := append([]int{0}, testNums1...)
+	a.NotTrueNow(set.ContainsAll(nums...))
+
+	set.RemoveAll(nums...)
+	a.NotTrueNow(set.ContainsAll(testNums1...))
+}
+
+func testSetEquals(a *assert.Assertion, constructor setTestConstructor) {
+	set1 := constructor()
+	a.NotTrueNow(set1.Equals(nil))
+
+	set2 := constructor()
+	set3 := constructor()
+
+	set1.AddAll(testNums1...)
+	set2.AddAll(testNums1...)
+	a.TrueNow(set1.Equals(set2))
+
+	set3.AddAll(testNums2...)
+	a.NotTrueNow(set1.Equals(set3))
+
+	set3.AddAll(testNums1...)
+	a.NotTrueNow(set1.Equals(set3))
+}
+
+func testSetForEach(a *assert.Assertion, constructor setTestConstructor) {
+	set1 := constructor()
+	set1.AddAll(testNums1...)
+
+	// Foreach should iterate over all elements
+	set2 := constructor()
+	err := set1.ForEach(func(e int) error {
+		set2.Add(e)
+		return nil
+	})
+	a.NilNow(err)
+	a.TrueNow(set1.Equals(set2))
+
+	// ForEach should exit early if the handler returns an error
+	cnt := 0
+	expectedErr := errors.New("expected error")
+	err = set1.ForEach(func(e int) error {
+		cnt++
+		return expectedErr
+	})
+	a.EqualNow(err, expectedErr)
+	a.EqualNow(cnt, 1)
+}
+
+func testSetIsEmpty(a *assert.Assertion, constructor setTestConstructor) {
+	set := constructor()
+	a.TrueNow(set.IsEmpty())
+
+	set.AddAll(testNums1...)
 	a.NotTrueNow(set.IsEmpty())
-	a.EqualNow(set.Size(), len(data)-1)
 
-	a.TrueNow(set.Remove(data[0]))
-	a.EqualNow(set.Size(), len(data)-2)
-
-	a.NotTrueNow(set.Remove(data[len(data)-1]))
-	a.EqualNow(set.Size(), len(data)-2)
-}
-
-func testSetRemoveAll[T comparable](a *assert.Assertion, set collection.Set[T], data []T) {
-	a.TrueNow(set.RemoveAll(data[0:2]...))
-	a.EqualNow(set.Size(), len(data)-3)
-}
-
-func testSetClear[T comparable](a *assert.Assertion, set collection.Set[T]) {
 	set.Clear()
 	a.TrueNow(set.IsEmpty())
 }
 
-func testSet[T comparable](a *assert.Assertion, set collection.Set[T], data []T) {
-	a.NotNilNow(set)
+func testSetRemove(a *assert.Assertion, constructor setTestConstructor) {
+	set := constructor()
+	set.AddAll(testNums1...)
+	a.EqualNow(set.Size(), len(testNums1))
 
-	testSetAdd(a, set, data[0])
-	testSetAddAll(a, set, data[0:len(data)-1]...)
-	testSetContains(a, set, data)
-	testSetToSlice(a, set)
-	testSetRemove(a, set, data)
-	testSetRemoveAll(a, set, data)
-	testSetClear(a, set)
+	// Remove non-existing element should not change the size
+	ret := set.Remove(0)
+	a.NotTrueNow(ret)
+	a.EqualNow(set.Size(), len(testNums1))
+	a.NotTrueNow(set.Contains(0))
+
+	for _, n := range testNums1 {
+		ret := set.Remove(n)
+		a.TrueNow(ret)
+		a.NotTrueNow(set.Contains(n))
+	}
+
+	a.EqualNow(set.Size(), 0)
 }
 
-func testSetForEachAndIter(a *assert.Assertion, set collection.Set[int]) {
-	set.Add(1)
-	set.Add(2)
-	set.Add(3)
+func testSetRemoveAll(a *assert.Assertion, constructor setTestConstructor) {
+	set := constructor()
+	set.AddAll(testNums1...)
+	a.EqualNow(set.Size(), len(testNums1))
 
-	testSetIter(a, set)
+	set.RemoveAll(testNums1...)
+	a.EqualNow(set.Size(), 0)
 
-	records := map[int]int{}
+	for _, n := range testNums1 {
+		a.NotTrueNow(set.Contains(n))
+	}
+}
 
-	err := set.ForEach(func(e int) error {
-		records[e]++
-		return nil
-	})
-	a.NilNow(err)
+func testSetSize(a *assert.Assertion, constructor setTestConstructor) {
+	set := constructor()
+	a.EqualNow(set.Size(), 0)
 
-	a.Equal(len(records), set.Size())
-	for _, v := range records {
-		a.EqualNow(v, 1)
+	set.AddAll(testNums1...)
+	a.EqualNow(set.Size(), len(testNums1))
+
+	set.Clear()
+	a.EqualNow(set.Size(), 0)
+}
+
+func testSetToSlice(a *assert.Assertion, constructor setTestConstructor) {
+	set := constructor()
+	set.AddAll(testNums1...)
+	slice := set.ToSlice()
+	a.EqualNow(len(slice), len(testNums1))
+
+	for _, n := range slice {
+		a.TrueNow(set.Contains(n))
 	}
 }

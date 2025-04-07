@@ -3,10 +3,15 @@
 package dict
 
 import (
-	"github.com/ghosind/collection"
+	"reflect"
+
 	"github.com/ghosind/go-assert"
 )
 
-func testDictIter(a *assert.Assertion, m collection.Dict[int, int], data []int) {
-	// Do nothing
+func testDictIter(a *assert.Assertion, constructor dictTestConstructor) {
+	d := constructor()
+
+	ty := reflect.TypeOf(d)
+	_, ok := ty.MethodByName("Iter")
+	a.NotTrueNow(ok)
 }
