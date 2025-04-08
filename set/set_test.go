@@ -184,6 +184,51 @@ func testSetRemoveAll(a *assert.Assertion, constructor setTestConstructor) {
 	}
 }
 
+func testSetRemoveIf(a *assert.Assertion, constructor setTestConstructor) {
+	set := constructor()
+	set.AddAll(testNums1...)
+	a.EqualNow(set.Size(), len(testNums1))
+
+	// Remove all even numbers
+	ret := set.RemoveIf(func(e int) bool {
+		return e%2 == 0
+	})
+	a.EqualNow(ret, true)
+
+	for _, n := range testNums1 {
+		if n%2 == 0 {
+			a.NotTrueNow(set.Contains(n))
+		} else {
+			a.TrueNow(set.Contains(n))
+		}
+	}
+}
+
+func testSetRetainAll(a *assert.Assertion, constructor setTestConstructor) {
+	set := constructor()
+	set.AddAll(testNums1...)
+	a.EqualNow(set.Size(), len(testNums1))
+
+	evenNums := make([]int, 0)
+	for _, n := range testNums1 {
+		if n%2 == 0 {
+			evenNums = append(evenNums, n)
+		}
+	}
+
+	// Retain all even numbers
+	set.RetainAll(evenNums...)
+	a.EqualNow(set.Size(), len(evenNums))
+
+	for _, n := range testNums1 {
+		if n%2 == 0 {
+			a.TrueNow(set.Contains(n))
+		} else {
+			a.NotTrueNow(set.Contains(n))
+		}
+	}
+}
+
 func testSetSize(a *assert.Assertion, constructor setTestConstructor) {
 	set := constructor()
 	a.EqualNow(set.Size(), 0)

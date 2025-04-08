@@ -154,6 +154,16 @@ func (set *ConcurrentHashSet[T]) RemoveAll(c ...T) bool {
 	return isChanged
 }
 
+// RemoveIf removes all of the elements of this set that satisfy the given predicate.
+func (set *ConcurrentHashSet[T]) RemoveIf(filter func(T) bool) bool {
+	panic("not implemented")
+}
+
+// RetainAll retains only the elements in this set that are contained in the specified collection.
+func (set *ConcurrentHashSet[T]) RetainAll(c ...T) bool {
+	panic("not implemented")
+}
+
 // Size returns the number of elements in this set.
 func (set *ConcurrentHashSet[T]) Size() int {
 	set.mutex.RLock()
