@@ -8,7 +8,8 @@
 
 Generics collections framework for Golang.
 
-> IMPORTANT NOTICE: This package requires Go version 1.18+.
+> [!NOTE]
+> This package requires Go version 1.18+.
 
 ## Overview
 
