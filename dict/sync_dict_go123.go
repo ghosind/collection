@@ -20,3 +20,35 @@ func (d *SyncDict[K, V]) Iter() iter.Seq2[K, V] {
 		}
 	}
 }
+
+func (d *SyncDict[K, V]) KeysIter() iter.Seq[K] {
+	return func(yield func(K) bool) {
+		read := d.loadPresentReadOnly()
+
+		for k, e := range read.M {
+			_, ok := e.Load(d.zero)
+			if !ok {
+				continue
+			}
+			if !yield(k) {
+				break
+			}
+		}
+	}
+}
+
+func (d *SyncDict[K, V]) ValuesIter() iter.Seq[V] {
+	return func(yield func(V) bool) {
+		read := d.loadPresentReadOnly()
+
+		for _, e := range read.M {
+			v, ok := e.Load(d.zero)
+			if !ok {
+				continue
+			}
+			if !yield(v) {
+				break
+			}
+		}
+	}
+}

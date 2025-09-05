@@ -9,3 +9,10 @@ type Iterable[T any] interface {
 
 type Iterable2[K comparable, V any] interface {
 }
+
+type DictIter[K comparable, V any] interface {
+	// KeysIter returns a channel over the keys in the dictionary.
+	KeysIter() <-chan K
+	// ValuesIter returns a channel over the values in the dictionary.
+	ValuesIter() <-chan V
+}

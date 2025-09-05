@@ -14,3 +14,23 @@ func (m *HashDict[K, V]) Iter() iter.Seq2[K, V] {
 		}
 	}
 }
+
+func (m *HashDict[K, V]) KeysIter() iter.Seq[K] {
+	return func(yield func(K) bool) {
+		for k := range *m {
+			if !yield(k) {
+				break
+			}
+		}
+	}
+}
+
+func (m *HashDict[K, V]) ValuesIter() iter.Seq[V] {
+	return func(yield func(V) bool) {
+		for _, v := range *m {
+			if !yield(v) {
+				break
+			}
+		}
+	}
+}

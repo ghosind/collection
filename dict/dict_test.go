@@ -47,11 +47,13 @@ func testDict(a *assert.Assertion, constructor dictTestConstructor) {
 	testDictIsEmpty(a, constructor)
 	testDictIter(a, constructor)
 	testDictKeys(a, constructor)
+	testDictKeysIter(a, constructor)
 	testDictPut(a, constructor)
 	testDictRemove(a, constructor)
 	testDictReplace(a, constructor)
 	testDictSize(a, constructor)
 	testDictValues(a, constructor)
+	testDictValuesIter(a, constructor)
 }
 
 func testDictClear(a *assert.Assertion, constructor dictTestConstructor) {
