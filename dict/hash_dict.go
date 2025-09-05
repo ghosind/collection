@@ -16,11 +16,6 @@ func NewHashDict[K comparable, V any]() *HashDict[K, V] {
 	return (&d)
 }
 
-// Clear removes all key-value pairs in this dictionary.
-func (m *HashDict[K, V]) Clear() {
-	*m = make(HashDict[K, V])
-}
-
 // Clone returns a copy of this dictionary.
 func (m *HashDict[K, V]) Clone() collection.Dict[K, V] {
 	newDict := make(HashDict[K, V], len(*m))

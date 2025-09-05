@@ -40,11 +40,6 @@ func (set *HashSet[T]) AddAll(c ...T) bool {
 	return isChanged
 }
 
-// Clear removes all of the elements from this set.
-func (set *HashSet[T]) Clear() {
-	*set = make(map[T]empty)
-}
-
 // Clone returns a copy of this set.
 func (set *HashSet[T]) Clone() collection.Set[T] {
 	newSet := new(HashSet[T])
