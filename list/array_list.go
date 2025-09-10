@@ -38,7 +38,9 @@ func (l *ArrayList[T]) AddAtIndex(i int, e T) {
 		return
 	}
 
-	*l = append((*l)[:i], append([]T{e}, (*l)[i:]...)...)
+	*l = append(*l, e)
+	copy((*l)[i+1:], (*l)[i:])
+	(*l)[i] = e
 }
 
 // Clear removes all of the elements from this list.
