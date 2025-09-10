@@ -16,6 +16,11 @@ func testDictIter(a *assert.Assertion, constructor dictTestConstructor) {
 	for k, v := range d.Iter() {
 		a.EqualNow(v, testDataEn[k])
 	}
+
+	for range d.Iter() {
+		// yield should returns false
+		break
+	}
 }
 
 func testDictKeysIter(a *assert.Assertion, constructor dictTestConstructor) {
@@ -28,6 +33,11 @@ func testDictKeysIter(a *assert.Assertion, constructor dictTestConstructor) {
 	for k := range d.KeysIter() {
 		_, ok := testDataEn[k]
 		a.TrueNow(ok)
+	}
+
+	for range d.KeysIter() {
+		// yield should returns false
+		break
 	}
 }
 
@@ -46,5 +56,10 @@ func testDictValuesIter(a *assert.Assertion, constructor dictTestConstructor) {
 	for v := range d.ValuesIter() {
 		_, ok := valueSet[v]
 		a.TrueNow(ok)
+	}
+
+	for range d.ValuesIter() {
+		// yield should returns false
+		break
 	}
 }

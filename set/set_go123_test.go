@@ -17,4 +17,9 @@ func testSetIter(a *assert.Assertion, constructor setTestConstructor) {
 	}
 
 	a.TrueNow(set1.Equals(set2))
+
+	for range set1.Iter() {
+		// yield should returns false
+		break
+	}
 }
