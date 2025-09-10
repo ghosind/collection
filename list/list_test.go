@@ -231,7 +231,7 @@ func testListRetainAll(a *assert.Assertion, constructor listConstructor) {
 	a.TrueNow(l.RetainAll(2, 3, 4, 100))
 	a.EqualNow(3, l.Size())
 	a.EqualNow([]int{2, 3, 4}, l.ToSlice())
-	a.NotTrueNow(l.RetainAll(100, 200))
+	a.TrueNow(l.RetainAll(100, 200))
 	a.EqualNow(0, l.Size())
 	a.EqualNow([]int{}, l.ToSlice())
 }

@@ -124,7 +124,7 @@ func (l *ArrayList[T]) LastIndexOf(e T) int {
 	return -1
 }
 
-// Remove removes the all occurrences of the specified element from this list, if it is present.
+// Remove removes all occurrences of the specified element from this list, if it is present.
 // Returns true if this list contained the specified element.
 func (l *ArrayList[T]) Remove(e T) bool {
 	i := l.IndexOf(e)
@@ -213,7 +213,6 @@ func (l *ArrayList[T]) RetainAll(c ...T) bool {
 		for _, e := range c {
 			if reflect.DeepEqual(e, (*l)[j]) {
 				shouldRetain = true
-				found = true
 				break
 			}
 		}
@@ -221,6 +220,8 @@ func (l *ArrayList[T]) RetainAll(c ...T) bool {
 		if shouldRetain {
 			(*l)[i] = (*l)[j]
 			i++
+		} else {
+			found = true
 		}
 	}
 
