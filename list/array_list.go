@@ -1,9 +1,8 @@
 package list
 
 import (
-	"reflect"
-
 	"github.com/ghosind/collection"
+	"github.com/ghosind/collection/internal"
 )
 
 type ArrayList[T any] []T
@@ -83,7 +82,7 @@ func (l *ArrayList[T]) Equals(o any) bool {
 	}
 
 	for i, v := range *l {
-		if !reflect.DeepEqual(v, (*ol)[i]) {
+		if !internal.Equal(v, (*ol)[i]) {
 			return false
 		}
 	}
@@ -101,7 +100,7 @@ func (l *ArrayList[T]) Get(i int) T {
 // or -1 if this list does not contain the element.
 func (l *ArrayList[T]) IndexOf(e T) int {
 	for i, v := range *l {
-		if reflect.DeepEqual(v, e) {
+		if internal.Equal(v, e) {
 			return i
 		}
 	}
@@ -118,7 +117,7 @@ func (l *ArrayList[T]) IsEmpty() bool {
 // or -1 if this list does not contain the element.
 func (l *ArrayList[T]) LastIndexOf(e T) int {
 	for i := len(*l) - 1; i >= 0; i-- {
-		if reflect.DeepEqual((*l)[i], e) {
+		if internal.Equal((*l)[i], e) {
 			return i
 		}
 	}
@@ -135,7 +134,7 @@ func (l *ArrayList[T]) Remove(e T) bool {
 	}
 
 	for j := i; j < l.Size(); j++ {
-		if !reflect.DeepEqual(e, (*l)[j]) {
+		if !internal.Equal(e, (*l)[j]) {
 			(*l)[i] = (*l)[j]
 			i++
 		}
@@ -154,7 +153,7 @@ func (l *ArrayList[T]) RemoveAll(c ...T) bool {
 	for j := 0; j < l.Size(); j++ {
 		shouldRemove := false
 		for _, e := range c {
-			if reflect.DeepEqual(e, (*l)[j]) {
+			if internal.Equal(e, (*l)[j]) {
 				shouldRemove = true
 				found = true
 				break
@@ -213,7 +212,7 @@ func (l *ArrayList[T]) RetainAll(c ...T) bool {
 	for j := 0; j < l.Size(); j++ {
 		shouldRetain := false
 		for _, e := range c {
-			if reflect.DeepEqual(e, (*l)[j]) {
+			if internal.Equal(e, (*l)[j]) {
 				shouldRetain = true
 				break
 			}
