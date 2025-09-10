@@ -41,6 +41,11 @@ func (l *ArrayList[T]) AddAtIndex(i int, e T) {
 	*l = append((*l)[:i], append([]T{e}, (*l)[i:]...)...)
 }
 
+// Clear removes all of the elements from this list.
+func (l *ArrayList[T]) Clear() {
+	*l = (*l)[:0]
+}
+
 // Clone returns a copy of this list.
 func (l *ArrayList[T]) Clone() collection.List[T] {
 	clone := make(ArrayList[T], 0, len(*l))
@@ -127,7 +132,7 @@ func (l *ArrayList[T]) Remove(e T) bool {
 		return false
 	}
 
-	for j := i; j < l.Size()-1; j++ {
+	for j := i; j < l.Size(); j++ {
 		if !reflect.DeepEqual(e, (*l)[j]) {
 			(*l)[i] = (*l)[j]
 			i++
@@ -213,7 +218,7 @@ func (l *ArrayList[T]) RetainAll(c ...T) bool {
 			}
 		}
 
-		if !shouldRetain {
+		if shouldRetain {
 			(*l)[i] = (*l)[j]
 			i++
 		}
