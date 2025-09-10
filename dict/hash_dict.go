@@ -1,9 +1,8 @@
 package dict
 
 import (
-	"reflect"
-
 	"github.com/ghosind/collection"
+	"github.com/ghosind/collection/internal"
 )
 
 // HashDict is a Golang builtin map wrapper.
@@ -51,7 +50,7 @@ func (m *HashDict[K, V]) Equals(o any) bool {
 			return false
 		}
 
-		if !reflect.DeepEqual(v, val) {
+		if !internal.Equal(v, val) {
 			return false
 		}
 	}

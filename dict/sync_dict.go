@@ -1,7 +1,6 @@
 package dict
 
 import (
-	"reflect"
 	"sync"
 	"sync/atomic"
 
@@ -198,7 +197,7 @@ func (d *SyncDict[K, V]) Equals(o any) bool {
 			return false
 		}
 
-		if !reflect.DeepEqual(dv, ov) {
+		if !internal.Equal(dv, ov) {
 			return false
 		}
 	}
