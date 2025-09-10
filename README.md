@@ -17,6 +17,10 @@ This package provides the following data structure interfaces and implementation
 
 - `Collection`: The root interface of most of the structures in this package (without `Dictionary`).
 
+- `List`: An ordered collection (also known as a sequence).
+
+    - [`ArrayList`](https://pkg.go.dev/github.com/ghosind/collection/list#ArrayList): The implementation of List based on Go built-in slice structure.
+
 - `Set`: A collection interface that contains no duplicate elements.
 
     - [`HashSet`](https://pkg.go.dev/github.com/ghosind/collection/set#HashSet): The implementation of Set based on Go built-in map structure.
@@ -61,7 +65,7 @@ log.Print(fruits.Contains("Banana")) // true
 log.Print(fruits.Contains("Lemon"))
 ```
 
-### HashDictionary Examples
+### HashDict Examples
 
 ```go
 // import "github.com/ghosind/collection/dict"
