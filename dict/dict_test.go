@@ -106,6 +106,11 @@ func testDictEquals(a *assert.Assertion, constructor dictTestConstructor) {
 	}
 	a.TrueNow(d1.Equals(d2))
 
+	for k, v := range testDataEn {
+		d2.Put(k, v+v)
+	}
+	a.NotTrueNow(d1.Equals(d2))
+
 	for k, v := range testDataZh {
 		d2.Put(k, v)
 	}

@@ -126,6 +126,12 @@ func testListEquals(a *assert.Assertion, constructor listConstructor) {
 	l2.Add(6)
 	a.NotTrueNow(l1.Equals(l2))
 
+	l2.Clear()
+	for _, v := range testData {
+		l2.Add(v + 1)
+	}
+	a.NotTrueNow(l1.Equals(l2))
+
 	a.NotTrueNow(l1.Equals(nil))
 	a.NotTrueNow(l1.Equals("string"))
 }
