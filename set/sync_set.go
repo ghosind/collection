@@ -8,6 +8,7 @@ import (
 	"github.com/ghosind/collection/internal"
 )
 
+// SyncSet is a thread-safe set implementation that based on sync.Map.
 type SyncSet[T comparable] struct {
 	mu     sync.Mutex
 	read   atomic.Pointer[internal.SyncReadOnly[T, empty]]
@@ -15,6 +16,7 @@ type SyncSet[T comparable] struct {
 	misses int
 }
 
+// NewSyncSet creates a new SyncSet.
 func NewSyncSet[T comparable]() *SyncSet[T] {
 	s := new(SyncSet[T])
 

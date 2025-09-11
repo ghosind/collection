@@ -92,7 +92,8 @@ func (set *HashSet[T]) Equals(o any) bool {
 	return true
 }
 
-// ForEach performs the given handler for each elements in the set until all elements have been processed or the handler returns an error.
+// ForEach performs the given handler for each elements in the set until all elements have been
+// processed or the handler returns an error.
 func (set *HashSet[T]) ForEach(handler func(e T) error) error {
 	for e := range *set {
 		if err := handler(e); err != nil {

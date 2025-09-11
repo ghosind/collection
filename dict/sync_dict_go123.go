@@ -21,6 +21,7 @@ func (d *SyncDict[K, V]) Iter() iter.Seq2[K, V] {
 	}
 }
 
+// KeysIter returns an iterator of all keys in this dictionary.
 func (d *SyncDict[K, V]) KeysIter() iter.Seq[K] {
 	return func(yield func(K) bool) {
 		read := d.loadPresentReadOnly()
@@ -37,6 +38,7 @@ func (d *SyncDict[K, V]) KeysIter() iter.Seq[K] {
 	}
 }
 
+// ValuesIter returns an iterator of all values in this dictionary.
 func (d *SyncDict[K, V]) ValuesIter() iter.Seq[V] {
 	return func(yield func(V) bool) {
 		read := d.loadPresentReadOnly()

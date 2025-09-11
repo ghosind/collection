@@ -2,6 +2,7 @@
 
 package dict
 
+// KeysIter returns a channel iterator of all keys in this dictionary.
 func (m *SyncDict[K, V]) KeysIter() chan<- K {
 	ch := make(chan K)
 	go func() {
@@ -19,6 +20,7 @@ func (m *SyncDict[K, V]) KeysIter() chan<- K {
 	return ch
 }
 
+// ValuesIter returns a channel iterator of all values in this dictionary.
 func (m *SyncDict[K, V]) ValuesIter() chan<- V {
 	ch := make(chan V)
 	go func() {
