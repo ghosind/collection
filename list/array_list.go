@@ -90,6 +90,18 @@ func (l *ArrayList[T]) Equals(o any) bool {
 	return true
 }
 
+// ForEach performs the given handler for each element in this list until all elements have been
+// processed or the handler returns an error.
+func (l *ArrayList[T]) ForEach(handler func(e T) error) error {
+	for _, v := range *l {
+		if err := handler(v); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // Get returns the element at the specified position in this list.
 func (l *ArrayList[T]) Get(i int) T {
 	l.checkIndex(i, l.Size())

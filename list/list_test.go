@@ -1,6 +1,8 @@
 package list
 
 import (
+	"errors"
+
 	"github.com/ghosind/collection"
 	"github.com/ghosind/go-assert"
 )
@@ -18,6 +20,7 @@ func testList(a *assert.Assertion, constructor listConstructor) {
 	testListContains(a, constructor)
 	testListContainsAll(a, constructor)
 	testListEquals(a, constructor)
+	testListForEach(a, constructor)
 	testListGet(a, constructor)
 	testListIndexOf(a, constructor)
 	testListIsEmpty(a, constructor)
@@ -134,6 +137,30 @@ func testListEquals(a *assert.Assertion, constructor listConstructor) {
 
 	a.NotTrueNow(l1.Equals(nil))
 	a.NotTrueNow(l1.Equals("string"))
+}
+
+func testListForEach(a *assert.Assertion, constructor listConstructor) {
+	l := constructor()
+
+	l.AddAll(testData...)
+	count := 0
+	l.ForEach(func(e int) error {
+		count++
+		return nil
+	})
+	a.EqualNow(len(testData), count)
+
+	count = 0
+	var expectedError error = errors.New("test error")
+	err := l.ForEach(func(e int) error {
+		if e == 3 {
+			return expectedError
+		}
+		count++
+		return nil
+	})
+	a.EqualNow(2, count)
+	a.EqualNow(expectedError, err)
 }
 
 func testListGet(a *assert.Assertion, constructor listConstructor) {
