@@ -23,6 +23,10 @@ type Collection[T any] interface {
 	// Equals compares this collection with the object pass from parameter.
 	Equals(o any) bool
 
+	// ForEach performs the given handler for each elements in the collection until all elements
+	// have been processed or the handler returns an error.
+	ForEach(func(e T) error) error
+
 	// IsEmpty returns true if this collection contains no elements.
 	IsEmpty() bool
 
