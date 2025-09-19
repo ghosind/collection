@@ -21,6 +21,8 @@ This package provides the following data structure interfaces and implementation
 
     - [`ArrayList`](https://pkg.go.dev/github.com/ghosind/collection/list#ArrayList): The implementation of List based on Go built-in slice structure.
 
+    - [`LinkedList`](https://pkg.go.dev/github.com/ghosind/collection/list#LinkedList): The implementation of List based on doubly linked list.
+
 - `Set`: A collection interface that contains no duplicate elements.
 
     - [`HashSet`](https://pkg.go.dev/github.com/ghosind/collection/set#HashSet): The implementation of Set based on Go built-in map structure.
@@ -48,6 +50,20 @@ import "github.com/ghosind/collection"
 ```
 
 ## Examples
+
+### ArrayList Examples
+
+Create an integer list, add and get elements from the list.
+
+```go
+// import "github.com/ghosind/collection/list"
+
+l := list.NewArrayList[int]()
+l.Add(10)
+l.Add(20)
+l.Add(30)
+log.Print(l.Get(1)) // 20
+```
 
 ### HashSet Examples
 
