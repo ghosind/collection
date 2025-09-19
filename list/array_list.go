@@ -30,7 +30,7 @@ func (l *ArrayList[T]) AddAll(c ...T) bool {
 
 // AddAtIndex inserts the specified element at the specified position in this list.
 func (l *ArrayList[T]) AddAtIndex(i int, e T) {
-	l.checkIndex(i, l.Size()+1)
+	internal.CheckIndex(i, l.Size()+1)
 
 	if i == l.Size() {
 		*l = append(*l, e)
@@ -104,7 +104,7 @@ func (l *ArrayList[T]) ForEach(handler func(e T) error) error {
 
 // Get returns the element at the specified position in this list.
 func (l *ArrayList[T]) Get(i int) T {
-	l.checkIndex(i, l.Size())
+	internal.CheckIndex(i, l.Size())
 	return (*l)[i]
 }
 
@@ -186,7 +186,7 @@ func (l *ArrayList[T]) RemoveAll(c ...T) bool {
 // RemoveAtIndex removes the element at the specified position in this list.
 // Returns the element that was removed from the list.
 func (l *ArrayList[T]) RemoveAtIndex(i int) T {
-	l.checkIndex(i, l.Size())
+	internal.CheckIndex(i, l.Size())
 
 	old := (*l)[i]
 	*l = append((*l)[:i], (*l)[i+1:]...)
@@ -247,7 +247,7 @@ func (l *ArrayList[T]) RetainAll(c ...T) bool {
 // Returns the element previously at the specified position. If the index is equal to the size of
 // this list, the element is appended to the end of this list and a zero value is returned.
 func (l *ArrayList[T]) Set(i int, e T) T {
-	l.checkIndex(i, l.Size()+1)
+	internal.CheckIndex(i, l.Size()+1)
 
 	if i == l.Size() {
 		*l = append(*l, e)
@@ -272,12 +272,4 @@ func (l *ArrayList[T]) ToSlice() []T {
 	copy(arr, *l)
 
 	return arr
-}
-
-// checkIndex checks if the given index is in the range [0, size). If not, it panics with an "index
-// out of bounds" error.
-func (l *ArrayList[T]) checkIndex(i, size int) {
-	if i < 0 || i >= size {
-		panic(collection.ErrOutOfBounds)
-	}
 }
