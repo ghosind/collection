@@ -5,7 +5,7 @@ package collection
 import "iter"
 
 type Iterable[T any] interface {
-	// Iter returns a channel of all elements in this collection.
+	// Iter returns an iterator of all elements in this collection.
 	Iter() iter.Seq[T]
 }
 
