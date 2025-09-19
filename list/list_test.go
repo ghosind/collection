@@ -70,7 +70,16 @@ func testListAddAtIndex(a *assert.Assertion, constructor listConstructor) {
 	a.EqualNow(len(testData)+2, l.Size())
 	a.EqualNow([]int{0, 1, 2, 3, 4, 5, 6}, l.ToSlice())
 
+	l.AddAtIndex(3, 100)
+	a.EqualNow([]int{0, 1, 2, 100, 3, 4, 5, 6}, l.ToSlice())
+	a.EqualNow(len(testData)+3, l.Size())
+
 	a.PanicOfNow(func() { l.AddAtIndex(-1, 100) }, collection.ErrOutOfBounds)
+
+	l.Clear()
+	l.AddAtIndex(0, 200)
+	a.EqualNow(1, l.Size())
+	a.EqualNow([]int{200}, l.ToSlice())
 }
 
 func testListClear(a *assert.Assertion, constructor listConstructor) {
@@ -241,6 +250,19 @@ func testListRemoveAtIndex(a *assert.Assertion, constructor listConstructor) {
 	a.EqualNow(1, v)
 	a.EqualNow(len(testData)-1, l.Size())
 	a.EqualNow([]int{2, 3, 4, 5}, l.ToSlice())
+
+	v = l.RemoveAtIndex(l.Size() - 1)
+	a.EqualNow(5, v)
+	a.EqualNow(len(testData)-2, l.Size())
+	a.EqualNow([]int{2, 3, 4}, l.ToSlice())
+
+	v = l.RemoveAtIndex(1)
+	a.EqualNow(3, v)
+	a.EqualNow(len(testData)-3, l.Size())
+	a.EqualNow([]int{2, 4}, l.ToSlice())
+
+	a.PanicOfNow(func() { l.RemoveAtIndex(-1) }, collection.ErrOutOfBounds)
+	a.PanicOfNow(func() { l.RemoveAtIndex(l.Size()) }, collection.ErrOutOfBounds)
 }
 
 func testListRemoveIf(a *assert.Assertion, constructor listConstructor) {
@@ -284,7 +306,13 @@ func testListSet(a *assert.Assertion, constructor listConstructor) {
 	a.EqualNow(200, l.Get(l.Size()-1))
 	a.EqualNow(len(testData)+1, l.Size())
 
+	old = l.Set(2, 300)
+	a.EqualNow(3, old)
+	a.EqualNow(300, l.Get(2))
+	a.EqualNow(len(testData)+1, l.Size())
+
 	a.PanicOfNow(func() { l.Set(-1, 300) }, collection.ErrOutOfBounds)
+	a.PanicOfNow(func() { l.Set(l.Size()+1, 400) }, collection.ErrOutOfBounds)
 }
 
 func testListSize(a *assert.Assertion, constructor listConstructor) {
