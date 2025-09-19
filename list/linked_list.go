@@ -152,7 +152,7 @@ func (l *LinkedList[T]) ForEach(handler func(e T) error) error {
 	return nil
 }
 
-// Get returns the element at the specified position inn this list.
+// Get returns the element at the specified position in this list.
 func (l *LinkedList[T]) Get(i int) T {
 	internal.CheckIndex(i, l.size)
 
@@ -200,10 +200,13 @@ func (l *LinkedList[T]) Remove(e T) bool {
 	current := l.head
 	for current != nil {
 		if internal.Equal(current.Value, e) {
+			next := current.Next
 			l.removeNode(current)
 			found = true
+			current = next
+		} else {
+			current = current.Next
 		}
-		current = current.Next
 	}
 	return found
 }
@@ -226,8 +229,11 @@ func (l *LinkedList[T]) RemoveAtIndex(i int) T {
 	for j := 0; j < i; j++ {
 		current = current.Next
 	}
+
+	val := current.Value
 	l.removeNode(current)
-	return current.Value
+
+	return val
 }
 
 // RemoveIf removes all of the elements of this collection that satisfy the given predicate.
@@ -236,10 +242,13 @@ func (l *LinkedList[T]) RemoveIf(f func(T) bool) bool {
 	current := l.head
 	for current != nil {
 		if f(current.Value) {
+			next := current.Next
 			l.removeNode(current)
+			current = next
 			found = true
+		} else {
+			current = current.Next
 		}
-		current = current.Next
 	}
 	return found
 }
@@ -258,10 +267,13 @@ func (l *LinkedList[T]) RetainAll(c ...T) bool {
 			}
 		}
 		if !shouldRetain {
+			next := current.Next
 			l.removeNode(current)
+			current = next
 			found = true
+		} else {
+			current = current.Next
 		}
-		current = current.Next
 	}
 	return found
 }
