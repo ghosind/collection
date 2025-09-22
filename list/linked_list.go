@@ -1,6 +1,8 @@
 package list
 
 import (
+	"sync"
+
 	"github.com/ghosind/collection"
 	"github.com/ghosind/collection/internal"
 )
@@ -17,16 +19,24 @@ type LinkedList[T any] struct {
 	head *LinkedListNode[T]
 	tail *LinkedListNode[T]
 	size int
+	pool sync.Pool
 }
 
 // NewLinkedList creates and returns a new empty linked list.
 func NewLinkedList[T any]() *LinkedList[T] {
-	return &LinkedList[T]{}
+	return &LinkedList[T]{
+		head: nil,
+		tail: nil,
+		size: 0,
+		pool: sync.Pool{New: func() any {
+			return &LinkedListNode[T]{}
+		}},
+	}
 }
 
 // Add adds the specified element to this collection.
 func (l *LinkedList[T]) Add(e T) bool {
-	newNode := &LinkedListNode[T]{Value: e}
+	newNode := l.getNode(e)
 	if l.head == nil {
 		l.head = newNode
 		l.tail = newNode
@@ -51,7 +61,7 @@ func (l *LinkedList[T]) AddAll(c ...T) bool {
 func (l *LinkedList[T]) AddAtIndex(i int, e T) {
 	internal.CheckIndex(i, l.size+1)
 
-	newNode := &LinkedListNode[T]{Value: e}
+	newNode := l.getNode(e)
 
 	if l.size == 0 {
 		l.head = newNode
@@ -90,6 +100,12 @@ func (l *LinkedList[T]) AddAtIndex(i int, e T) {
 
 // Clear removes all of the elements from this collection.
 func (l *LinkedList[T]) Clear() {
+	for node := l.head; node != nil; {
+		next := node.Next
+		l.pool.Put(node)
+		node = next
+	}
+
 	l.head = nil
 	l.tail = nil
 	l.size = 0
@@ -321,5 +337,15 @@ func (l *LinkedList[T]) removeNode(node *LinkedListNode[T]) {
 	} else {
 		l.tail = node.Prev
 	}
+	l.pool.Put(node)
 	l.size--
+}
+
+// getNode retrieves an empty node from the pool.
+func (l *LinkedList[T]) getNode(e T) *LinkedListNode[T] {
+	node := l.pool.Get().(*LinkedListNode[T])
+	node.Value = e
+	node.Next = nil
+	node.Prev = nil
+	return node
 }
