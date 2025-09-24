@@ -230,6 +230,7 @@ func testListRemove(a *assert.Assertion, constructor listConstructor) {
 func testListRemoveAll(a *assert.Assertion, constructor listConstructor) {
 	l := constructor()
 
+	a.NotTrueNow(l.RemoveAll())
 	l.AddAll(testData...)
 	l.Add(3)
 	a.EqualNow(len(testData)+1, l.Size())

@@ -229,6 +229,10 @@ func (l *LinkedList[T]) Remove(e T) bool {
 
 // RemoveAll removes all of the elements in the specified collection from this collection.
 func (l *LinkedList[T]) RemoveAll(c ...T) bool {
+	if len(c) == 0 {
+		return false
+	}
+
 	found := false
 	for _, e := range c {
 		if l.Remove(e) {

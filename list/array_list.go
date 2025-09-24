@@ -159,6 +159,10 @@ func (l *ArrayList[T]) Remove(e T) bool {
 // RemoveAll removes all occurrences of the specified elements from this list, if they are present.
 // Returns true if this list contained any of the specified elements.
 func (l *ArrayList[T]) RemoveAll(c ...T) bool {
+	if len(c) == 0 {
+		return false
+	}
+
 	found := false
 
 	i := 0
