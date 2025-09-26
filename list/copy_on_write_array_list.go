@@ -202,6 +202,10 @@ func (l *CopyOnWriteArrayList[T]) Remove(e T) bool {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
+	if len(l.data) == 0 {
+		return false
+	}
+
 	newData := make([]T, 0, len(l.data))
 	removed := false
 
@@ -279,6 +283,10 @@ func (l *CopyOnWriteArrayList[T]) RemoveIf(f func(T) bool) bool {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
+	if len(l.data) == 0 {
+		return false
+	}
+
 	newData := make([]T, 0, len(l.data))
 	removed := false
 
@@ -302,6 +310,15 @@ func (l *CopyOnWriteArrayList[T]) RemoveIf(f func(T) bool) bool {
 func (l *CopyOnWriteArrayList[T]) RetainAll(c ...T) bool {
 	l.mu.Lock()
 	defer l.mu.Unlock()
+
+	if len(c) == 0 {
+		if len(l.data) == 0 {
+			return false
+		}
+
+		l.data = make([]T, 0)
+		return true
+	}
 
 	newData := make([]T, 0, len(l.data))
 	changed := false

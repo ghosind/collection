@@ -212,6 +212,10 @@ func (l *LinkedList[T]) LastIndexOf(e T) int {
 
 // Remove removes the specified element from this collection.
 func (l *LinkedList[T]) Remove(e T) bool {
+	if l.size == 0 {
+		return false
+	}
+
 	found := false
 	current := l.head
 	for current != nil {
@@ -258,6 +262,10 @@ func (l *LinkedList[T]) RemoveAtIndex(i int) T {
 
 // RemoveIf removes all of the elements of this collection that satisfy the given predicate.
 func (l *LinkedList[T]) RemoveIf(f func(T) bool) bool {
+	if l.size == 0 {
+		return false
+	}
+
 	found := false
 	current := l.head
 	for current != nil {
@@ -276,6 +284,10 @@ func (l *LinkedList[T]) RemoveIf(f func(T) bool) bool {
 // RetainAll retains only the elements in this collection that are contained in the specified
 // collection.
 func (l *LinkedList[T]) RetainAll(c ...T) bool {
+	if len(c) == 0 {
+		return clearListForRetainAll[T](l)
+	}
+
 	found := false
 	current := l.head
 	for current != nil {

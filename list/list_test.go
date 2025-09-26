@@ -216,6 +216,7 @@ func testListLastIndexOf(a *assert.Assertion, constructor listConstructor) {
 func testListRemove(a *assert.Assertion, constructor listConstructor) {
 	l := constructor()
 
+	a.NotTrueNow(l.Remove(100))
 	l.AddAll(testData...)
 	l.Add(3)
 	a.EqualNow(len(testData)+1, l.Size())
@@ -269,6 +270,7 @@ func testListRemoveAtIndex(a *assert.Assertion, constructor listConstructor) {
 func testListRemoveIf(a *assert.Assertion, constructor listConstructor) {
 	l := constructor()
 
+	a.NotTrueNow(l.RemoveIf(func(i int) bool { return i%2 == 0 }))
 	l.AddAll(testData...)
 	a.EqualNow(len(testData), l.Size())
 	a.TrueNow(l.RemoveIf(func(i int) bool { return i%2 == 0 }))
@@ -281,6 +283,11 @@ func testListRemoveIf(a *assert.Assertion, constructor listConstructor) {
 
 func testListRetainAll(a *assert.Assertion, constructor listConstructor) {
 	l := constructor()
+
+	l.AddAll(testData...)
+	a.TrueNow(l.RetainAll())
+	a.EqualNow(0, l.Size())
+	a.NotTrueNow(l.RetainAll())
 
 	l.AddAll(testData...)
 	a.EqualNow(len(testData), l.Size())

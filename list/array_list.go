@@ -201,6 +201,10 @@ func (l *ArrayList[T]) RemoveAtIndex(i int) T {
 // RemoveIf removes all of the elements of this list that satisfy the given predicate.
 // Returns true if any elements were removed.
 func (l *ArrayList[T]) RemoveIf(f func(T) bool) bool {
+	if len(*l) == 0 {
+		return false
+	}
+
 	found := false
 	i := 0
 
@@ -222,6 +226,10 @@ func (l *ArrayList[T]) RemoveIf(f func(T) bool) bool {
 // In other words, removes from this list all of its elements that are not contained in the
 // specified elements. Returns true if this list changed as a result of the call.
 func (l *ArrayList[T]) RetainAll(c ...T) bool {
+	if len(c) == 0 {
+		return clearListForRetainAll[T](l)
+	}
+
 	found := false
 
 	i := 0
