@@ -1,10 +1,13 @@
 # collection
 
 ![Test](https://github.com/ghosind/collection/workflows/collection/badge.svg)
+[![Go Report Card](https://goreportcard.com/badge/github.com/ghosind/collection)](https://goreportcard.com/report/github.com/ghosind/collection)
 [![codecov](https://codecov.io/gh/ghosind/collection/branch/main/graph/badge.svg)](https://codecov.io/gh/ghosind/collection)
 [![Latest version](https://img.shields.io/github/v/release/ghosind/collection?include_prereleases)](https://github.com/ghosind/collection)
 ![License Badge](https://img.shields.io/github/license/ghosind/collection)
 [![Go Reference](https://pkg.go.dev/badge/github.com/ghosind/collection.svg)](https://pkg.go.dev/github.com/ghosind/collection)
+
+English | [中文](README-CN.md)
 
 Generics collections framework for Golang.
 
@@ -15,13 +18,15 @@ Generics collections framework for Golang.
 
 This package provides the following data structure interfaces and implementations:
 
-- `Collection`: The root interface of most of the structures in this package (without `Dictionary`).
+- `Collection`: The root interface of most of the structures in this package (without `Dict`).
 
 - `List`: An ordered collection (also known as a sequence).
 
     - [`ArrayList`](https://pkg.go.dev/github.com/ghosind/collection/list#ArrayList): The implementation of List based on Go built-in slice structure.
 
     - [`LinkedList`](https://pkg.go.dev/github.com/ghosind/collection/list#LinkedList): The implementation of List based on doubly linked list.
+
+    - [`CopyOnWriteArrayList`](https://pkg.go.dev/github.com/ghosind/collection/list#CopyOnWriteArrayList): The thread safe implementation of List based on copy-on-write strategy.
 
 - `Set`: A collection interface that contains no duplicate elements.
 
@@ -78,7 +83,7 @@ fruits.Add("Apple")
 fruits.Add("Banana")
 
 log.Print(fruits.Contains("Banana")) // true
-log.Print(fruits.Contains("Lemon"))
+log.Print(fruits.Contains("Lemon")) // false
 ```
 
 ### HashDict Examples
