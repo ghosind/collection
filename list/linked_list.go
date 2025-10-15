@@ -1,6 +1,8 @@
 package list
 
 import (
+	"bytes"
+	"fmt"
 	"sync"
 
 	"github.com/ghosind/collection"
@@ -331,6 +333,19 @@ func (l *LinkedList[T]) Set(i int, e T) T {
 // Size returns the number of elements in this collection.
 func (l *LinkedList[T]) Size() int {
 	return l.size
+}
+
+// String returns the string representation of this collection.
+func (l *LinkedList[T]) String() string {
+	buf := bytes.NewBufferString("list[")
+	for node := l.head; node != nil; node = node.Next {
+		fmt.Fprintf(buf, "%v", node.Value)
+		if node.Next != nil {
+			buf.WriteString(" ")
+		}
+	}
+	buf.WriteString("]")
+	return buf.String()
 }
 
 // ToSlice returns a slice containing all of the elements in this collection.

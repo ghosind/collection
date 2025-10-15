@@ -1,6 +1,9 @@
 package list
 
 import (
+	"bytes"
+	"fmt"
+
 	"github.com/ghosind/collection"
 	"github.com/ghosind/collection/internal"
 )
@@ -276,6 +279,22 @@ func (l *ArrayList[T]) Set(i int, e T) T {
 // Size returns the number of elements in this list.
 func (l *ArrayList[T]) Size() int {
 	return len(*l)
+}
+
+// String returns the string representation of this collection.
+func (l *ArrayList[T]) String() string {
+	buf := bytes.NewBufferString("list[")
+	first := true
+	for _, v := range *l {
+		if !first {
+			buf.WriteString(" ")
+		}
+		first = false
+		fmt.Fprintf(buf, "%v", v)
+	}
+	buf.WriteString("]")
+
+	return buf.String()
 }
 
 // ToSlice returns a slice containing all of the elements in this list in proper sequence.
