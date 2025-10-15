@@ -1,6 +1,8 @@
 package list
 
 import (
+	"bytes"
+	"fmt"
 	"sync"
 
 	"github.com/ghosind/collection"
@@ -373,6 +375,22 @@ func (l *CopyOnWriteArrayList[T]) Set(i int, e T) T {
 func (l *CopyOnWriteArrayList[T]) Size() int {
 	data := l.data
 	return len(data)
+}
+
+// String returns the string representation of this collection.
+func (l *CopyOnWriteArrayList[T]) String() string {
+	buf := bytes.NewBufferString("list[")
+	first := true
+	data := l.data
+	for _, v := range data {
+		if !first {
+			buf.WriteString(" ")
+		}
+		first = false
+		fmt.Fprintf(buf, "%v", v)
+	}
+	buf.WriteString("]")
+	return buf.String()
 }
 
 // ToSlice returns a slice containing all of the elements in this collection.

@@ -1,6 +1,8 @@
 package dict
 
 import (
+	"bytes"
+	"fmt"
 	"sync"
 	"sync/atomic"
 
@@ -338,6 +340,26 @@ func (d *SyncDict[K, V]) Size() int {
 	}
 
 	return size
+}
+
+// String returns the string representation of this dictionary.
+func (d *SyncDict[K, V]) String() string {
+	buf := bytes.NewBufferString("dict[")
+	read := d.loadPresentReadOnly()
+	count := 0
+	for k, e := range read.M {
+		v, ok := e.Load(d.zero)
+		if !ok {
+			continue
+		}
+		if count > 0 {
+			buf.WriteString(" ")
+		}
+		fmt.Fprintf(buf, "%v: %v", k, v)
+		count++
+	}
+	buf.WriteString("]")
+	return buf.String()
 }
 
 // Values returns a slice that contains all the values in this dictionary.

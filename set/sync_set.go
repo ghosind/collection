@@ -1,6 +1,8 @@
 package set
 
 import (
+	"bytes"
+	"fmt"
 	"sync"
 	"sync/atomic"
 
@@ -327,6 +329,25 @@ func (s *SyncSet[T]) Size() int {
 	}
 
 	return size
+}
+
+// String returns the string representation of this collection.
+func (s *SyncSet[T]) String() string {
+	buf := bytes.NewBufferString("set[")
+	first := true
+	read := s.loadPresentReadOnly()
+	for k := range read.M {
+		_, ok := read.M[k].Load(emptyZero)
+		if ok {
+			if !first {
+				buf.WriteString(" ")
+			}
+			first = false
+			fmt.Fprintf(buf, "%v", k)
+		}
+	}
+	buf.WriteString("]")
+	return buf.String()
 }
 
 // ToSlice returns a slice containing all of the elements in this collection.

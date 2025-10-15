@@ -2,7 +2,9 @@ package dict
 
 import (
 	"errors"
+	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/ghosind/collection"
 	"github.com/ghosind/go-assert"
@@ -52,6 +54,7 @@ func testDict(a *assert.Assertion, constructor dictTestConstructor) {
 	testDictRemove(a, constructor)
 	testDictReplace(a, constructor)
 	testDictSize(a, constructor)
+	testDictString(a, constructor)
 	testDictValues(a, constructor)
 	testDictValuesIter(a, constructor)
 }
@@ -255,6 +258,21 @@ func testDictSize(a *assert.Assertion, constructor dictTestConstructor) {
 	a.EqualNow(d.Size(), len(testDataEn))
 	d.Clear()
 	a.EqualNow(d.Size(), 0)
+}
+
+func testDictString(a *assert.Assertion, constructor dictTestConstructor) {
+	d := constructor()
+	for k, v := range testDataEn {
+		d.Put(k, v)
+	}
+
+	str := d.String()
+	a.TrueNow(strings.HasPrefix(str, "dict["))
+	a.TrueNow(strings.HasSuffix(str, "]"))
+
+	for k, v := range testDataEn {
+		a.TrueNow(strings.Contains(str, fmt.Sprintf("%v: %v", k, v)))
+	}
 }
 
 func testDictValues(a *assert.Assertion, constructor dictTestConstructor) {

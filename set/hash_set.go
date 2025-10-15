@@ -1,6 +1,9 @@
 package set
 
 import (
+	"bytes"
+	"fmt"
+
 	"github.com/ghosind/collection"
 )
 
@@ -168,6 +171,21 @@ func (set *HashSet[T]) RetainAll(c ...T) bool {
 // Size returns the number of elements in this set.
 func (set *HashSet[T]) Size() int {
 	return len(*set)
+}
+
+// String returns the string representation of this set.
+func (set *HashSet[T]) String() string {
+	buf := bytes.NewBufferString("set[")
+	first := true
+	for e := range *set {
+		if !first {
+			buf.WriteString(" ")
+		}
+		first = false
+		fmt.Fprintf(buf, "%v", e)
+	}
+	buf.WriteString("]")
+	return buf.String()
 }
 
 // ToSlice returns a slice containing all of the elements in this set.

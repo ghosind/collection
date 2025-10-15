@@ -1,6 +1,9 @@
 package dict
 
 import (
+	"bytes"
+	"fmt"
+
 	"github.com/ghosind/collection"
 	"github.com/ghosind/collection/internal"
 )
@@ -133,6 +136,21 @@ func (m *HashDict[K, V]) Replace(k K, v V) (V, bool) {
 // Size returns the number of key-value pairs in this dictionary.
 func (m *HashDict[K, V]) Size() int {
 	return len(*m)
+}
+
+// String returns the string representation of this dictionary.
+func (m *HashDict[K, V]) String() string {
+	buf := bytes.NewBufferString("dict[")
+	count := 0
+	for k, v := range *m {
+		if count > 0 {
+			buf.WriteString(" ")
+		}
+		fmt.Fprintf(buf, "%v: %v", k, v)
+		count++
+	}
+	buf.WriteString("]")
+	return buf.String()
 }
 
 // Values returns a slice that contains all the values in this dictionary.

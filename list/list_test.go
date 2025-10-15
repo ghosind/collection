@@ -33,6 +33,7 @@ func testList(a *assert.Assertion, constructor listConstructor) {
 	testListRetainAll(a, constructor)
 	testListSet(a, constructor)
 	testListSize(a, constructor)
+	testListString(a, constructor)
 	testListToSlice(a, constructor)
 }
 
@@ -329,6 +330,14 @@ func testListSize(a *assert.Assertion, constructor listConstructor) {
 	a.EqualNow(0, l.Size())
 	l.AddAll(testData...)
 	a.EqualNow(len(testData), l.Size())
+}
+
+func testListString(a *assert.Assertion, constructor listConstructor) {
+	l := constructor()
+
+	a.EqualNow("list[]", l.String())
+	l.AddAll(testData...)
+	a.EqualNow("list[1 2 3 4 5]", l.String())
 }
 
 func testListToSlice(a *assert.Assertion, constructor listConstructor) {

@@ -2,6 +2,7 @@ package set
 
 import (
 	"errors"
+	"strconv"
 
 	"github.com/ghosind/collection"
 	"github.com/ghosind/go-assert"
@@ -26,6 +27,7 @@ func testSet(a *assert.Assertion, constructor setTestConstructor) {
 	testSetRemove(a, constructor)
 	testSetRemoveAll(a, constructor)
 	testSetSize(a, constructor)
+	testSetString(a, constructor)
 	testSetToSlice(a, constructor)
 }
 
@@ -238,6 +240,19 @@ func testSetSize(a *assert.Assertion, constructor setTestConstructor) {
 
 	set.Clear()
 	a.EqualNow(set.Size(), 0)
+}
+
+func testSetString(a *assert.Assertion, constructor setTestConstructor) {
+	set := constructor()
+	set.AddAll(testNums1...)
+	str := set.String()
+
+	a.HasPrefixString(str, "set[")
+	a.HasSuffixString(str, "]")
+
+	for _, n := range testNums1 {
+		a.ContainsString(str, strconv.FormatInt(int64(n), 10))
+	}
 }
 
 func testSetToSlice(a *assert.Assertion, constructor setTestConstructor) {
