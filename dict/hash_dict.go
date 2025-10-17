@@ -2,7 +2,6 @@ package dict
 
 import (
 	"bytes"
-	"fmt"
 
 	"github.com/ghosind/collection"
 	"github.com/ghosind/collection/internal"
@@ -146,7 +145,9 @@ func (m *HashDict[K, V]) String() string {
 		if count > 0 {
 			buf.WriteString(" ")
 		}
-		fmt.Fprintf(buf, "%v: %v", k, v)
+		buf.WriteString(internal.ValueString(k))
+		buf.WriteString(": ")
+		buf.WriteString(internal.ValueString(v))
 		count++
 	}
 	buf.WriteString("]")

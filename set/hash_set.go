@@ -2,9 +2,9 @@ package set
 
 import (
 	"bytes"
-	"fmt"
 
 	"github.com/ghosind/collection"
+	"github.com/ghosind/collection/internal"
 )
 
 // HashSet is a set implementation that uses a Golang builtin map to store its elements.
@@ -182,7 +182,7 @@ func (set *HashSet[T]) String() string {
 			buf.WriteString(" ")
 		}
 		first = false
-		fmt.Fprintf(buf, "%v", e)
+		buf.WriteString(internal.ValueString(e))
 	}
 	buf.WriteString("]")
 	return buf.String()

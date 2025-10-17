@@ -2,7 +2,6 @@ package set
 
 import (
 	"bytes"
-	"fmt"
 	"sync"
 	"sync/atomic"
 
@@ -343,7 +342,7 @@ func (s *SyncSet[T]) String() string {
 				buf.WriteString(" ")
 			}
 			first = false
-			fmt.Fprintf(buf, "%v", k)
+			buf.WriteString(internal.ValueString(k))
 		}
 	}
 	buf.WriteString("]")

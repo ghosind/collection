@@ -2,7 +2,6 @@ package list
 
 import (
 	"bytes"
-	"fmt"
 
 	"github.com/ghosind/collection"
 	"github.com/ghosind/collection/internal"
@@ -290,7 +289,7 @@ func (l *ArrayList[T]) String() string {
 			buf.WriteString(" ")
 		}
 		first = false
-		fmt.Fprintf(buf, "%v", v)
+		buf.WriteString(internal.ValueString(v))
 	}
 	buf.WriteString("]")
 
