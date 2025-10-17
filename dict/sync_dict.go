@@ -2,7 +2,6 @@ package dict
 
 import (
 	"bytes"
-	"fmt"
 	"sync"
 	"sync/atomic"
 
@@ -355,7 +354,9 @@ func (d *SyncDict[K, V]) String() string {
 		if count > 0 {
 			buf.WriteString(" ")
 		}
-		fmt.Fprintf(buf, "%v: %v", k, v)
+		buf.WriteString(internal.ValueString(k))
+		buf.WriteString(": ")
+		buf.WriteString(internal.ValueString(v))
 		count++
 	}
 	buf.WriteString("]")

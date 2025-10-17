@@ -2,7 +2,6 @@ package list
 
 import (
 	"bytes"
-	"fmt"
 	"sync"
 
 	"github.com/ghosind/collection"
@@ -339,7 +338,7 @@ func (l *LinkedList[T]) Size() int {
 func (l *LinkedList[T]) String() string {
 	buf := bytes.NewBufferString("list[")
 	for node := l.head; node != nil; node = node.Next {
-		fmt.Fprintf(buf, "%v", node.Value)
+		buf.WriteString(internal.ValueString(node.Value))
 		if node.Next != nil {
 			buf.WriteString(" ")
 		}

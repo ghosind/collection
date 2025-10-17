@@ -2,7 +2,6 @@ package list
 
 import (
 	"bytes"
-	"fmt"
 	"sync"
 
 	"github.com/ghosind/collection"
@@ -387,7 +386,7 @@ func (l *CopyOnWriteArrayList[T]) String() string {
 			buf.WriteString(" ")
 		}
 		first = false
-		fmt.Fprintf(buf, "%v", v)
+		buf.WriteString(internal.ValueString(v))
 	}
 	buf.WriteString("]")
 	return buf.String()
