@@ -31,13 +31,13 @@ func ValueString(v any) string {
 	case uintptr:
 		return strconv.FormatUint(uint64(vt), 10)
 	case float32:
-		return strconv.FormatFloat(float64(vt), 'f', -1, 32)
+		return strconv.FormatFloat(float64(vt), 'g', -1, 32)
 	case float64:
-		return strconv.FormatFloat(vt, 'f', -1, 64)
+		return strconv.FormatFloat(vt, 'g', -1, 64)
 	case complex64:
-		return strconv.FormatComplex(complex128(vt), 'f', -1, 64)
+		return strconv.FormatComplex(complex128(vt), 'g', -1, 64)
 	case complex128:
-		return strconv.FormatComplex(vt, 'f', -1, 128)
+		return strconv.FormatComplex(vt, 'g', -1, 128)
 	case bool:
 		return strconv.FormatBool(vt)
 	case string:
