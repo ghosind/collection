@@ -376,10 +376,17 @@ func (s *SyncSet[T]) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &items); err != nil {
 		return err
 	}
-	s.Clear()
-	if len(items) > 0 {
-		s.AddAll(items...)
+
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	m := make(map[T]*internal.SyncEntry[empty])
+	for _, item := range items {
+		m[item] = internal.NewSyncEntry(emptyZero, nilEmpty)
 	}
+	s.read.Store(&internal.SyncReadOnly[T, empty]{M: m})
+	s.dirty = nil
+
 	return nil
 }
 

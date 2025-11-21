@@ -382,11 +382,17 @@ func (d *SyncDict[K, V]) Values() []V {
 
 // MarshalJSON marshals the SyncDict as a JSON object (map).
 func (d *SyncDict[K, V]) MarshalJSON() ([]byte, error) {
+	read := d.loadPresentReadOnly()
 	m := make(map[K]V)
-	_ = d.ForEach(func(k K, v V) error {
+
+	for k, e := range read.M {
+		v, ok := e.Load(d.zero)
+		if !ok {
+			continue
+		}
 		m[k] = v
-		return nil
-	})
+	}
+
 	return json.Marshal(m)
 }
 
@@ -396,9 +402,16 @@ func (d *SyncDict[K, V]) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &tmp); err != nil {
 		return err
 	}
-	d.Clear()
+
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	m := make(map[K]*internal.SyncEntry[V])
 	for k, v := range tmp {
-		d.Put(k, v)
+		m[k] = internal.NewSyncEntry(v, d.expunged)
 	}
+	d.read.Store(&internal.SyncReadOnly[K, V]{M: m})
+	d.dirty = nil
+
 	return nil
 }
