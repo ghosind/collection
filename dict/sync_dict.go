@@ -406,12 +406,18 @@ func (d *SyncDict[K, V]) UnmarshalJSON(b []byte) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
+	if d.expunged == nil {
+		// ensure expunged marker is initialized
+		d.expunged = new(V)
+	}
+
 	m := make(map[K]*internal.SyncEntry[V])
 	for k, v := range tmp {
 		m[k] = internal.NewSyncEntry(v, d.expunged)
 	}
 	d.read.Store(&internal.SyncReadOnly[K, V]{M: m})
 	d.dirty = nil
+	d.misses = 0
 
 	return nil
 }

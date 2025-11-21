@@ -386,6 +386,7 @@ func (s *SyncSet[T]) UnmarshalJSON(b []byte) error {
 	}
 	s.read.Store(&internal.SyncReadOnly[T, empty]{M: m})
 	s.dirty = nil
+	s.misses = 0
 
 	return nil
 }
