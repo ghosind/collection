@@ -1,6 +1,7 @@
 package set
 
 import (
+	"encoding/json"
 	"errors"
 	"strconv"
 
@@ -8,12 +9,12 @@ import (
 	"github.com/ghosind/go-assert"
 )
 
-type setTestConstructor func() collection.Set[int]
+type setConstructor func() collection.Set[int]
 
 var testNums1 = []int{47, 11, 42, 13, 37, 23, 31, 29, 17, 19}
 var testNums2 = []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 
-func testSet(a *assert.Assertion, constructor setTestConstructor) {
+func testSet(a *assert.Assertion, constructor setConstructor) {
 	testSetAdd(a, constructor)
 	testSetAddAll(a, constructor)
 	testSetClear(a, constructor)
@@ -26,12 +27,15 @@ func testSet(a *assert.Assertion, constructor setTestConstructor) {
 	testSetIter(a, constructor)
 	testSetRemove(a, constructor)
 	testSetRemoveAll(a, constructor)
+	testSetRemoveIf(a, constructor)
+	testSetRetainAll(a, constructor)
 	testSetSize(a, constructor)
 	testSetString(a, constructor)
 	testSetToSlice(a, constructor)
+	testSetJSON(a, constructor)
 }
 
-func testSetAdd(a *assert.Assertion, constructor setTestConstructor) {
+func testSetAdd(a *assert.Assertion, constructor setConstructor) {
 	set1 := constructor()
 	last := 0
 	for _, n := range testNums1 {
@@ -47,7 +51,7 @@ func testSetAdd(a *assert.Assertion, constructor setTestConstructor) {
 	a.EqualNow(set1.Size(), len(testNums1))
 }
 
-func testSetAddAll(a *assert.Assertion, constructor setTestConstructor) {
+func testSetAddAll(a *assert.Assertion, constructor setConstructor) {
 	set1 := constructor()
 
 	set1.AddAll(testNums1...)
@@ -57,7 +61,7 @@ func testSetAddAll(a *assert.Assertion, constructor setTestConstructor) {
 	}
 }
 
-func testSetClear(a *assert.Assertion, constructor setTestConstructor) {
+func testSetClear(a *assert.Assertion, constructor setConstructor) {
 	set1 := constructor()
 	set1.AddAll(testNums1...)
 	a.EqualNow(set1.Size(), len(testNums1))
@@ -66,7 +70,7 @@ func testSetClear(a *assert.Assertion, constructor setTestConstructor) {
 	a.NotTrueNow(set1.Contains(testNums1[len(testNums1)-1]))
 }
 
-func testSetClone(a *assert.Assertion, constructor setTestConstructor) {
+func testSetClone(a *assert.Assertion, constructor setConstructor) {
 	set1 := constructor()
 	set1.AddAll(testNums1...)
 	set2 := set1.Clone()
@@ -74,7 +78,7 @@ func testSetClone(a *assert.Assertion, constructor setTestConstructor) {
 	a.TrueNow(set1.Equals(set2))
 }
 
-func testSetContains(a *assert.Assertion, constructor setTestConstructor) {
+func testSetContains(a *assert.Assertion, constructor setConstructor) {
 	set := constructor()
 	set.AddAll(testNums1...)
 
@@ -87,7 +91,7 @@ func testSetContains(a *assert.Assertion, constructor setTestConstructor) {
 	a.NotTrueNow(set.Contains(0))
 }
 
-func testSetContainsAll(a *assert.Assertion, constructor setTestConstructor) {
+func testSetContainsAll(a *assert.Assertion, constructor setConstructor) {
 	set := constructor()
 
 	set.AddAll(testNums1...)
@@ -100,7 +104,7 @@ func testSetContainsAll(a *assert.Assertion, constructor setTestConstructor) {
 	a.NotTrueNow(set.ContainsAll(testNums1...))
 }
 
-func testSetEquals(a *assert.Assertion, constructor setTestConstructor) {
+func testSetEquals(a *assert.Assertion, constructor setConstructor) {
 	set1 := constructor()
 	a.NotTrueNow(set1.Equals(nil))
 
@@ -118,7 +122,7 @@ func testSetEquals(a *assert.Assertion, constructor setTestConstructor) {
 	a.NotTrueNow(set1.Equals(set3))
 }
 
-func testSetForEach(a *assert.Assertion, constructor setTestConstructor) {
+func testSetForEach(a *assert.Assertion, constructor setConstructor) {
 	set1 := constructor()
 	set1.AddAll(testNums1...)
 
@@ -142,7 +146,7 @@ func testSetForEach(a *assert.Assertion, constructor setTestConstructor) {
 	a.EqualNow(cnt, 1)
 }
 
-func testSetIsEmpty(a *assert.Assertion, constructor setTestConstructor) {
+func testSetIsEmpty(a *assert.Assertion, constructor setConstructor) {
 	set := constructor()
 	a.TrueNow(set.IsEmpty())
 
@@ -153,7 +157,7 @@ func testSetIsEmpty(a *assert.Assertion, constructor setTestConstructor) {
 	a.TrueNow(set.IsEmpty())
 }
 
-func testSetRemove(a *assert.Assertion, constructor setTestConstructor) {
+func testSetRemove(a *assert.Assertion, constructor setConstructor) {
 	set := constructor()
 	set.AddAll(testNums1...)
 	a.EqualNow(set.Size(), len(testNums1))
@@ -173,7 +177,7 @@ func testSetRemove(a *assert.Assertion, constructor setTestConstructor) {
 	a.EqualNow(set.Size(), 0)
 }
 
-func testSetRemoveAll(a *assert.Assertion, constructor setTestConstructor) {
+func testSetRemoveAll(a *assert.Assertion, constructor setConstructor) {
 	set := constructor()
 	set.AddAll(testNums1...)
 	a.EqualNow(set.Size(), len(testNums1))
@@ -186,7 +190,7 @@ func testSetRemoveAll(a *assert.Assertion, constructor setTestConstructor) {
 	}
 }
 
-func testSetRemoveIf(a *assert.Assertion, constructor setTestConstructor) {
+func testSetRemoveIf(a *assert.Assertion, constructor setConstructor) {
 	set := constructor()
 	set.AddAll(testNums1...)
 	a.EqualNow(set.Size(), len(testNums1))
@@ -206,7 +210,7 @@ func testSetRemoveIf(a *assert.Assertion, constructor setTestConstructor) {
 	}
 }
 
-func testSetRetainAll(a *assert.Assertion, constructor setTestConstructor) {
+func testSetRetainAll(a *assert.Assertion, constructor setConstructor) {
 	set := constructor()
 	set.AddAll(testNums1...)
 	a.EqualNow(set.Size(), len(testNums1))
@@ -231,7 +235,7 @@ func testSetRetainAll(a *assert.Assertion, constructor setTestConstructor) {
 	}
 }
 
-func testSetSize(a *assert.Assertion, constructor setTestConstructor) {
+func testSetSize(a *assert.Assertion, constructor setConstructor) {
 	set := constructor()
 	a.EqualNow(set.Size(), 0)
 
@@ -242,7 +246,7 @@ func testSetSize(a *assert.Assertion, constructor setTestConstructor) {
 	a.EqualNow(set.Size(), 0)
 }
 
-func testSetString(a *assert.Assertion, constructor setTestConstructor) {
+func testSetString(a *assert.Assertion, constructor setConstructor) {
 	set := constructor()
 	set.AddAll(testNums1...)
 	str := set.String()
@@ -255,7 +259,7 @@ func testSetString(a *assert.Assertion, constructor setTestConstructor) {
 	}
 }
 
-func testSetToSlice(a *assert.Assertion, constructor setTestConstructor) {
+func testSetToSlice(a *assert.Assertion, constructor setConstructor) {
 	set := constructor()
 	set.AddAll(testNums1...)
 	slice := set.ToSlice()
@@ -264,4 +268,26 @@ func testSetToSlice(a *assert.Assertion, constructor setTestConstructor) {
 	for _, n := range slice {
 		a.TrueNow(set.Contains(n))
 	}
+}
+
+func testSetJSON(a *assert.Assertion, constructor setConstructor) {
+	s1 := constructor()
+	s1.AddAll(testNums1...)
+
+	b, err := s1.MarshalJSON()
+	a.NilNow(err)
+
+	s2 := constructor()
+	err = s2.UnmarshalJSON(b)
+	a.NilNow(err)
+	a.TrueNow(s1.Equals(s2))
+
+	s2.Clear()
+
+	b, err = json.Marshal(s1)
+	a.NilNow(err)
+
+	err = json.Unmarshal(b, s2)
+	a.NilNow(err)
+	a.TrueNow(s1.Equals(s2))
 }

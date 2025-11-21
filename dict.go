@@ -5,6 +5,8 @@ type Dict[K comparable, V any] interface {
 	Iterable2[K, V]
 	DictIter[K, V]
 	Stringer
+	JSONMarshaler
+	JSONUnmarshaler
 
 	// Clear removes all key-value pairs in this dictionary.
 	Clear()

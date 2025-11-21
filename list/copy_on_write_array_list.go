@@ -2,6 +2,7 @@ package list
 
 import (
 	"bytes"
+	"encoding/json"
 	"sync"
 
 	"github.com/ghosind/collection"
@@ -398,4 +399,22 @@ func (l *CopyOnWriteArrayList[T]) ToSlice() []T {
 	copy(slice, l.data)
 
 	return slice
+}
+
+// MarshalJSON marshals the copy-on-write list as a JSON array.
+func (l *CopyOnWriteArrayList[T]) MarshalJSON() ([]byte, error) {
+	return json.Marshal(l.ToSlice())
+}
+
+// UnmarshalJSON unmarshals a JSON array into the copy-on-write list.
+func (l *CopyOnWriteArrayList[T]) UnmarshalJSON(b []byte) error {
+	var items []T
+	if err := json.Unmarshal(b, &items); err != nil {
+		return err
+	}
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	l.data = make([]T, len(items))
+	copy(l.data, items)
+	return nil
 }

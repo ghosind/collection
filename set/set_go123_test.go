@@ -6,7 +6,7 @@ import (
 	"github.com/ghosind/go-assert"
 )
 
-func testSetIter(a *assert.Assertion, constructor setTestConstructor) {
+func testSetIter(a *assert.Assertion, constructor setConstructor) {
 	set1 := constructor()
 	set1.AddAll(testNums1...)
 

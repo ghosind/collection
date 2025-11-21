@@ -14,8 +14,4 @@ func TestHashSet(t *testing.T) {
 	}
 
 	testSet(a, constructor)
-
-	// TODO: Move to set_test.go
-	testSetRemoveIf(a, constructor)
-	testSetRetainAll(a, constructor)
 }

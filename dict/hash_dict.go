@@ -2,6 +2,7 @@ package dict
 
 import (
 	"bytes"
+	"encoding/json"
 
 	"github.com/ghosind/collection"
 	"github.com/ghosind/collection/internal"
@@ -163,4 +164,19 @@ func (m *HashDict[K, V]) Values() []V {
 	}
 
 	return arr
+}
+
+// MarshalJSON marshals the HashDict as a JSON object (map).
+func (m *HashDict[K, V]) MarshalJSON() ([]byte, error) {
+	return json.Marshal(map[K]V(*m))
+}
+
+// UnmarshalJSON unmarshals a JSON object into the HashDict.
+func (m *HashDict[K, V]) UnmarshalJSON(b []byte) error {
+	var tmp map[K]V
+	if err := json.Unmarshal(b, &tmp); err != nil {
+		return err
+	}
+	*m = HashDict[K, V](tmp)
+	return nil
 }

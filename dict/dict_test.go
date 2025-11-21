@@ -1,6 +1,7 @@
 package dict
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"sort"
@@ -10,7 +11,7 @@ import (
 	"github.com/ghosind/go-assert"
 )
 
-type dictTestConstructor func() collection.Dict[string, string]
+type dictConstructor func() collection.Dict[string, string]
 
 var testDataEn = map[string]string{
 	"zero":  "0",
@@ -38,7 +39,7 @@ var testDataZh = map[string]string{
 	"九": "9",
 }
 
-func testDict(a *assert.Assertion, constructor dictTestConstructor) {
+func testDict(a *assert.Assertion, constructor dictConstructor) {
 	testDictClear(a, constructor)
 	testDictClone(a, constructor)
 	testDictContainsKey(a, constructor)
@@ -57,9 +58,10 @@ func testDict(a *assert.Assertion, constructor dictTestConstructor) {
 	testDictString(a, constructor)
 	testDictValues(a, constructor)
 	testDictValuesIter(a, constructor)
+	testDictJSON(a, constructor)
 }
 
-func testDictClear(a *assert.Assertion, constructor dictTestConstructor) {
+func testDictClear(a *assert.Assertion, constructor dictConstructor) {
 	d := constructor()
 	for k, v := range testDataEn {
 		d.Put(k, v)
@@ -72,7 +74,7 @@ func testDictClear(a *assert.Assertion, constructor dictTestConstructor) {
 	}
 }
 
-func testDictClone(a *assert.Assertion, constructor dictTestConstructor) {
+func testDictClone(a *assert.Assertion, constructor dictConstructor) {
 	d1 := constructor()
 	for k, v := range testDataEn {
 		d1.Put(k, v)
@@ -81,7 +83,7 @@ func testDictClone(a *assert.Assertion, constructor dictTestConstructor) {
 	a.TrueNow(d1.Equals(d2))
 }
 
-func testDictContainsKey(a *assert.Assertion, constructor dictTestConstructor) {
+func testDictContainsKey(a *assert.Assertion, constructor dictConstructor) {
 	d := constructor()
 	for k, v := range testDataEn {
 		d.Put(k, v)
@@ -94,7 +96,7 @@ func testDictContainsKey(a *assert.Assertion, constructor dictTestConstructor) {
 	}
 }
 
-func testDictEquals(a *assert.Assertion, constructor dictTestConstructor) {
+func testDictEquals(a *assert.Assertion, constructor dictConstructor) {
 	d1 := constructor()
 	a.NotTrueNow(d1.Equals(nil))
 
@@ -126,7 +128,7 @@ func testDictEquals(a *assert.Assertion, constructor dictTestConstructor) {
 	a.NotTrueNow(d1.Equals(d3))
 }
 
-func testDictForEach(a *assert.Assertion, constructor dictTestConstructor) {
+func testDictForEach(a *assert.Assertion, constructor dictConstructor) {
 	d := constructor()
 	for k, v := range testDataEn {
 		d.Put(k, v)
@@ -152,7 +154,7 @@ func testDictForEach(a *assert.Assertion, constructor dictTestConstructor) {
 	a.EqualNow(count, 1)
 }
 
-func testDictGet(a *assert.Assertion, constructor dictTestConstructor) {
+func testDictGet(a *assert.Assertion, constructor dictConstructor) {
 	d := constructor()
 	for k, v := range testDataEn {
 		d.Put(k, v)
@@ -170,7 +172,7 @@ func testDictGet(a *assert.Assertion, constructor dictTestConstructor) {
 	}
 }
 
-func testDictGetDefault(a *assert.Assertion, constructor dictTestConstructor) {
+func testDictGetDefault(a *assert.Assertion, constructor dictConstructor) {
 	d := constructor()
 	for k, v := range testDataEn {
 		d.Put(k, v)
@@ -186,7 +188,7 @@ func testDictGetDefault(a *assert.Assertion, constructor dictTestConstructor) {
 	}
 }
 
-func testDictIsEmpty(a *assert.Assertion, constructor dictTestConstructor) {
+func testDictIsEmpty(a *assert.Assertion, constructor dictConstructor) {
 	d := constructor()
 	a.TrueNow(d.IsEmpty())
 	for k, v := range testDataEn {
@@ -197,7 +199,7 @@ func testDictIsEmpty(a *assert.Assertion, constructor dictTestConstructor) {
 	a.TrueNow(d.IsEmpty())
 }
 
-func testDictKeys(a *assert.Assertion, constructor dictTestConstructor) {
+func testDictKeys(a *assert.Assertion, constructor dictConstructor) {
 	d := constructor()
 	for k, v := range testDataEn {
 		d.Put(k, v)
@@ -209,7 +211,7 @@ func testDictKeys(a *assert.Assertion, constructor dictTestConstructor) {
 	}
 }
 
-func testDictPut(a *assert.Assertion, constructor dictTestConstructor) {
+func testDictPut(a *assert.Assertion, constructor dictConstructor) {
 	d := constructor()
 	for k, v := range testDataEn {
 		d.Put(k, v)
@@ -218,7 +220,7 @@ func testDictPut(a *assert.Assertion, constructor dictTestConstructor) {
 	a.EqualNow(d.Size(), len(testDataEn))
 }
 
-func testDictRemove(a *assert.Assertion, constructor dictTestConstructor) {
+func testDictRemove(a *assert.Assertion, constructor dictConstructor) {
 	d := constructor()
 	for k, v := range testDataEn {
 		d.Put(k, v)
@@ -230,7 +232,7 @@ func testDictRemove(a *assert.Assertion, constructor dictTestConstructor) {
 	a.EqualNow(d.Size(), 0)
 }
 
-func testDictReplace(a *assert.Assertion, constructor dictTestConstructor) {
+func testDictReplace(a *assert.Assertion, constructor dictConstructor) {
 	d := constructor()
 	for k, v := range testDataEn {
 		d.Put(k, v)
@@ -249,7 +251,7 @@ func testDictReplace(a *assert.Assertion, constructor dictTestConstructor) {
 	}
 }
 
-func testDictSize(a *assert.Assertion, constructor dictTestConstructor) {
+func testDictSize(a *assert.Assertion, constructor dictConstructor) {
 	d := constructor()
 	a.EqualNow(d.Size(), 0)
 	for k, v := range testDataEn {
@@ -260,7 +262,7 @@ func testDictSize(a *assert.Assertion, constructor dictTestConstructor) {
 	a.EqualNow(d.Size(), 0)
 }
 
-func testDictString(a *assert.Assertion, constructor dictTestConstructor) {
+func testDictString(a *assert.Assertion, constructor dictConstructor) {
 	d := constructor()
 	for k, v := range testDataEn {
 		d.Put(k, v)
@@ -275,7 +277,7 @@ func testDictString(a *assert.Assertion, constructor dictTestConstructor) {
 	}
 }
 
-func testDictValues(a *assert.Assertion, constructor dictTestConstructor) {
+func testDictValues(a *assert.Assertion, constructor dictConstructor) {
 	d := constructor()
 	expectedValues := make([]string, 0, len(testDataEn))
 	for k, v := range testDataEn {
@@ -290,4 +292,27 @@ func testDictValues(a *assert.Assertion, constructor dictTestConstructor) {
 	sort.Strings(values)
 
 	a.EqualNow(expectedValues, values)
+}
+
+func testDictJSON(a *assert.Assertion, constructor dictConstructor) {
+	d1 := constructor()
+	for k, v := range testDataEn {
+		d1.Put(k, v)
+	}
+
+	b, err := d1.MarshalJSON()
+	a.NilNow(err)
+
+	d2 := constructor()
+	err = d2.UnmarshalJSON(b)
+	a.NilNow(err)
+	a.TrueNow(d1.Equals(d2))
+
+	d2.Clear()
+	b, err = json.Marshal(d1)
+	a.NilNow(err)
+
+	err = json.Unmarshal(b, d2)
+	a.NilNow(err)
+	a.TrueNow(d1.Equals(d2))
 }

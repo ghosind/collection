@@ -4,6 +4,8 @@ package collection
 type Collection[T any] interface {
 	Iterable[T]
 	Stringer
+	JSONMarshaler
+	JSONUnmarshaler
 
 	// Add adds the specified element to this collection.
 	Add(e T) bool

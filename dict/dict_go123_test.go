@@ -6,7 +6,7 @@ import (
 	"github.com/ghosind/go-assert"
 )
 
-func testDictIter(a *assert.Assertion, constructor dictTestConstructor) {
+func testDictIter(a *assert.Assertion, constructor dictConstructor) {
 	d := constructor()
 	for k, v := range testDataEn {
 		d.Put(k, v)
@@ -23,7 +23,7 @@ func testDictIter(a *assert.Assertion, constructor dictTestConstructor) {
 	}
 }
 
-func testDictKeysIter(a *assert.Assertion, constructor dictTestConstructor) {
+func testDictKeysIter(a *assert.Assertion, constructor dictConstructor) {
 	d := constructor()
 	for k, v := range testDataEn {
 		d.Put(k, v)
@@ -41,7 +41,7 @@ func testDictKeysIter(a *assert.Assertion, constructor dictTestConstructor) {
 	}
 }
 
-func testDictValuesIter(a *assert.Assertion, constructor dictTestConstructor) {
+func testDictValuesIter(a *assert.Assertion, constructor dictConstructor) {
 	d := constructor()
 	for k, v := range testDataEn {
 		d.Put(k, v)
