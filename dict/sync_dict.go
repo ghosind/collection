@@ -2,6 +2,7 @@ package dict
 
 import (
 	"bytes"
+	"encoding/json"
 	"sync"
 	"sync/atomic"
 
@@ -377,4 +378,46 @@ func (d *SyncDict[K, V]) Values() []V {
 	}
 
 	return keys
+}
+
+// MarshalJSON marshals the SyncDict as a JSON object (map).
+func (d *SyncDict[K, V]) MarshalJSON() ([]byte, error) {
+	read := d.loadPresentReadOnly()
+	m := make(map[K]V)
+
+	for k, e := range read.M {
+		v, ok := e.Load(d.zero)
+		if !ok {
+			continue
+		}
+		m[k] = v
+	}
+
+	return json.Marshal(m)
+}
+
+// UnmarshalJSON unmarshals a JSON object into the SyncDict.
+func (d *SyncDict[K, V]) UnmarshalJSON(b []byte) error {
+	var tmp map[K]V
+	if err := json.Unmarshal(b, &tmp); err != nil {
+		return err
+	}
+
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.expunged == nil {
+		// ensure expunged marker is initialized
+		d.expunged = new(V)
+	}
+
+	m := make(map[K]*internal.SyncEntry[V])
+	for k, v := range tmp {
+		m[k] = internal.NewSyncEntry(v, d.expunged)
+	}
+	d.read.Store(&internal.SyncReadOnly[K, V]{M: m})
+	d.dirty = nil
+	d.misses = 0
+
+	return nil
 }

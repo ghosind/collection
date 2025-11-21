@@ -1,6 +1,7 @@
 package list
 
 import (
+	"encoding/json"
 	"errors"
 
 	"github.com/ghosind/collection"
@@ -35,6 +36,7 @@ func testList(a *assert.Assertion, constructor listConstructor) {
 	testListSize(a, constructor)
 	testListString(a, constructor)
 	testListToSlice(a, constructor)
+	testListJSON(a, constructor)
 }
 
 func testListAdd(a *assert.Assertion, constructor listConstructor) {
@@ -346,4 +348,25 @@ func testListToSlice(a *assert.Assertion, constructor listConstructor) {
 	a.EqualNow([]int{}, l.ToSlice())
 	l.AddAll(testData...)
 	a.EqualNow(testData, l.ToSlice())
+}
+
+func testListJSON(a *assert.Assertion, constructor listConstructor) {
+	l1 := constructor()
+	l1.AddAll(testData...)
+
+	b, err := l1.MarshalJSON()
+	a.NilNow(err)
+
+	l2 := constructor()
+	err = l2.UnmarshalJSON(b)
+	a.NilNow(err)
+	a.TrueNow(l1.Equals(l2))
+
+	l2.Clear()
+	b, err = json.Marshal(l1)
+	a.NilNow(err)
+
+	err = json.Unmarshal(b, l2)
+	a.NilNow(err)
+	a.TrueNow(l1.Equals(l2))
 }

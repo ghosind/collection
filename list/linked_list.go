@@ -2,6 +2,7 @@ package list
 
 import (
 	"bytes"
+	"encoding/json"
 	"sync"
 
 	"github.com/ghosind/collection"
@@ -354,6 +355,30 @@ func (l *LinkedList[T]) ToSlice() []T {
 		slice = append(slice, node.Value)
 	}
 	return slice
+}
+
+// MarshalJSON marshals the linked list as a JSON array.
+func (l *LinkedList[T]) MarshalJSON() ([]byte, error) {
+	return json.Marshal(l.ToSlice())
+}
+
+// UnmarshalJSON unmarshals a JSON array into the linked list.
+func (l *LinkedList[T]) UnmarshalJSON(b []byte) error {
+	var items []T
+	if err := json.Unmarshal(b, &items); err != nil {
+		return err
+	}
+	// Ensure pool is initialized for zero-value LinkedList
+	if l.pool.New == nil {
+		l.pool = sync.Pool{New: func() any {
+			return &LinkedListNode[T]{}
+		}}
+	}
+	l.Clear()
+	if len(items) > 0 {
+		l.AddAll(items...)
+	}
+	return nil
 }
 
 func (l *LinkedList[T]) removeNode(node *LinkedListNode[T]) {

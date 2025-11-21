@@ -2,6 +2,7 @@ package set
 
 import (
 	"bytes"
+	"encoding/json"
 
 	"github.com/ghosind/collection"
 	"github.com/ghosind/collection/internal"
@@ -197,4 +198,22 @@ func (set *HashSet[T]) ToSlice() []T {
 	}
 
 	return slice
+}
+
+// MarshalJSON marshals the set as a JSON array.
+func (set *HashSet[T]) MarshalJSON() ([]byte, error) {
+	return json.Marshal(set.ToSlice())
+}
+
+// UnmarshalJSON unmarshals a JSON array into the set.
+func (set *HashSet[T]) UnmarshalJSON(b []byte) error {
+	var items []T
+	if err := json.Unmarshal(b, &items); err != nil {
+		return err
+	}
+	*set = make(HashSet[T], len(items))
+	for _, v := range items {
+		(*set)[v] = empty{}
+	}
+	return nil
 }

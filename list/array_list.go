@@ -2,6 +2,7 @@ package list
 
 import (
 	"bytes"
+	"encoding/json"
 
 	"github.com/ghosind/collection"
 	"github.com/ghosind/collection/internal"
@@ -302,4 +303,19 @@ func (l *ArrayList[T]) ToSlice() []T {
 	copy(arr, *l)
 
 	return arr
+}
+
+// MarshalJSON marshals the list as a JSON array.
+func (l *ArrayList[T]) MarshalJSON() ([]byte, error) {
+	return json.Marshal(*l)
+}
+
+// UnmarshalJSON unmarshals a JSON array into the list.
+func (l *ArrayList[T]) UnmarshalJSON(b []byte) error {
+	var items []T
+	if err := json.Unmarshal(b, &items); err != nil {
+		return err
+	}
+	*l = ArrayList[T](items)
+	return nil
 }

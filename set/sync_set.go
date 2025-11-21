@@ -2,6 +2,7 @@ package set
 
 import (
 	"bytes"
+	"encoding/json"
 	"sync"
 	"sync/atomic"
 
@@ -362,6 +363,32 @@ func (s *SyncSet[T]) ToSlice() []T {
 	}
 
 	return slice
+}
+
+// MarshalJSON marshals the SyncSet as a JSON array.
+func (s *SyncSet[T]) MarshalJSON() ([]byte, error) {
+	return json.Marshal(s.ToSlice())
+}
+
+// UnmarshalJSON unmarshals a JSON array into the SyncSet.
+func (s *SyncSet[T]) UnmarshalJSON(b []byte) error {
+	var items []T
+	if err := json.Unmarshal(b, &items); err != nil {
+		return err
+	}
+
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	m := make(map[T]*internal.SyncEntry[empty])
+	for _, item := range items {
+		m[item] = internal.NewSyncEntry(emptyZero, nilEmpty)
+	}
+	s.read.Store(&internal.SyncReadOnly[T, empty]{M: m})
+	s.dirty = nil
+	s.misses = 0
+
+	return nil
 }
 
 // Clone returns a copy of this set.
