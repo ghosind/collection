@@ -369,4 +369,13 @@ func testListJSON(a *assert.Assertion, constructor listConstructor) {
 	err = json.Unmarshal(b, l2)
 	a.NilNow(err)
 	a.TrueNow(l1.Equals(l2))
+
+	var customData = []byte(`[5,4,3,2,1]`)
+	err = l2.UnmarshalJSON(customData)
+	a.NilNow(err)
+	a.EqualNow([]int{5, 4, 3, 2, 1}, l2.ToSlice())
+
+	var invalidData = []byte(`{"key":"value"}`)
+	err = l2.UnmarshalJSON(invalidData)
+	a.NotNilNow(err)
 }

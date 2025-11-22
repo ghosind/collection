@@ -315,4 +315,16 @@ func testDictJSON(a *assert.Assertion, constructor dictConstructor) {
 	err = json.Unmarshal(b, d2)
 	a.NilNow(err)
 	a.TrueNow(d1.Equals(d2))
+
+	var customData = []byte(`{"un":"1","deux":"2","trois":"3"}`)
+	err = d2.UnmarshalJSON(customData)
+	a.NilNow(err)
+	a.EqualNow(3, d2.Size())
+	a.EqualNow("1", d2.GetDefault("un", ""))
+	a.EqualNow("2", d2.GetDefault("deux", ""))
+	a.EqualNow("3", d2.GetDefault("trois", ""))
+
+	var invalidData = []byte(`["key1","value1"]`)
+	err = d2.UnmarshalJSON(invalidData)
+	a.NotNilNow(err)
 }

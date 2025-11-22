@@ -290,4 +290,16 @@ func testSetJSON(a *assert.Assertion, constructor setConstructor) {
 	err = json.Unmarshal(b, s2)
 	a.NilNow(err)
 	a.TrueNow(s1.Equals(s2))
+
+	var customData = []byte(`[1,2,3,4,5]`)
+	err = s2.UnmarshalJSON(customData)
+	a.NilNow(err)
+	for i := 1; i <= 5; i++ {
+		a.TrueNow(s2.Contains(i))
+	}
+	a.EqualNow(s2.Size(), 5)
+
+	var invalidData = []byte(`{"key":"value"}`)
+	err = s2.UnmarshalJSON(invalidData)
+	a.NotNilNow(err)
 }
