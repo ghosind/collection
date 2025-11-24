@@ -7,11 +7,16 @@ import (
 	"github.com/ghosind/go-assert"
 )
 
+var hashSetConstructor = func() collection.Set[int] {
+	return NewHashSet[int]()
+}
+
 func TestHashSet(t *testing.T) {
 	a := assert.New(t)
-	constructor := func() collection.Set[int] {
-		return NewHashSet[int]()
-	}
 
-	testSet(a, constructor)
+	testSet(a, hashSetConstructor)
+}
+
+func BenchmarkHashSet(b *testing.B) {
+	benchmarkSet(b, hashSetConstructor, false)
 }

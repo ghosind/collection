@@ -3,7 +3,9 @@ package set
 import (
 	"encoding/json"
 	"errors"
+	"math/rand"
 	"strconv"
+	"testing"
 
 	"github.com/ghosind/collection"
 	"github.com/ghosind/go-assert"
@@ -302,4 +304,26 @@ func testSetJSON(a *assert.Assertion, constructor setConstructor) {
 	var invalidData = []byte(`{"key":"value"}`)
 	err = s2.UnmarshalJSON(invalidData)
 	a.NotNilNow(err)
+}
+
+func benchmarkSet(b *testing.B, constructor setConstructor, isParallel bool) {
+	s := constructor()
+
+	rand.NewSource(42)
+
+	if isParallel {
+		b.RunParallel(func(pb *testing.PB) {
+			for pb.Next() {
+				n := rand.Intn(100)
+				s.Contains(n)
+				s.Add(n)
+			}
+		})
+	} else {
+		for i := 0; i < b.N; i++ {
+			n := rand.Intn(100)
+			s.Contains(n)
+			s.Add(n)
+		}
+	}
 }

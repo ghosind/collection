@@ -7,11 +7,16 @@ import (
 	"github.com/ghosind/go-assert"
 )
 
+var syncSetConstructor = func() collection.Set[int] {
+	return NewSyncSet[int]()
+}
+
 func TestSyncSet(t *testing.T) {
 	a := assert.New(t)
-	constructor := func() collection.Set[int] {
-		return NewSyncSet[int]()
-	}
 
-	testSet(a, constructor)
+	testSet(a, syncSetConstructor)
+}
+
+func BenchmarkSyncSet(b *testing.B) {
+	benchmarkSet(b, syncSetConstructor, true)
 }
