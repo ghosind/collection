@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math/rand"
 	"sort"
 	"strings"
+	"testing"
 
 	"github.com/ghosind/collection"
 	"github.com/ghosind/go-assert"
@@ -38,6 +40,11 @@ var testDataZh = map[string]string{
 	"八": "8",
 	"九": "9",
 }
+
+var (
+	benchmarkKeys   = []string{"key1", "key2", "key3", "key4", "key5", "key6", "key7", "key8", "key9", "key10"}
+	benchmarkValues = []string{"value1", "value2", "value3", "value4", "value5", "value6", "value7", "value8", "value9", "value10"}
+)
 
 func testDict(a *assert.Assertion, constructor dictConstructor) {
 	testDictClear(a, constructor)
@@ -327,4 +334,46 @@ func testDictJSON(a *assert.Assertion, constructor dictConstructor) {
 	var invalidData = []byte(`["key1","value1"]`)
 	err = d2.UnmarshalJSON(invalidData)
 	a.NotNilNow(err)
+}
+
+func benchmarkDictGet(b *testing.B, constructor dictConstructor, isParallel bool) {
+	d := constructor()
+
+	for i := 0; i < len(benchmarkKeys); i++ {
+		d.Put(benchmarkKeys[i], benchmarkValues[i])
+	}
+
+	if isParallel {
+		b.RunParallel(func(pb *testing.PB) {
+			for pb.Next() {
+				keyN := rand.Intn(len(benchmarkKeys))
+				d.Get(benchmarkKeys[keyN])
+			}
+		})
+	} else {
+		for i := 0; i < b.N; i++ {
+			keyN := rand.Intn(len(benchmarkKeys))
+			d.Get(benchmarkKeys[keyN])
+		}
+	}
+}
+
+func benchmarkDictPut(b *testing.B, constructor dictConstructor, isParallel bool) {
+	dict := constructor()
+
+	if isParallel {
+		b.RunParallel(func(pb *testing.PB) {
+			for pb.Next() {
+				keyN := rand.Intn(len(benchmarkKeys))
+				valueN := rand.Intn(len(benchmarkValues))
+				dict.Put(benchmarkKeys[keyN], benchmarkValues[valueN])
+			}
+		})
+	} else {
+		for i := 0; i < b.N; i++ {
+			keyN := rand.Intn(len(benchmarkKeys))
+			valueN := rand.Intn(len(benchmarkValues))
+			dict.Put(benchmarkKeys[keyN], benchmarkValues[valueN])
+		}
+	}
 }

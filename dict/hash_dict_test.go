@@ -7,11 +7,20 @@ import (
 	"github.com/ghosind/go-assert"
 )
 
+func hashDictConstructor() collection.Dict[string, string] {
+	return NewHashDict[string, string]()
+}
+
 func TestHashDict(t *testing.T) {
 	a := assert.New(t)
-	constructor := func() collection.Dict[string, string] {
-		return NewHashDict[string, string]()
-	}
 
-	testDict(a, constructor)
+	testDict(a, hashDictConstructor)
+}
+
+func BenchmarkHashDictGet(b *testing.B) {
+	benchmarkDictGet(b, hashDictConstructor, false)
+}
+
+func BenchmarkHashDictPut(b *testing.B) {
+	benchmarkDictPut(b, hashDictConstructor, false)
 }
