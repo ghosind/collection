@@ -28,17 +28,23 @@ Golang泛型集合框架。
 
     - [`CopyOnWriteArrayList`](https://pkg.go.dev/github.com/ghosind/collection/list#CopyOnWriteArrayList)：基于写时复制策略的线程安全 List 实现。
 
+    - [`Stack`](https://pkg.go.dev/github.com/ghosind/collection/list#Stack)：基于 ArrayList 的栈实现。
+
 - `Set`：不包含重复元素的集合接口。
 
     - [`HashSet`](https://pkg.go.dev/github.com/ghosind/collection/set#HashSet)：基于 Go 内置 map 结构的 Set 实现。
 
     - [`SyncSet`](https://pkg.go.dev/github.com/ghosind/collection/set#SyncSet)：基于 `sync.Map` 的线程安全 Set 实现。
 
+    - [`DictSet`](https://pkg.go.dev/github.com/ghosind/collection/set#DictSet)：基于 RWMutex 的线程安全 Set 实现。
+
 - `Dict`：将键映射到值的对象，不能包含重复键。
 
     - [`HashDict`](https://pkg.go.dev/github.com/ghosind/collection/dict#HashDict)：基于 Go 内置 map 结构的字典实现。
 
     - [`SyncDict`](https://pkg.go.dev/github.com/ghosind/collection/dict#SyncDict)：基于 `sync.Map` 的线程安全字典实现。
+
+    - [`DictDict`](https://pkg.go.dev/github.com/ghosind/collection/dict#DictDict)：基于 RWMutex 的线程安全字典实现。
 
 ## 安装
 
@@ -97,6 +103,49 @@ languages.Put("C", 1972)
 languages.Put("Go", 2007)
 
 log.Print(languages.GetDefault("C", 0)) // 1972
+```
+
+## 测试
+
+运行整个仓库的单元测试：
+
+```sh
+go test ./...
+```
+
+运行基准测试（所有包）：
+
+```sh
+go test -bench=. -benchmem ./...
+```
+
+仅运行单个包的基准（例如：`dict`）：
+
+```sh
+go test ./dict -bench=. -run=^$ -benchmem
+```
+
+## 基准测试（Apple M2 示例结果）
+
+以下为在 Apple M2 机器上得到的示例基准结果，实际结果可能因 Go 版本和系统负载有所不同。
+
+Dict 分别执行`Get`/`Put`基准结果：
+
+```
+BenchmarkHashDictGet-8          75120351                16.42 ns/op            0 B/op          0 allocs/op
+BenchmarkHashDictPut-8          36379850                36.31 ns/op            0 B/op          0 allocs/op
+BenchmarkLockDictGet-8          14418043                82.43 ns/op            0 B/op          0 allocs/op
+BenchmarkLockDictPut-8           9442551               120.4 ns/op             0 B/op          0 allocs/op
+BenchmarkSyncDictGet-8          202543980                7.756 ns/op           0 B/op          0 allocs/op
+BenchmarkSyncDictPut-8           8971009               132.8 ns/op            16 B/op          1 allocs/op
+```
+
+Set 分别执行`Add`与`Contains`基准结果：
+
+```
+BenchmarkHashSet-8      60629182                22.92 ns/op            0 B/op          0 allocs/op
+BenchmarkLockSet-8       9375787               126.8 ns/op             0 B/op          0 allocs/op
+BenchmarkSyncSet-8      50990958                23.69 ns/op            0 B/op          0 allocs/op
 ```
 
 ## 许可证

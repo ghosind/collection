@@ -28,17 +28,23 @@ This package provides the following data structure interfaces and implementation
 
     - [`CopyOnWriteArrayList`](https://pkg.go.dev/github.com/ghosind/collection/list#CopyOnWriteArrayList): The thread safe implementation of List based on copy-on-write strategy.
 
+    - [`Stack`](https://pkg.go.dev/github.com/ghosind/collection/list#Stack): The stack implementation based on ArrayList.
+
 - `Set`: A collection interface that contains no duplicate elements.
 
     - [`HashSet`](https://pkg.go.dev/github.com/ghosind/collection/set#HashSet): The implementation of Set based on Go built-in map structure.
 
     - [`SyncSet`](https://pkg.go.dev/github.com/ghosind/collection/set#SyncSet): The thread safe implementation of Set based on `sync.Map`.
 
+    - [`DictSet`](https://pkg.go.dev/github.com/ghosind/collection/set#DictSet): The thread safe Set based on RWMutex.
+
 - `Dict`: A object that maps keys to values, and it cannot contain duplicate key.
 
     - [`HashDict`](https://pkg.go.dev/github.com/ghosind/collection/dict#HashDict): The implementation of Dictionary based on Go built-in map structure.
 
     - [`SyncDict`](https://pkg.go.dev/github.com/ghosind/collection/dict#SyncDict): The thread safe implementation of dictionary based on `sync.Map`.
+
+    - [`DictDict`](https://pkg.go.dev/github.com/ghosind/collection/dict#DictDict): The thread safe dictionary based on RWMutex.
 
 ## Installation
 
@@ -97,6 +103,49 @@ languages.Put("C", 1972)
 languages.Put("Go", 2007)
 
 log.Print(languages.GetDefault("C", 0)) // 1972
+```
+
+## Testing
+
+Run unit tests for the whole repository:
+
+```sh
+go test ./...
+```
+
+Run benchmarks (all packages):
+
+```sh
+go test -bench=. -benchmem ./...
+```
+
+Run benchmarks for a single package (example: `dict`):
+
+```sh
+go test ./dict -bench=. -run=^$ -benchmem
+```
+
+## Benchmarks (Apple M2 sample results)
+
+Below are sample benchmark results run on an Apple M2 machine. Your results may vary depending on Go version and system load.
+
+Dict benchmarks with `Get`/`Put`:
+
+```
+BenchmarkHashDictGet-8          74139873                15.95 ns/op
+BenchmarkHashDictPut-8          34336933                31.73 ns/op
+BenchmarkLockDictGet-8          14385025                84.57 ns/op
+BenchmarkLockDictPut-8          10031228               119.8 ns/op
+BenchmarkSyncDictGet-8          191864160                5.795 ns/op
+BenchmarkSyncDictPut-8           9078417               129.7 ns/op
+```
+
+Set benchmarks with `Add` and `Contains`:
+
+```
+BenchmarkHashSet-8      65497208                20.00 ns/op
+BenchmarkLockSet-8       9549130               127.4 ns/op
+BenchmarkSyncSet-8      61220974                20.90 ns/op
 ```
 
 ## License
