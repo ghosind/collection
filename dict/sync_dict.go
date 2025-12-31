@@ -29,6 +29,20 @@ func NewSyncDict[K comparable, V any]() *SyncDict[K, V] {
 	return d
 }
 
+// NewSyncDictFrom creates a new SyncDict from the given map.
+func NewSyncDictFrom[K comparable, V any](m map[K]V) *SyncDict[K, V] {
+	d := new(SyncDict[K, V])
+	d.expunged = new(V)
+
+	entries := make(map[K]*internal.SyncEntry[V], len(m))
+	for k, v := range m {
+		entries[k] = internal.NewSyncEntry(v, d.expunged)
+	}
+	d.read.Store(&internal.SyncReadOnly[K, V]{M: entries})
+
+	return d
+}
+
 func (d *SyncDict[K, V]) loadReadOnly() internal.SyncReadOnly[K, V] {
 	if p := d.read.Load(); p != nil {
 		return *p

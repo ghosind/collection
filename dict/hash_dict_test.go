@@ -7,8 +7,11 @@ import (
 	"github.com/ghosind/go-assert"
 )
 
-func hashDictConstructor() collection.Dict[string, string] {
-	return NewHashDict[string, string]()
+func hashDictConstructor(initData ...map[string]string) collection.Dict[string, string] {
+	if len(initData) == 0 || len(initData[0]) == 0 {
+		return NewHashDict[string, string]()
+	}
+	return NewHashDictFrom[string, string](initData[0])
 }
 
 func TestHashDict(t *testing.T) {

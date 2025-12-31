@@ -18,6 +18,17 @@ func NewHashDict[K comparable, V any]() *HashDict[K, V] {
 	return (&d)
 }
 
+// NewHashDictFrom creates a new HashDict from the given map.
+func NewHashDictFrom[K comparable, V any](m map[K]V) *HashDict[K, V] {
+	d := make(HashDict[K, V], len(m))
+
+	for k, v := range m {
+		d[k] = v
+	}
+
+	return (&d)
+}
+
 // Clone returns a copy of this dictionary.
 func (m *HashDict[K, V]) Clone() collection.Dict[K, V] {
 	newDict := make(HashDict[K, V], len(*m))

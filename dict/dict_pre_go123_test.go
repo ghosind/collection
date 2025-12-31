@@ -17,10 +17,7 @@ func testDictIter(a *assert.Assertion, constructor dictTestConstructor) {
 }
 
 func testDictKeysIter(a *assert.Assertion, constructor dictTestConstructor) {
-	d := constructor()
-	for k, v := range testDataEn {
-		d.Put(k, v)
-	}
+	d := constructor(testDataEn)
 	a.EqualNow(d.Size(), len(testDataEn))
 
 	for k := range d.KeysIter() {
@@ -30,10 +27,7 @@ func testDictKeysIter(a *assert.Assertion, constructor dictTestConstructor) {
 }
 
 func testDictValuesIter(a *assert.Assertion, constructor dictTestConstructor) {
-	d := constructor()
-	for k, v := range testDataEn {
-		d.Put(k, v)
-	}
+	d := constructor(testDataEn)
 	a.EqualNow(d.Size(), len(testDataEn))
 
 	valueSet := make(map[string]struct{})

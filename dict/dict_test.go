@@ -13,7 +13,7 @@ import (
 	"github.com/ghosind/go-assert"
 )
 
-type dictConstructor func() collection.Dict[string, string]
+type dictConstructor func(...map[string]string) collection.Dict[string, string]
 
 var testDataEn = map[string]string{
 	"zero":  "0",
@@ -69,10 +69,7 @@ func testDict(a *assert.Assertion, constructor dictConstructor) {
 }
 
 func testDictClear(a *assert.Assertion, constructor dictConstructor) {
-	d := constructor()
-	for k, v := range testDataEn {
-		d.Put(k, v)
-	}
+	d := constructor(testDataEn)
 	a.EqualNow(d.Size(), len(testDataEn))
 	d.Clear()
 	a.EqualNow(d.Size(), 0)
@@ -82,19 +79,13 @@ func testDictClear(a *assert.Assertion, constructor dictConstructor) {
 }
 
 func testDictClone(a *assert.Assertion, constructor dictConstructor) {
-	d1 := constructor()
-	for k, v := range testDataEn {
-		d1.Put(k, v)
-	}
+	d1 := constructor(testDataEn)
 	d2 := d1.Clone()
 	a.TrueNow(d1.Equals(d2))
 }
 
 func testDictContainsKey(a *assert.Assertion, constructor dictConstructor) {
-	d := constructor()
-	for k, v := range testDataEn {
-		d.Put(k, v)
-	}
+	d := constructor(testDataEn)
 	for k := range testDataEn {
 		a.TrueNow(d.ContainsKey(k))
 	}
@@ -111,11 +102,7 @@ func testDictEquals(a *assert.Assertion, constructor dictConstructor) {
 		d1.Put(k, v)
 	}
 
-	d2 := constructor()
-
-	for k, v := range testDataEn {
-		d2.Put(k, v)
-	}
+	d2 := constructor(testDataEn)
 	a.TrueNow(d1.Equals(d2))
 
 	for k, v := range testDataEn {
@@ -128,18 +115,12 @@ func testDictEquals(a *assert.Assertion, constructor dictConstructor) {
 	}
 	a.NotTrueNow(d1.Equals(d2))
 
-	d3 := constructor()
-	for k, v := range testDataZh {
-		d3.Put(k, v)
-	}
+	d3 := constructor(testDataZh)
 	a.NotTrueNow(d1.Equals(d3))
 }
 
 func testDictForEach(a *assert.Assertion, constructor dictConstructor) {
-	d := constructor()
-	for k, v := range testDataEn {
-		d.Put(k, v)
-	}
+	d := constructor(testDataEn)
 	count := 0
 	// ForEach should iterate over all elements
 	err := d.ForEach(func(k string, v string) error {
@@ -162,10 +143,7 @@ func testDictForEach(a *assert.Assertion, constructor dictConstructor) {
 }
 
 func testDictGet(a *assert.Assertion, constructor dictConstructor) {
-	d := constructor()
-	for k, v := range testDataEn {
-		d.Put(k, v)
-	}
+	d := constructor(testDataEn)
 	for k, v := range testDataEn {
 		vv, found := d.Get(k)
 		a.TrueNow(found)
@@ -180,10 +158,7 @@ func testDictGet(a *assert.Assertion, constructor dictConstructor) {
 }
 
 func testDictGetDefault(a *assert.Assertion, constructor dictConstructor) {
-	d := constructor()
-	for k, v := range testDataEn {
-		d.Put(k, v)
-	}
+	d := constructor(testDataEn)
 	for k, v := range testDataEn {
 		vv := d.GetDefault(k, "default")
 		a.EqualNow(v, vv)
@@ -207,10 +182,7 @@ func testDictIsEmpty(a *assert.Assertion, constructor dictConstructor) {
 }
 
 func testDictKeys(a *assert.Assertion, constructor dictConstructor) {
-	d := constructor()
-	for k, v := range testDataEn {
-		d.Put(k, v)
-	}
+	d := constructor(testDataEn)
 	keys := d.Keys()
 	a.EqualNow(len(keys), len(testDataEn))
 	for _, k := range keys {
@@ -228,10 +200,8 @@ func testDictPut(a *assert.Assertion, constructor dictConstructor) {
 }
 
 func testDictRemove(a *assert.Assertion, constructor dictConstructor) {
-	d := constructor()
-	for k, v := range testDataEn {
-		d.Put(k, v)
-	}
+	d := constructor(testDataEn)
+	a.EqualNow(d.Size(), len(testDataEn))
 	for k := range testDataEn {
 		d.Remove(k)
 		a.NotTrueNow(d.ContainsKey(k))
@@ -240,10 +210,7 @@ func testDictRemove(a *assert.Assertion, constructor dictConstructor) {
 }
 
 func testDictReplace(a *assert.Assertion, constructor dictConstructor) {
-	d := constructor()
-	for k, v := range testDataEn {
-		d.Put(k, v)
-	}
+	d := constructor(testDataEn)
 	for k, v := range testDataEn {
 		old, found := d.Replace(k, v+"-new")
 		a.TrueNow(found)
@@ -270,10 +237,7 @@ func testDictSize(a *assert.Assertion, constructor dictConstructor) {
 }
 
 func testDictString(a *assert.Assertion, constructor dictConstructor) {
-	d := constructor()
-	for k, v := range testDataEn {
-		d.Put(k, v)
-	}
+	d := constructor(testDataEn)
 
 	str := d.String()
 	a.TrueNow(strings.HasPrefix(str, "dict["))
@@ -302,10 +266,7 @@ func testDictValues(a *assert.Assertion, constructor dictConstructor) {
 }
 
 func testDictJSON(a *assert.Assertion, constructor dictConstructor) {
-	d1 := constructor()
-	for k, v := range testDataEn {
-		d1.Put(k, v)
-	}
+	d1 := constructor(testDataEn)
 
 	b, err := d1.MarshalJSON()
 	a.NilNow(err)

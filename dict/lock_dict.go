@@ -23,6 +23,18 @@ func NewLockDict[K comparable, V any]() *LockDict[K, V] {
 	return d
 }
 
+// NewLockDictFrom creates a new LockDict from the given map.
+func NewLockDictFrom[K comparable, V any](m map[K]V) *LockDict[K, V] {
+	d := new(LockDict[K, V])
+	d.data = make(map[K]V, len(m))
+
+	for k, v := range m {
+		d.data[k] = v
+	}
+
+	return d
+}
+
 // Clone returns a copy of this dictionary.
 func (m *LockDict[K, V]) Clone() collection.Dict[K, V] {
 	m.mu.RLock()
