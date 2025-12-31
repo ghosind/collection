@@ -9,7 +9,10 @@ import (
 
 func TestLinkedList(t *testing.T) {
 	a := assert.New(t)
-	constructor := func() collection.List[int] {
+	constructor := func(initData ...[]int) collection.List[int] {
+		if len(initData) > 0 && len(initData[0]) > 0 {
+			return NewLinkedListFrom(initData[0]...)
+		}
 		return NewLinkedList[int]()
 	}
 

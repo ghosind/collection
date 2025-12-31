@@ -11,7 +11,7 @@ func syncDictConstructor(initData ...map[string]string) collection.Dict[string, 
 	if len(initData) == 0 || len(initData[0]) == 0 {
 		return NewSyncDict[string, string]()
 	}
-	return NewSyncDictFrom[string, string](initData[0])
+	return NewSyncDictFrom(initData[0])
 }
 
 func TestSyncDict(t *testing.T) {

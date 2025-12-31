@@ -11,7 +11,7 @@ func hashDictConstructor(initData ...map[string]string) collection.Dict[string, 
 	if len(initData) == 0 || len(initData[0]) == 0 {
 		return NewHashDict[string, string]()
 	}
-	return NewHashDictFrom[string, string](initData[0])
+	return NewHashDictFrom(initData[0])
 }
 
 func TestHashDict(t *testing.T) {

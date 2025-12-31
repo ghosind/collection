@@ -8,7 +8,7 @@ import (
 	"github.com/ghosind/go-assert"
 )
 
-type listConstructor func() collection.List[int]
+type listConstructor func(...[]int) collection.List[int]
 
 var testData []int = []int{1, 2, 3, 4, 5}
 
@@ -60,9 +60,8 @@ func testListAddAll(a *assert.Assertion, constructor listConstructor) {
 }
 
 func testListAddAtIndex(a *assert.Assertion, constructor listConstructor) {
-	l := constructor()
+	l := constructor(testData)
 
-	l.AddAll(testData...)
 	a.EqualNow(len(testData), l.Size())
 	a.EqualNow(testData, l.ToSlice())
 	l.AddAtIndex(0, 0)
@@ -86,9 +85,8 @@ func testListAddAtIndex(a *assert.Assertion, constructor listConstructor) {
 }
 
 func testListClear(a *assert.Assertion, constructor listConstructor) {
-	l := constructor()
+	l := constructor(testData)
 
-	l.AddAll(testData...)
 	a.EqualNow(len(testData), l.Size())
 	l.Clear()
 	a.EqualNow(0, l.Size())
@@ -96,9 +94,8 @@ func testListClear(a *assert.Assertion, constructor listConstructor) {
 }
 
 func testListClone(a *assert.Assertion, constructor listConstructor) {
-	l := constructor()
+	l := constructor(testData)
 
-	l.AddAll(testData...)
 	clone := l.Clone()
 	a.EqualNow(l.Size(), clone.Size())
 	a.EqualNow(l.ToSlice(), clone.ToSlice())
@@ -109,9 +106,8 @@ func testListClone(a *assert.Assertion, constructor listConstructor) {
 }
 
 func testListContains(a *assert.Assertion, constructor listConstructor) {
-	l := constructor()
+	l := constructor(testData)
 
-	l.AddAll(testData...)
 	for _, v := range testData {
 		a.TrueNow(l.Contains(v))
 	}
@@ -119,9 +115,8 @@ func testListContains(a *assert.Assertion, constructor listConstructor) {
 }
 
 func testListContainsAll(a *assert.Assertion, constructor listConstructor) {
-	l := constructor()
+	l := constructor(testData)
 
-	l.AddAll(testData...)
 	a.TrueNow(l.ContainsAll(1, 2, 3))
 	a.NotTrueNow(l.ContainsAll(1, 2, 100))
 }
@@ -152,9 +147,8 @@ func testListEquals(a *assert.Assertion, constructor listConstructor) {
 }
 
 func testListForEach(a *assert.Assertion, constructor listConstructor) {
-	l := constructor()
+	l := constructor(testData)
 
-	l.AddAll(testData...)
 	count := 0
 	l.ForEach(func(e int) error {
 		count++
@@ -176,9 +170,8 @@ func testListForEach(a *assert.Assertion, constructor listConstructor) {
 }
 
 func testListGet(a *assert.Assertion, constructor listConstructor) {
-	l := constructor()
+	l := constructor(testData)
 
-	l.AddAll(testData...)
 	for i, v := range testData {
 		a.EqualNow(v, l.Get(i))
 	}
@@ -187,9 +180,8 @@ func testListGet(a *assert.Assertion, constructor listConstructor) {
 }
 
 func testListIndexOf(a *assert.Assertion, constructor listConstructor) {
-	l := constructor()
+	l := constructor([]int{1, 2, 3, 2, 1})
 
-	l.AddAll([]int{1, 2, 3, 2, 1}...)
 	a.EqualNow(0, l.IndexOf(1))
 	a.EqualNow(1, l.IndexOf(2))
 	a.EqualNow(2, l.IndexOf(3))
@@ -207,9 +199,8 @@ func testListIsEmpty(a *assert.Assertion, constructor listConstructor) {
 }
 
 func testListLastIndexOf(a *assert.Assertion, constructor listConstructor) {
-	l := constructor()
+	l := constructor([]int{1, 2, 3, 2, 1})
 
-	l.AddAll([]int{1, 2, 3, 2, 1}...)
 	a.EqualNow(4, l.LastIndexOf(1))
 	a.EqualNow(3, l.LastIndexOf(2))
 	a.EqualNow(2, l.LastIndexOf(3))
@@ -247,9 +238,8 @@ func testListRemoveAll(a *assert.Assertion, constructor listConstructor) {
 }
 
 func testListRemoveAtIndex(a *assert.Assertion, constructor listConstructor) {
-	l := constructor()
+	l := constructor(testData)
 
-	l.AddAll(testData...)
 	a.EqualNow(len(testData), l.Size())
 	v := l.RemoveAtIndex(0)
 	a.EqualNow(1, v)
@@ -285,9 +275,8 @@ func testListRemoveIf(a *assert.Assertion, constructor listConstructor) {
 }
 
 func testListRetainAll(a *assert.Assertion, constructor listConstructor) {
-	l := constructor()
+	l := constructor(testData)
 
-	l.AddAll(testData...)
 	a.TrueNow(l.RetainAll())
 	a.EqualNow(0, l.Size())
 	a.NotTrueNow(l.RetainAll())
@@ -303,9 +292,8 @@ func testListRetainAll(a *assert.Assertion, constructor listConstructor) {
 }
 
 func testListSet(a *assert.Assertion, constructor listConstructor) {
-	l := constructor()
+	l := constructor(testData)
 
-	l.AddAll(testData...)
 	a.EqualNow(len(testData), l.Size())
 	old := l.Set(0, 100)
 	a.EqualNow(1, old)
@@ -351,8 +339,7 @@ func testListToSlice(a *assert.Assertion, constructor listConstructor) {
 }
 
 func testListJSON(a *assert.Assertion, constructor listConstructor) {
-	l1 := constructor()
-	l1.AddAll(testData...)
+	l1 := constructor(testData)
 
 	b, err := l1.MarshalJSON()
 	a.NilNow(err)

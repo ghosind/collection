@@ -9,15 +9,29 @@ import (
 	"github.com/ghosind/collection/internal"
 )
 
+// CopyOnWriteArrayList is a thread-safe variant of ArrayList in which all mutative operations
+// (Add, Set, and so on) are implemented by making a fresh copy of the underlying array.
 type CopyOnWriteArrayList[T any] struct {
 	data []T
 	mu   sync.RWMutex
 }
 
+// NewCopyOnWriteArrayList creates and returns a new empty copy-on-write list.
 func NewCopyOnWriteArrayList[T any]() *CopyOnWriteArrayList[T] {
 	l := &CopyOnWriteArrayList[T]{
 		data: make([]T, 0),
 	}
+
+	return l
+}
+
+// NewCopyOnWriteArrayListFrom creates and returns a new copy-on-write list containing the
+// elements of the provided collection.
+func NewCopyOnWriteArrayListFrom[T any](c ...T) *CopyOnWriteArrayList[T] {
+	l := &CopyOnWriteArrayList[T]{
+		data: make([]T, len(c)),
+	}
+	copy(l.data, c)
 
 	return l
 }

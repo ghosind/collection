@@ -7,7 +7,10 @@ import (
 	"github.com/ghosind/go-assert"
 )
 
-var syncSetConstructor = func() collection.Set[int] {
+var syncSetConstructor = func(initData ...[]int) collection.Set[int] {
+	if len(initData) > 0 && len(initData[0]) > 0 {
+		return NewSyncSetFrom(initData[0]...)
+	}
 	return NewSyncSet[int]()
 }
 

@@ -5,9 +5,8 @@ package list
 import "github.com/ghosind/go-assert"
 
 func testListIter(a *assert.Assertion, constructor listConstructor) {
-	l := constructor()
+	l := constructor(testData)
 
-	l.AddAll(testData...)
 	a.EqualNow(len(testData), l.Size())
 	res := make([]int, 0, l.Size())
 

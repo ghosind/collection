@@ -25,6 +25,19 @@ func NewSyncSet[T comparable]() *SyncSet[T] {
 	return s
 }
 
+// NewSyncSetFrom creates and returns a new SyncSet containing the elements of the
+// provided collection.
+func NewSyncSetFrom[T comparable](c ...T) *SyncSet[T] {
+	s := new(SyncSet[T])
+	m := make(map[T]*internal.SyncEntry[empty], len(c))
+	for _, e := range c {
+		m[e] = internal.NewSyncEntry(emptyZero, nilEmpty)
+	}
+	s.read.Store(&internal.SyncReadOnly[T, empty]{M: m})
+
+	return s
+}
+
 // Add adds the specified element to this collection.
 func (s *SyncSet[T]) Add(val T) bool {
 	read := s.loadReadOnly()

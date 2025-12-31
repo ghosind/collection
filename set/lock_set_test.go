@@ -7,7 +7,10 @@ import (
 	"github.com/ghosind/go-assert"
 )
 
-var lockSetConstructor = func() collection.Set[int] {
+var lockSetConstructor = func(initData ...[]int) collection.Set[int] {
+	if len(initData) > 0 && len(initData[0]) > 0 {
+		return NewLockSetFrom(initData[0]...)
+	}
 	return NewLockSet[int]()
 }
 

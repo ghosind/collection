@@ -36,6 +36,16 @@ func NewLinkedList[T any]() *LinkedList[T] {
 	}
 }
 
+// NewLinkedListFrom creates and returns a new linked list containing the elements of the
+// provided collection.
+func NewLinkedListFrom[T any](c ...T) *LinkedList[T] {
+	l := NewLinkedList[T]()
+	for _, e := range c {
+		l.Add(e)
+	}
+	return l
+}
+
 // Add adds the specified element to this collection.
 func (l *LinkedList[T]) Add(e T) bool {
 	newNode := l.getNode(e)

@@ -11,7 +11,7 @@ func lockDictConstructor(initData ...map[string]string) collection.Dict[string, 
 	if len(initData) == 0 || len(initData[0]) == 0 {
 		return NewLockDict[string, string]()
 	}
-	return NewLockDictFrom[string, string](initData[0])
+	return NewLockDictFrom(initData[0])
 }
 
 func TestLockDict(t *testing.T) {

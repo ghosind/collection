@@ -8,11 +8,21 @@ import (
 	"github.com/ghosind/collection/internal"
 )
 
+// ArrayList is a resizable-array implementation of the List interface.
 type ArrayList[T any] []T
 
 // NewArrayList creates and returns a new empty list.
 func NewArrayList[T any]() *ArrayList[T] {
 	l := make(ArrayList[T], 0)
+
+	return &l
+}
+
+// NewArrayListFrom creates and returns a new list containing the elements of the
+// provided collection.
+func NewArrayListFrom[T any](c ...T) *ArrayList[T] {
+	l := make(ArrayList[T], len(c))
+	copy(l, c)
 
 	return &l
 }

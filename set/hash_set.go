@@ -18,6 +18,17 @@ func NewHashSet[T comparable]() *HashSet[T] {
 	return &set
 }
 
+// NewHashSetFrom creates and returns a new HashSet containing the elements of the
+// provided collection.
+func NewHashSetFrom[T comparable](c ...T) *HashSet[T] {
+	set := make(HashSet[T], len(c))
+	for _, e := range c {
+		set[e] = empty{}
+	}
+
+	return &set
+}
+
 // Add adds the specified element to this set.
 func (set *HashSet[T]) Add(e T) bool {
 	_, found := (*set)[e]

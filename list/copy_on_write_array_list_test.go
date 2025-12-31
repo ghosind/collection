@@ -9,7 +9,10 @@ import (
 
 func TestCopyOnWriteArrayList(t *testing.T) {
 	a := assert.New(t)
-	constructor := func() collection.List[int] {
+	constructor := func(initData ...[]int) collection.List[int] {
+		if len(initData) > 0 && len(initData[0]) > 0 {
+			return NewCopyOnWriteArrayListFrom(initData[0]...)
+		}
 		return NewCopyOnWriteArrayList[int]()
 	}
 

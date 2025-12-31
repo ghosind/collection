@@ -7,7 +7,10 @@ import (
 	"github.com/ghosind/go-assert"
 )
 
-var hashSetConstructor = func() collection.Set[int] {
+var hashSetConstructor = func(initData ...[]int) collection.Set[int] {
+	if len(initData) > 0 && len(initData[0]) > 0 {
+		return NewHashSetFrom(initData[0]...)
+	}
 	return NewHashSet[int]()
 }
 

@@ -7,9 +7,7 @@ import (
 )
 
 func testSetIter(a *assert.Assertion, constructor setConstructor) {
-	set1 := constructor()
-	set1.AddAll(testNums1...)
-
+	set1 := constructor(testNums1)
 	set2 := constructor()
 
 	for e := range set1.Iter() {

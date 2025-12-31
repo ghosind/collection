@@ -24,6 +24,18 @@ func NewLockSet[T comparable]() *LockSet[T] {
 	return s
 }
 
+// NewHashSetFrom creates and returns a new HashSet containing the elements of the
+// provided collection.
+func NewLockSetFrom[T comparable](c ...T) *LockSet[T] {
+	s := new(LockSet[T])
+	s.data = make(map[T]empty, len(c))
+	for _, e := range c {
+		s.data[e] = empty{}
+	}
+
+	return s
+}
+
 // Add adds the specified element to this set.
 func (s *LockSet[T]) Add(e T) bool {
 	s.mu.Lock()
