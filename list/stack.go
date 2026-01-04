@@ -3,6 +3,7 @@ package list
 import (
 	"bytes"
 
+	"github.com/ghosind/collection"
 	"github.com/ghosind/collection/internal"
 )
 
@@ -31,12 +32,14 @@ func (s *Stack[T]) topIndex() int {
 	return s.Size() - 1
 }
 
-func (s *Stack[T]) Clone() *Stack[T] {
+// Clone returns a shallow copy of this stack.
+func (s *Stack[T]) Clone() collection.Stack[T] {
 	clone := NewStack[T]()
 	clone.ArrayList = *(s.ArrayList.Clone().(*ArrayList[T]))
 	return clone
 }
 
+// Equals checks whether this stack is equal to another stack.
 func (s *Stack[T]) Equals(o any) bool {
 	other, ok := o.(*Stack[T])
 	if !ok {

@@ -1,14 +1,11 @@
 package collection
 
-// List is an ordered collection.
-type List[T any] interface {
+// SequencedCollection is a collection that maintains the order of elements.
+type SequencedCollection[T any] interface {
 	Collection[T]
 
 	// AddAtIndex inserts the specified element to the specified position in this list.
 	AddAtIndex(i int, e T)
-
-	// Clone returns a copy of this list.
-	Clone() List[T]
 
 	// Get returns the element at the specified position in this list.
 	Get(i int) T
@@ -26,4 +23,29 @@ type List[T any] interface {
 
 	// Set replaces the element at the specified position in this list with the specified element.
 	Set(i int, e T) T
+}
+
+// List is an ordered collection.
+type List[T any] interface {
+	SequencedCollection[T]
+
+	// Clone returns a copy of this list.
+	Clone() List[T]
+}
+
+// Stack is a collection that follows the LIFO (last-in, first-out) principle.
+type Stack[T any] interface {
+	SequencedCollection[T]
+
+	// Clone returns a shallow copy of this stack.
+	Clone() Stack[T]
+
+	// Peek returns the element at the top of this stack without removing it.
+	Peek() T
+
+	// Pop removes and returns the element at the top of this stack.
+	Pop() T
+
+	// Push adds the specified element to the top of this stack.
+	Push(e T)
 }
