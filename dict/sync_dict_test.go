@@ -20,10 +20,10 @@ func TestSyncDict(t *testing.T) {
 	testDict(a, syncDictConstructor)
 }
 
-func BenchmarkSyncDictGet(b *testing.B) {
-	benchmarkDictGet(b, syncDictConstructor, true)
+func BenchmarkSyncDict_Get(b *testing.B) {
+	benchmarkDict_Get(b, syncDictConstructor, true)
 }
 
-func BenchmarkSyncDictPut(b *testing.B) {
-	benchmarkDictPut(b, syncDictConstructor, true)
+func BenchmarkSyncDict_Put(b *testing.B) {
+	benchmarkDict_Put(b, syncDictConstructor, true)
 }

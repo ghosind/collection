@@ -20,6 +20,10 @@ func TestHashSet(t *testing.T) {
 	testSet(a, hashSetConstructor)
 }
 
-func BenchmarkHashSet(b *testing.B) {
-	benchmarkSet(b, hashSetConstructor, false)
+func BenchmarkHashSet_Add(b *testing.B) {
+	benchmarkSet_Add(b, hashSetConstructor, false)
+}
+
+func BenchmarkHashSet_Contains(b *testing.B) {
+	benchmarkSet_Contains(b, hashSetConstructor, false)
 }

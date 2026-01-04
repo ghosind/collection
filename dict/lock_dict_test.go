@@ -20,10 +20,10 @@ func TestLockDict(t *testing.T) {
 	testDict(a, lockDictConstructor)
 }
 
-func BenchmarkLockDictGet(b *testing.B) {
-	benchmarkDictGet(b, lockDictConstructor, true)
+func BenchmarkLockDict_Get(b *testing.B) {
+	benchmarkDict_Get(b, lockDictConstructor, true)
 }
 
-func BenchmarkLockDictPut(b *testing.B) {
-	benchmarkDictPut(b, lockDictConstructor, true)
+func BenchmarkLockDict_Put(b *testing.B) {
+	benchmarkDict_Put(b, lockDictConstructor, true)
 }

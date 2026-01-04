@@ -297,7 +297,7 @@ func testDictJSON(a *assert.Assertion, constructor dictConstructor) {
 	a.NotNilNow(err)
 }
 
-func benchmarkDictGet(b *testing.B, constructor dictConstructor, isParallel bool) {
+func benchmarkDict_Get(b *testing.B, constructor dictConstructor, isParallel bool) {
 	d := constructor()
 
 	for i := 0; i < len(benchmarkKeys); i++ {
@@ -319,7 +319,7 @@ func benchmarkDictGet(b *testing.B, constructor dictConstructor, isParallel bool
 	}
 }
 
-func benchmarkDictPut(b *testing.B, constructor dictConstructor, isParallel bool) {
+func benchmarkDict_Put(b *testing.B, constructor dictConstructor, isParallel bool) {
 	dict := constructor()
 
 	if isParallel {
@@ -336,5 +336,28 @@ func benchmarkDictPut(b *testing.B, constructor dictConstructor, isParallel bool
 			valueN := rand.Intn(len(benchmarkValues))
 			dict.Put(benchmarkKeys[keyN], benchmarkValues[valueN])
 		}
+	}
+}
+
+func BenchmarkBuiltinMap_Get(b *testing.B) {
+	d := make(map[string]string)
+
+	for i := 0; i < len(benchmarkKeys); i++ {
+		d[benchmarkKeys[i]] = benchmarkValues[i]
+	}
+
+	for i := 0; i < b.N; i++ {
+		keyN := rand.Intn(len(benchmarkKeys))
+		_ = d[benchmarkKeys[keyN]]
+	}
+}
+
+func BenchmarkBuiltinMap_Put(b *testing.B) {
+	d := make(map[string]string)
+
+	for i := 0; i < b.N; i++ {
+		keyN := rand.Intn(len(benchmarkKeys))
+		valueN := rand.Intn(len(benchmarkValues))
+		d[benchmarkKeys[keyN]] = benchmarkValues[valueN]
 	}
 }

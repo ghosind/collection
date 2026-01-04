@@ -134,20 +134,27 @@ Below are sample benchmark results run on an Apple M2 machine. Your results may 
 Dict benchmarks with `Get`/`Put`:
 
 ```
-BenchmarkHashDictGet-8          74139873                15.95 ns/op
-BenchmarkHashDictPut-8          34336933                31.73 ns/op
-BenchmarkLockDictGet-8          14385025                84.57 ns/op
-BenchmarkLockDictPut-8          10031228               119.8 ns/op
-BenchmarkSyncDictGet-8          191864160                5.795 ns/op
-BenchmarkSyncDictPut-8           9078417               129.7 ns/op
+BenchmarkBuiltinMap_Get-8       78598278                15.34 ns/op            0 B/op          0 allocs/op
+BenchmarkBuiltinMap_Put-8       48577176                26.72 ns/op            0 B/op          0 allocs/op
+BenchmarkHashDict_Get-8         72823633                16.32 ns/op            0 B/op          0 allocs/op
+BenchmarkHashDict_Put-8         32907440                34.03 ns/op            0 B/op          0 allocs/op
+BenchmarkLockDict_Get-8         14978312                82.18 ns/op            0 B/op          0 allocs/op
+BenchmarkLockDict_Put-8          9767184               123.2 ns/op             0 B/op          0 allocs/op
+BenchmarkSyncDict_Get-8         192600193                5.701 ns/op           0 B/op          0 allocs/op
+BenchmarkSyncDict_Put-8          9013268               129.3 ns/op            16 B/op          1 allocs/op
 ```
 
-Set benchmarks with `Add` and `Contains`:
+Set benchmarks with `Add`/`Contains`:
 
 ```
-BenchmarkHashSet-8      65497208                20.00 ns/op
-BenchmarkLockSet-8       9549130               127.4 ns/op
-BenchmarkSyncSet-8      61220974                20.90 ns/op
+BenchmarkHashSet_Add-8                  83323072                14.53 ns/op            0 B/op          0 allocs/op
+BenchmarkHashSet_Contains-8             90324601                14.28 ns/op            0 B/op          0 allocs/op
+BenchmarkLockSet_Add-8                  10818360               113.4 ns/op             0 B/op          0 allocs/op
+BenchmarkLockSet_Contains-8             14657197                82.17 ns/op            0 B/op          0 allocs/op
+BenchmarkBuiltinMapAsSet_Add-8          92263930                14.61 ns/op            0 B/op          0 allocs/op
+BenchmarkBuiltinMapAsSet_Contains-8     98068932                11.20 ns/op            0 B/op          0 allocs/op
+BenchmarkSyncSet_Add-8                  10983445               108.0 ns/op             0 B/op          0 allocs/op
+BenchmarkSyncSet_Contains-8             272523782                4.427 ns/op           0 B/op          0 allocs/op
 ```
 
 ## License

@@ -20,6 +20,10 @@ func TestSyncSet(t *testing.T) {
 	testSet(a, syncSetConstructor)
 }
 
-func BenchmarkSyncSet(b *testing.B) {
-	benchmarkSet(b, syncSetConstructor, true)
+func BenchmarkSyncSet_Add(b *testing.B) {
+	benchmarkSet_Add(b, syncSetConstructor, true)
+}
+
+func BenchmarkSyncSet_Contains(b *testing.B) {
+	benchmarkSet_Contains(b, syncSetConstructor, true)
 }

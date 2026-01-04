@@ -20,6 +20,10 @@ func TestLockSet(t *testing.T) {
 	testSet(a, lockSetConstructor)
 }
 
-func BenchmarkLockSet(b *testing.B) {
-	benchmarkSet(b, lockSetConstructor, true)
+func BenchmarkLockSet_Add(b *testing.B) {
+	benchmarkSet_Add(b, lockSetConstructor, true)
+}
+
+func BenchmarkLockSet_Contains(b *testing.B) {
+	benchmarkSet_Contains(b, lockSetConstructor, true)
 }

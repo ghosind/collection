@@ -20,10 +20,10 @@ func TestHashDict(t *testing.T) {
 	testDict(a, hashDictConstructor)
 }
 
-func BenchmarkHashDictGet(b *testing.B) {
-	benchmarkDictGet(b, hashDictConstructor, false)
+func BenchmarkHashDict_Get(b *testing.B) {
+	benchmarkDict_Get(b, hashDictConstructor, false)
 }
 
-func BenchmarkHashDictPut(b *testing.B) {
-	benchmarkDictPut(b, hashDictConstructor, false)
+func BenchmarkHashDict_Put(b *testing.B) {
+	benchmarkDict_Put(b, hashDictConstructor, false)
 }

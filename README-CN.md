@@ -134,20 +134,27 @@ go test ./dict -bench=. -run=^$ -benchmem
 Dict 分别执行`Get`/`Put`基准结果：
 
 ```
-BenchmarkHashDictGet-8          75120351                16.42 ns/op            0 B/op          0 allocs/op
-BenchmarkHashDictPut-8          36379850                36.31 ns/op            0 B/op          0 allocs/op
-BenchmarkLockDictGet-8          14418043                82.43 ns/op            0 B/op          0 allocs/op
-BenchmarkLockDictPut-8           9442551               120.4 ns/op             0 B/op          0 allocs/op
-BenchmarkSyncDictGet-8          202543980                7.756 ns/op           0 B/op          0 allocs/op
-BenchmarkSyncDictPut-8           8971009               132.8 ns/op            16 B/op          1 allocs/op
+BenchmarkBuiltinMap_Get-8       78598278                15.34 ns/op            0 B/op          0 allocs/op
+BenchmarkBuiltinMap_Put-8       48577176                26.72 ns/op            0 B/op          0 allocs/op
+BenchmarkHashDict_Get-8         72823633                16.32 ns/op            0 B/op          0 allocs/op
+BenchmarkHashDict_Put-8         32907440                34.03 ns/op            0 B/op          0 allocs/op
+BenchmarkLockDict_Get-8         14978312                82.18 ns/op            0 B/op          0 allocs/op
+BenchmarkLockDict_Put-8          9767184               123.2 ns/op             0 B/op          0 allocs/op
+BenchmarkSyncDict_Get-8         192600193                5.701 ns/op           0 B/op          0 allocs/op
+BenchmarkSyncDict_Put-8          9013268               129.3 ns/op            16 B/op          1 allocs/op
 ```
 
-Set 分别执行`Add`与`Contains`基准结果：
+Set 分别执行`Add`/`Contains`基准结果：
 
 ```
-BenchmarkHashSet-8      60629182                22.92 ns/op            0 B/op          0 allocs/op
-BenchmarkLockSet-8       9375787               126.8 ns/op             0 B/op          0 allocs/op
-BenchmarkSyncSet-8      50990958                23.69 ns/op            0 B/op          0 allocs/op
+BenchmarkHashSet_Add-8                  83323072                14.53 ns/op            0 B/op          0 allocs/op
+BenchmarkHashSet_Contains-8             90324601                14.28 ns/op            0 B/op          0 allocs/op
+BenchmarkLockSet_Add-8                  10818360               113.4 ns/op             0 B/op          0 allocs/op
+BenchmarkLockSet_Contains-8             14657197                82.17 ns/op            0 B/op          0 allocs/op
+BenchmarkBuiltinMapAsSet_Add-8          92263930                14.61 ns/op            0 B/op          0 allocs/op
+BenchmarkBuiltinMapAsSet_Contains-8     98068932                11.20 ns/op            0 B/op          0 allocs/op
+BenchmarkSyncSet_Add-8                  10983445               108.0 ns/op             0 B/op          0 allocs/op
+BenchmarkSyncSet_Contains-8             272523782                4.427 ns/op           0 B/op          0 allocs/op
 ```
 
 ## 许可证

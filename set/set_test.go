@@ -295,7 +295,7 @@ func testSetJSON(a *assert.Assertion, constructor setConstructor) {
 	a.NotNilNow(err)
 }
 
-func benchmarkSet(b *testing.B, constructor setConstructor, isParallel bool) {
+func benchmarkSet_Add(b *testing.B, constructor setConstructor, isParallel bool) {
 	s := constructor()
 
 	rand.NewSource(42)
@@ -304,15 +304,61 @@ func benchmarkSet(b *testing.B, constructor setConstructor, isParallel bool) {
 		b.RunParallel(func(pb *testing.PB) {
 			for pb.Next() {
 				n := rand.Intn(100)
-				s.Contains(n)
 				s.Add(n)
 			}
 		})
 	} else {
 		for i := 0; i < b.N; i++ {
 			n := rand.Intn(100)
-			s.Contains(n)
 			s.Add(n)
 		}
+	}
+}
+
+func benchmarkSet_Contains(b *testing.B, constructor setConstructor, isParallel bool) {
+	s := constructor()
+
+	rand.NewSource(42)
+	for i := 0; i < 100; i++ {
+		s.Add(i)
+	}
+
+	if isParallel {
+		b.RunParallel(func(pb *testing.PB) {
+			for pb.Next() {
+				n := rand.Intn(100)
+				s.Contains(n)
+			}
+		})
+	} else {
+		for i := 0; i < b.N; i++ {
+			n := rand.Intn(100)
+			s.Contains(n)
+		}
+	}
+}
+
+func BenchmarkBuiltinMapAsSet_Add(b *testing.B) {
+	s := make(map[int]struct{})
+
+	rand.NewSource(42)
+
+	for i := 0; i < b.N; i++ {
+		n := rand.Intn(100)
+		s[n] = struct{}{}
+	}
+}
+
+func BenchmarkBuiltinMapAsSet_Contains(b *testing.B) {
+	s := make(map[int]struct{})
+
+	rand.NewSource(42)
+	for i := 0; i < 100; i++ {
+		s[i] = struct{}{}
+	}
+
+	for i := 0; i < b.N; i++ {
+		n := rand.Intn(100)
+		_, _ = s[n]
 	}
 }
