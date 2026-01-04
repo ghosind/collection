@@ -22,29 +22,31 @@ Golang泛型集合框架。
 
 - `List`：有序集合（也称为序列）。
 
-    - [`ArrayList`](https://pkg.go.dev/github.com/ghosind/collection/list#ArrayList)：基于 Go 内置切片结构的 List 实现。
+    - [`list.ArrayList`](https://pkg.go.dev/github.com/ghosind/collection/list#ArrayList)：基于 Go 内置切片结构的 List 实现。
 
-    - [`LinkedList`](https://pkg.go.dev/github.com/ghosind/collection/list#LinkedList)：基于双向链表的 List 实现。
+    - [`list.LinkedList`](https://pkg.go.dev/github.com/ghosind/collection/list#LinkedList)：基于双向链表的 List 实现。
 
-    - [`CopyOnWriteArrayList`](https://pkg.go.dev/github.com/ghosind/collection/list#CopyOnWriteArrayList)：基于写时复制策略的线程安全 List 实现。
+    - [`list.CopyOnWriteArrayList`](https://pkg.go.dev/github.com/ghosind/collection/list#CopyOnWriteArrayList)：基于写时复制策略的线程安全 List 实现。
 
-    - [`Stack`](https://pkg.go.dev/github.com/ghosind/collection/list#Stack)：基于 ArrayList 的栈实现。
+- `Stack`：遵循后进先出（LIFO）原则的集合。
+
+    - [`list.Stack`](https://pkg.go.dev/github.com/ghosind/collection/list#Stack)：基于 ArrayList 的栈实现。
 
 - `Set`：不包含重复元素的集合接口。
 
-    - [`HashSet`](https://pkg.go.dev/github.com/ghosind/collection/set#HashSet)：基于 Go 内置 map 结构的 Set 实现。
+    - [`set.HashSet`](https://pkg.go.dev/github.com/ghosind/collection/set#HashSet)：基于 Go 内置 map 结构的 Set 实现。
 
-    - [`SyncSet`](https://pkg.go.dev/github.com/ghosind/collection/set#SyncSet)：基于 `sync.Map` 的线程安全 Set 实现。
+    - [`set.SyncSet`](https://pkg.go.dev/github.com/ghosind/collection/set#SyncSet)：基于 `sync.Map` 的线程安全 Set 实现。
 
-    - [`DictSet`](https://pkg.go.dev/github.com/ghosind/collection/set#DictSet)：基于 RWMutex 的线程安全 Set 实现。
+    - [`set.DictSet`](https://pkg.go.dev/github.com/ghosind/collection/set#DictSet)：基于 RWMutex 的线程安全 Set 实现。
 
 - `Dict`：将键映射到值的对象，不能包含重复键。
 
-    - [`HashDict`](https://pkg.go.dev/github.com/ghosind/collection/dict#HashDict)：基于 Go 内置 map 结构的字典实现。
+    - [`dict.HashDict`](https://pkg.go.dev/github.com/ghosind/collection/dict#HashDict)：基于 Go 内置 map 结构的字典实现。
 
-    - [`SyncDict`](https://pkg.go.dev/github.com/ghosind/collection/dict#SyncDict)：基于 `sync.Map` 的线程安全字典实现。
+    - [`dict.SyncDict`](https://pkg.go.dev/github.com/ghosind/collection/dict#SyncDict)：基于 `sync.Map` 的线程安全字典实现。
 
-    - [`DictDict`](https://pkg.go.dev/github.com/ghosind/collection/dict#DictDict)：基于 RWMutex 的线程安全字典实现。
+    - [`dict.LockDict`](https://pkg.go.dev/github.com/ghosind/collection/dict#LockDict)：基于 RWMutex 的线程安全字典实现。
 
 ## 安装
 

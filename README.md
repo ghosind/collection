@@ -22,29 +22,31 @@ This package provides the following data structure interfaces and implementation
 
 - `List`: An ordered collection (also known as a sequence).
 
-    - [`ArrayList`](https://pkg.go.dev/github.com/ghosind/collection/list#ArrayList): The implementation of List based on Go built-in slice structure.
+    - [`list.ArrayList`](https://pkg.go.dev/github.com/ghosind/collection/list#ArrayList): The implementation of List based on Go built-in slice structure.
 
-    - [`LinkedList`](https://pkg.go.dev/github.com/ghosind/collection/list#LinkedList): The implementation of List based on doubly linked list.
+    - [`list.LinkedList`](https://pkg.go.dev/github.com/ghosind/collection/list#LinkedList): The implementation of List based on doubly linked list.
 
-    - [`CopyOnWriteArrayList`](https://pkg.go.dev/github.com/ghosind/collection/list#CopyOnWriteArrayList): The thread safe implementation of List based on copy-on-write strategy.
+    - [`list.CopyOnWriteArrayList`](https://pkg.go.dev/github.com/ghosind/collection/list#CopyOnWriteArrayList): The thread safe implementation of List based on copy-on-write strategy.
 
-    - [`Stack`](https://pkg.go.dev/github.com/ghosind/collection/list#Stack): The stack implementation based on ArrayList.
+- `Stack`: A collection that follows the LIFO (last-in, first-out) principle.
+
+    - [`list.Stack`](https://pkg.go.dev/github.com/ghosind/collection/list#Stack): The stack implementation based on ArrayList.
 
 - `Set`: A collection interface that contains no duplicate elements.
 
-    - [`HashSet`](https://pkg.go.dev/github.com/ghosind/collection/set#HashSet): The implementation of Set based on Go built-in map structure.
+    - [`set.HashSet`](https://pkg.go.dev/github.com/ghosind/collection/set#HashSet): The implementation of Set based on Go built-in map structure.
 
-    - [`SyncSet`](https://pkg.go.dev/github.com/ghosind/collection/set#SyncSet): The thread safe implementation of Set based on `sync.Map`.
+    - [`set.SyncSet`](https://pkg.go.dev/github.com/ghosind/collection/set#SyncSet): The thread safe implementation of Set based on `sync.Map`.
 
-    - [`DictSet`](https://pkg.go.dev/github.com/ghosind/collection/set#DictSet): The thread safe Set based on RWMutex.
+    - [`set.DictSet`](https://pkg.go.dev/github.com/ghosind/collection/set#DictSet): The thread safe Set based on RWMutex.
 
 - `Dict`: A object that maps keys to values, and it cannot contain duplicate key.
 
-    - [`HashDict`](https://pkg.go.dev/github.com/ghosind/collection/dict#HashDict): The implementation of Dictionary based on Go built-in map structure.
+    - [`dict.HashDict`](https://pkg.go.dev/github.com/ghosind/collection/dict#HashDict): The implementation of Dictionary based on Go built-in map structure.
 
-    - [`SyncDict`](https://pkg.go.dev/github.com/ghosind/collection/dict#SyncDict): The thread safe implementation of dictionary based on `sync.Map`.
+    - [`dict.SyncDict`](https://pkg.go.dev/github.com/ghosind/collection/dict#SyncDict): The thread safe implementation of dictionary based on `sync.Map`.
 
-    - [`DictDict`](https://pkg.go.dev/github.com/ghosind/collection/dict#DictDict): The thread safe dictionary based on RWMutex.
+    - [`dict.LockDict`](https://pkg.go.dev/github.com/ghosind/collection/dict#LockDict): The thread safe dictionary based on RWMutex.
 
 ## Installation
 
