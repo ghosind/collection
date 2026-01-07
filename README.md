@@ -32,7 +32,7 @@ This package provides the following data structure interfaces and implementation
 
 - `Stack`: A collection that follows the LIFO (last-in, first-out) principle.
 
-    - [`list.Stack`](https://pkg.go.dev/github.com/ghosind/collection/list#Stack): The stack implementation based on ArrayList.
+    - [`stack.Stack`](https://pkg.go.dev/github.com/ghosind/collection/stack#Stack): The stack implementation based on ArrayList.
 
 - `Set`: A collection interface that contains no duplicate elements.
 

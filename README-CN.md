@@ -32,7 +32,7 @@ Golang泛型集合框架。
 
 - `Stack`：遵循后进先出（LIFO）原则的集合。
 
-    - [`list.Stack`](https://pkg.go.dev/github.com/ghosind/collection/list#Stack)：基于 ArrayList 的栈实现。
+    - [`stack.Stack`](https://pkg.go.dev/github.com/ghosind/collection/stack#Stack)：基于 ArrayList 的栈实现。
 
 - `Set`：不包含重复元素的集合接口。
 

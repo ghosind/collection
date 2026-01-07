@@ -1,15 +1,16 @@
-package list
+package stack
 
 import (
 	"bytes"
 
 	"github.com/ghosind/collection"
 	"github.com/ghosind/collection/internal"
+	"github.com/ghosind/collection/list"
 )
 
-// Stack represents a stack data structure based on ArrayList.
+// Stack represents a stack data structure based on list.ArrayList.
 type Stack[T any] struct {
-	ArrayList[T]
+	list.ArrayList[T]
 }
 
 // NewStack creates and returns a new Stack.
@@ -35,7 +36,7 @@ func (s *Stack[T]) topIndex() int {
 // Clone returns a shallow copy of this stack.
 func (s *Stack[T]) Clone() collection.Stack[T] {
 	clone := NewStack[T]()
-	clone.ArrayList = *(s.ArrayList.Clone().(*ArrayList[T]))
+	clone.ArrayList = *(s.ArrayList.Clone().(*list.ArrayList[T]))
 	return clone
 }
 
