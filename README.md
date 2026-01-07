@@ -111,6 +111,8 @@ log.Print(languages.GetDefault("C", 0)) // 1972
 
 ### Wrap existing collections with thread safe wrappers
 
+This example shows how to wrap an existing `ArrayList` with `LockList` to make it thread safe.
+
 ```go
 unsafeList := list.NewArrayList[int]()
 safeList := list.NewLockList[int](unsafeList)

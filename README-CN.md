@@ -22,11 +22,13 @@ Golang泛型集合框架。
 
 - `List`：有序集合（也称为序列）。
 
-    - [`list.ArrayList`](https://pkg.go.dev/github.com/ghosind/collection/list#ArrayList)：基于 Go 内置切片结构的 List 实现。
+    - [`list.ArrayList`](https://pkg.go.dev/github.com/ghosind/collection/list#ArrayList)：基于 Go 内置切片结构的列表实现。
 
-    - [`list.LinkedList`](https://pkg.go.dev/github.com/ghosind/collection/list#LinkedList)：基于双向链表的 List 实现。
+    - [`list.LinkedList`](https://pkg.go.dev/github.com/ghosind/collection/list#LinkedList)：基于双向链表的列表实现。
 
-    - [`list.CopyOnWriteArrayList`](https://pkg.go.dev/github.com/ghosind/collection/list#CopyOnWriteArrayList)：基于写时复制策略的线程安全 List 实现。
+    - [`list.CopyOnWriteArrayList`](https://pkg.go.dev/github.com/ghosind/collection/list#CopyOnWriteArrayList)：基于写时复制策略的线程安全列表实现。
+
+    - [`list.LockList`](https://pkg.go.dev/github.com/ghosind/collection/list#LockList)：基于 RWMutex 的线程安全列表包装器。
 
 - `Stack`：遵循后进先出（LIFO）原则的集合。
 
@@ -34,19 +36,18 @@ Golang泛型集合框架。
 
 - `Set`：不包含重复元素的集合接口。
 
-    - [`set.HashSet`](https://pkg.go.dev/github.com/ghosind/collection/set#HashSet)：基于 Go 内置 map 结构的 Set 实现。
+    - [`set.HashSet`](https://pkg.go.dev/github.com/ghosind/collection/set#HashSet)：基于 Go 内置 map 结构的集合实现。
 
-    - [`set.SyncSet`](https://pkg.go.dev/github.com/ghosind/collection/set#SyncSet)：基于 `sync.Map` 的线程安全 Set 实现。
+    - [`set.SyncSet`](https://pkg.go.dev/github.com/ghosind/collection/set#SyncSet)：基于 `sync.Map` 的线程安全集合实现。
 
-    - [`set.DictSet`](https://pkg.go.dev/github.com/ghosind/collection/set#DictSet)：基于 RWMutex 的线程安全 Set 实现。
-
+    - [`set.LockSet`](https://pkg.go.dev/github.com/ghosind/collection/set#LockSet)：基于 RWMutex 的线程安全集合包装器。
 - `Dict`：将键映射到值的对象，不能包含重复键。
 
     - [`dict.HashDict`](https://pkg.go.dev/github.com/ghosind/collection/dict#HashDict)：基于 Go 内置 map 结构的字典实现。
 
     - [`dict.SyncDict`](https://pkg.go.dev/github.com/ghosind/collection/dict#SyncDict)：基于 `sync.Map` 的线程安全字典实现。
 
-    - [`dict.LockDict`](https://pkg.go.dev/github.com/ghosind/collection/dict#LockDict)：基于 RWMutex 的线程安全字典实现。
+    - [`dict.LockDict`](https://pkg.go.dev/github.com/ghosind/collection/dict#LockDict)：基于 RWMutex 的线程安全字典包装器。
 
 ## 安装
 
@@ -107,6 +108,19 @@ languages.Put("Go", 2007)
 log.Print(languages.GetDefault("C", 0)) // 1972
 ```
 
+### 线程安全包装器
+
+这个示例展示了如何使用 `list.LockList` 来创建一个线程安全的列表：
+
+```go
+unsafeList := list.NewArrayList[int]()
+safeList := list.NewLockList[int](unsafeList)
+
+safeList.Add(10)
+
+log.Print(safeList.Get(0)) // 10
+```
+
 ## 测试
 
 运行整个仓库的单元测试：
@@ -134,27 +148,27 @@ go test ./dict -bench=. -run=^$ -benchmem
 Dict 分别执行`Get`/`Put`基准结果：
 
 ```
-BenchmarkBuiltinMap_Get-8       78598278                15.34 ns/op            0 B/op          0 allocs/op
-BenchmarkBuiltinMap_Put-8       48577176                26.72 ns/op            0 B/op          0 allocs/op
-BenchmarkHashDict_Get-8         72823633                16.32 ns/op            0 B/op          0 allocs/op
-BenchmarkHashDict_Put-8         32907440                34.03 ns/op            0 B/op          0 allocs/op
-BenchmarkLockDict_Get-8         14978312                82.18 ns/op            0 B/op          0 allocs/op
-BenchmarkLockDict_Put-8          9767184               123.2 ns/op             0 B/op          0 allocs/op
-BenchmarkSyncDict_Get-8         192600193                5.701 ns/op           0 B/op          0 allocs/op
-BenchmarkSyncDict_Put-8          9013268               129.3 ns/op            16 B/op          1 allocs/op
+BenchmarkBuiltinMap_Get-8               78146028                17.79 ns/op            0 B/op          0 allocs/op
+BenchmarkBuiltinMap_Put-8               43320583                25.11 ns/op            0 B/op          0 allocs/op
+BenchmarkHashDict_Get-8                 70750198                16.34 ns/op            0 B/op          0 allocs/op
+BenchmarkHashDict_Put-8                 34192296                31.89 ns/op            0 B/op          0 allocs/op
+BenchmarkLockedHashDict_Get-8           10532293               113.8 ns/op             0 B/op          0 allocs/op
+BenchmarkLockedHashDict_Put-8            9389860               129.7 ns/op             0 B/op          0 allocs/op
+BenchmarkSyncDict_Get-8                 202971288                6.154 ns/op           0 B/op          0 allocs/op
+BenchmarkSyncDict_Put-8                  9171009               130.0 ns/op            16 B/op          1 allocs/op
 ```
 
 Set 分别执行`Add`/`Contains`基准结果：
 
 ```
-BenchmarkHashSet_Add-8                  83323072                14.53 ns/op            0 B/op          0 allocs/op
-BenchmarkHashSet_Contains-8             90324601                14.28 ns/op            0 B/op          0 allocs/op
-BenchmarkLockSet_Add-8                  10818360               113.4 ns/op             0 B/op          0 allocs/op
-BenchmarkLockSet_Contains-8             14657197                82.17 ns/op            0 B/op          0 allocs/op
-BenchmarkBuiltinMapAsSet_Add-8          92263930                14.61 ns/op            0 B/op          0 allocs/op
-BenchmarkBuiltinMapAsSet_Contains-8     98068932                11.20 ns/op            0 B/op          0 allocs/op
-BenchmarkSyncSet_Add-8                  10983445               108.0 ns/op             0 B/op          0 allocs/op
-BenchmarkSyncSet_Contains-8             272523782                4.427 ns/op           0 B/op          0 allocs/op
+BenchmarkHashSet_Add-8                  87384132                13.21 ns/op            0 B/op          0 allocs/op
+BenchmarkHashSet_Contains-8             87521766                13.77 ns/op            0 B/op          0 allocs/op
+BenchmarkLockHashSet_Add-8              41700088                29.54 ns/op            0 B/op          0 allocs/op
+BenchmarkLockHashSet_Contains-8         60127644                19.93 ns/op            0 B/op          0 allocs/op
+BenchmarkBuiltinMapAsSet_Add-8          87572594                13.49 ns/op            0 B/op          0 allocs/op
+BenchmarkBuiltinMapAsSet_Contains-8     84940970                12.69 ns/op            0 B/op          0 allocs/op
+BenchmarkSyncSet_Add-8                  10465891               110.3 ns/op             0 B/op          0 allocs/op
+BenchmarkSyncSet_Contains-8             245409312                5.671 ns/op           0 B/op          0 allocs/op
 ```
 
 ## 许可证
