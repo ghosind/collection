@@ -27,3 +27,24 @@ func BenchmarkHashDict_Get(b *testing.B) {
 func BenchmarkHashDict_Put(b *testing.B) {
 	benchmarkDict_Put(b, hashDictConstructor, false)
 }
+
+func lockedHashDictConstructor(initData ...map[string]string) collection.Dict[string, string] {
+	if len(initData) == 0 || len(initData[0]) == 0 {
+		return NewLockDict[string, string](NewHashDict[string, string]())
+	}
+	return NewLockDict[string, string](NewHashDictFrom(initData[0]))
+}
+
+func TestLockedHashDict(t *testing.T) {
+	a := assert.New(t)
+
+	testDict(a, lockedHashDictConstructor)
+}
+
+func BenchmarkLockedHashDict_Get(b *testing.B) {
+	benchmarkDict_Get(b, lockedHashDictConstructor, true)
+}
+
+func BenchmarkLockedHashDict_Put(b *testing.B) {
+	benchmarkDict_Put(b, lockedHashDictConstructor, true)
+}

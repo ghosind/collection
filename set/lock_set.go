@@ -1,37 +1,21 @@
 package set
 
 import (
-	"bytes"
-	"encoding/json"
 	"sync"
 
 	"github.com/ghosind/collection"
-	"github.com/ghosind/collection/internal"
 )
 
-// LockSet is a thread-safe set implementation that uses a Golang builtin map to store its
-// elements.
+// LockSet is a thread-safe set that wraps another set with read-write locks.
 type LockSet[T comparable] struct {
-	data map[T]empty
+	data collection.Set[T]
 	mu   sync.RWMutex
 }
 
 // NewHashSet creates a new HashSet.
-func NewLockSet[T comparable]() *LockSet[T] {
+func NewLockSet[T comparable](data collection.Set[T]) *LockSet[T] {
 	s := new(LockSet[T])
-	s.data = make(map[T]empty)
-
-	return s
-}
-
-// NewHashSetFrom creates and returns a new HashSet containing the elements of the
-// provided collection.
-func NewLockSetFrom[T comparable](c ...T) *LockSet[T] {
-	s := new(LockSet[T])
-	s.data = make(map[T]empty, len(c))
-	for _, e := range c {
-		s.data[e] = empty{}
-	}
+	s.data = data
 
 	return s
 }
@@ -41,13 +25,7 @@ func (s *LockSet[T]) Add(e T) bool {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	_, found := s.data[e]
-	if found {
-		return false
-	}
-
-	s.data[e] = empty{}
-	return true
+	return s.data.Add(e)
 }
 
 // AddAll adds all of the specified elements to this set.
@@ -55,17 +33,15 @@ func (s *LockSet[T]) AddAll(c ...T) bool {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	isChanged := false
+	return s.data.AddAll(c...)
+}
 
-	for _, e := range c {
-		_, found := s.data[e]
-		if !found {
-			s.data[e] = empty{}
-			isChanged = true
-		}
-	}
+// Clear removes all of the elements from this set.
+func (s *LockSet[T]) Clear() {
+	s.mu.Lock()
+	defer s.mu.Unlock()
 
-	return isChanged
+	s.data.Clear()
 }
 
 // Clone returns a copy of this set.
@@ -73,14 +49,9 @@ func (s *LockSet[T]) Clone() collection.Set[T] {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
-	newSet := new(LockSet[T])
-	newSet.data = make(map[T]empty, s.Size())
+	cloned := s.data.Clone()
 
-	for e := range s.data {
-		newSet.data[e] = empty{}
-	}
-
-	return newSet
+	return NewLockSet[T](cloned)
 }
 
 // Contains returns true if this set contains the specified element.
@@ -88,9 +59,7 @@ func (s *LockSet[T]) Contains(e T) bool {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
-	_, found := s.data[e]
-
-	return found
+	return s.data.Contains(e)
 }
 
 // ContainsAll returns true if this set contains all of the specified elements.
@@ -98,14 +67,7 @@ func (s *LockSet[T]) ContainsAll(c ...T) bool {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
-	for _, e := range c {
-		_, found := s.data[e]
-		if !found {
-			return false
-		}
-	}
-
-	return true
+	return s.data.ContainsAll(c...)
 }
 
 // Equals compares set with the object pass from parameter.
@@ -120,18 +82,7 @@ func (s *LockSet[T]) Equals(o any) bool {
 	os.mu.RLock()
 	defer os.mu.RUnlock()
 
-	if s.Size() != os.Size() {
-		return false
-	}
-
-	for k := range s.data {
-		_, ok := os.data[k]
-		if !ok {
-			return false
-		}
-	}
-
-	return true
+	return s.data.Equals(os.data)
 }
 
 // ForEach performs the given handler for each elements in the set until all elements have been
@@ -140,13 +91,7 @@ func (s *LockSet[T]) ForEach(handler func(e T) error) error {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
-	for e := range s.data {
-		if err := handler(e); err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return s.data.ForEach(handler)
 }
 
 // IsEmpty returns true if this set contains no elements.
@@ -154,7 +99,7 @@ func (s *LockSet[T]) IsEmpty() bool {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
-	return len(s.data) == 0
+	return s.data.IsEmpty()
 }
 
 // Remove removes the specified element from this set.
@@ -162,13 +107,7 @@ func (s *LockSet[T]) Remove(e T) bool {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	_, found := s.data[e]
-	if !found {
-		return false
-	}
-
-	delete(s.data, e)
-	return true
+	return s.data.Remove(e)
 }
 
 // RemoveAll removes all of the specified elements from this set.
@@ -176,17 +115,7 @@ func (s *LockSet[T]) RemoveAll(c ...T) bool {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	isChanged := false
-
-	for _, e := range c {
-		_, found := s.data[e]
-		if found {
-			isChanged = true
-			delete(s.data, e)
-		}
-	}
-
-	return isChanged
+	return s.data.RemoveAll(c...)
 }
 
 // RemoveIf removes all of the elements of this set that satisfy the given predicate.
@@ -194,16 +123,7 @@ func (s *LockSet[T]) RemoveIf(filter func(T) bool) bool {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	isChanged := false
-
-	for e := range s.data {
-		if filter(e) {
-			delete(s.data, e)
-			isChanged = true
-		}
-	}
-
-	return isChanged
+	return s.data.RemoveIf(filter)
 }
 
 // RetainAll retains only the elements in this set that are contained in the specified collection.
@@ -211,18 +131,7 @@ func (s *LockSet[T]) RetainAll(c ...T) bool {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	cSet := NewHashSet[T]()
-	cSet.AddAll(c...)
-	isChanged := false
-
-	for e := range s.data {
-		if !cSet.Contains(e) {
-			delete(s.data, e)
-			isChanged = true
-		}
-	}
-
-	return isChanged
+	return s.data.RetainAll(c...)
 }
 
 // Size returns the number of elements in this set.
@@ -230,7 +139,7 @@ func (s *LockSet[T]) Size() int {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
-	return len(s.data)
+	return s.data.Size()
 }
 
 // String returns the string representation of this set.
@@ -238,17 +147,7 @@ func (s *LockSet[T]) String() string {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
-	buf := bytes.NewBufferString("set[")
-	first := true
-	for e := range s.data {
-		if !first {
-			buf.WriteString(" ")
-		}
-		first = false
-		buf.WriteString(internal.ValueString(e))
-	}
-	buf.WriteString("]")
-	return buf.String()
+	return s.data.String()
 }
 
 // ToSlice returns a slice containing all of the elements in this set.
@@ -256,18 +155,15 @@ func (s *LockSet[T]) ToSlice() []T {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
-	slice := make([]T, 0, s.Size())
-
-	for e := range s.data {
-		slice = append(slice, e)
-	}
-
-	return slice
+	return s.data.ToSlice()
 }
 
 // MarshalJSON marshals the set as a JSON array.
 func (s *LockSet[T]) MarshalJSON() ([]byte, error) {
-	return json.Marshal(s.ToSlice())
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	return s.data.MarshalJSON()
 }
 
 // UnmarshalJSON unmarshals a JSON array into the set.
@@ -275,13 +171,5 @@ func (s *LockSet[T]) UnmarshalJSON(b []byte) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	var items []T
-	if err := json.Unmarshal(b, &items); err != nil {
-		return err
-	}
-	s.data = make(HashSet[T], len(items))
-	for _, v := range items {
-		s.data[v] = empty{}
-	}
-	return nil
+	return s.data.UnmarshalJSON(b)
 }

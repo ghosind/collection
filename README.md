@@ -28,6 +28,8 @@ This package provides the following data structure interfaces and implementation
 
     - [`list.CopyOnWriteArrayList`](https://pkg.go.dev/github.com/ghosind/collection/list#CopyOnWriteArrayList): The thread safe implementation of List based on copy-on-write strategy.
 
+    - [`list.LockList`](https://pkg.go.dev/github.com/ghosind/collection/list#LockList): The thread safe wrapper of List based on RWMutex.
+
 - `Stack`: A collection that follows the LIFO (last-in, first-out) principle.
 
     - [`list.Stack`](https://pkg.go.dev/github.com/ghosind/collection/list#Stack): The stack implementation based on ArrayList.
@@ -38,7 +40,7 @@ This package provides the following data structure interfaces and implementation
 
     - [`set.SyncSet`](https://pkg.go.dev/github.com/ghosind/collection/set#SyncSet): The thread safe implementation of Set based on `sync.Map`.
 
-    - [`set.DictSet`](https://pkg.go.dev/github.com/ghosind/collection/set#DictSet): The thread safe Set based on RWMutex.
+    - [`set.LockSet`](https://pkg.go.dev/github.com/ghosind/collection/set#LockSet): The thread safe wrapper of Set based on RWMutex.
 
 - `Dict`: A object that maps keys to values, and it cannot contain duplicate key.
 
@@ -46,7 +48,7 @@ This package provides the following data structure interfaces and implementation
 
     - [`dict.SyncDict`](https://pkg.go.dev/github.com/ghosind/collection/dict#SyncDict): The thread safe implementation of dictionary based on `sync.Map`.
 
-    - [`dict.LockDict`](https://pkg.go.dev/github.com/ghosind/collection/dict#LockDict): The thread safe dictionary based on RWMutex.
+    - [`dict.LockDict`](https://pkg.go.dev/github.com/ghosind/collection/dict#LockDict): The thread safe wrapper of Dictionary based on RWMutex.
 
 ## Installation
 
@@ -107,6 +109,17 @@ languages.Put("Go", 2007)
 log.Print(languages.GetDefault("C", 0)) // 1972
 ```
 
+### Wrap existing collections with thread safe wrappers
+
+```go
+unsafeList := list.NewArrayList[int]()
+safeList := list.NewLockList[int](unsafeList)
+
+safeList.Add(10)
+
+log.Print(safeList.Get(0)) // 10
+```
+
 ## Testing
 
 Run unit tests for the whole repository:
@@ -129,32 +142,32 @@ go test ./dict -bench=. -run=^$ -benchmem
 
 ## Benchmarks (Apple M2 sample results)
 
-Below are sample benchmark results run on an Apple M2 machine. Your results may vary depending on Go version and system load.
+Below are sample benchmark results run on an Apple M2 machine and Go 1.25.1. Your results may vary depending on Go version and system load.
 
 Dict benchmarks with `Get`/`Put`:
 
 ```
-BenchmarkBuiltinMap_Get-8       78598278                15.34 ns/op            0 B/op          0 allocs/op
-BenchmarkBuiltinMap_Put-8       48577176                26.72 ns/op            0 B/op          0 allocs/op
-BenchmarkHashDict_Get-8         72823633                16.32 ns/op            0 B/op          0 allocs/op
-BenchmarkHashDict_Put-8         32907440                34.03 ns/op            0 B/op          0 allocs/op
-BenchmarkLockDict_Get-8         14978312                82.18 ns/op            0 B/op          0 allocs/op
-BenchmarkLockDict_Put-8          9767184               123.2 ns/op             0 B/op          0 allocs/op
-BenchmarkSyncDict_Get-8         192600193                5.701 ns/op           0 B/op          0 allocs/op
-BenchmarkSyncDict_Put-8          9013268               129.3 ns/op            16 B/op          1 allocs/op
+BenchmarkBuiltinMap_Get-8               78146028                17.79 ns/op            0 B/op          0 allocs/op
+BenchmarkBuiltinMap_Put-8               43320583                25.11 ns/op            0 B/op          0 allocs/op
+BenchmarkHashDict_Get-8                 70750198                16.34 ns/op            0 B/op          0 allocs/op
+BenchmarkHashDict_Put-8                 34192296                31.89 ns/op            0 B/op          0 allocs/op
+BenchmarkLockedHashDict_Get-8           10532293               113.8 ns/op             0 B/op          0 allocs/op
+BenchmarkLockedHashDict_Put-8            9389860               129.7 ns/op             0 B/op          0 allocs/op
+BenchmarkSyncDict_Get-8                 202971288                6.154 ns/op           0 B/op          0 allocs/op
+BenchmarkSyncDict_Put-8                  9171009               130.0 ns/op            16 B/op          1 allocs/op
 ```
 
 Set benchmarks with `Add`/`Contains`:
 
 ```
-BenchmarkHashSet_Add-8                  83323072                14.53 ns/op            0 B/op          0 allocs/op
-BenchmarkHashSet_Contains-8             90324601                14.28 ns/op            0 B/op          0 allocs/op
-BenchmarkLockSet_Add-8                  10818360               113.4 ns/op             0 B/op          0 allocs/op
-BenchmarkLockSet_Contains-8             14657197                82.17 ns/op            0 B/op          0 allocs/op
-BenchmarkBuiltinMapAsSet_Add-8          92263930                14.61 ns/op            0 B/op          0 allocs/op
-BenchmarkBuiltinMapAsSet_Contains-8     98068932                11.20 ns/op            0 B/op          0 allocs/op
-BenchmarkSyncSet_Add-8                  10983445               108.0 ns/op             0 B/op          0 allocs/op
-BenchmarkSyncSet_Contains-8             272523782                4.427 ns/op           0 B/op          0 allocs/op
+BenchmarkHashSet_Add-8                  87384132                13.21 ns/op            0 B/op          0 allocs/op
+BenchmarkHashSet_Contains-8             87521766                13.77 ns/op            0 B/op          0 allocs/op
+BenchmarkLockHashSet_Add-8              41700088                29.54 ns/op            0 B/op          0 allocs/op
+BenchmarkLockHashSet_Contains-8         60127644                19.93 ns/op            0 B/op          0 allocs/op
+BenchmarkBuiltinMapAsSet_Add-8          87572594                13.49 ns/op            0 B/op          0 allocs/op
+BenchmarkBuiltinMapAsSet_Contains-8     84940970                12.69 ns/op            0 B/op          0 allocs/op
+BenchmarkSyncSet_Add-8                  10465891               110.3 ns/op             0 B/op          0 allocs/op
+BenchmarkSyncSet_Contains-8             245409312                5.671 ns/op           0 B/op          0 allocs/op
 ```
 
 ## License

@@ -9,11 +9,5 @@ func (s *LockSet[T]) Iter() iter.Seq[T] {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
-	return func(yield func(T) bool) {
-		for e := range s.data {
-			if !yield(e) {
-				break
-			}
-		}
-	}
+	return s.data.Iter()
 }

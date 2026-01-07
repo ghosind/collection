@@ -18,3 +18,15 @@ func TestLinkedList(t *testing.T) {
 
 	testList(a, constructor)
 }
+
+func TestLockLinkedList(t *testing.T) {
+	a := assert.New(t)
+	constructor := func(initData ...[]int) collection.List[int] {
+		if len(initData) > 0 && len(initData[0]) > 0 {
+			return NewLockList[int](NewLinkedListFrom(initData[0]...))
+		}
+		return NewLockList[int](NewLinkedList[int]())
+	}
+
+	testList(a, constructor)
+}

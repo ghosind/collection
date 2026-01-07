@@ -456,6 +456,15 @@ func (l *LinkedList[T]) SubList(fromIndex, toIndex int) collection.List[T] {
 	return subList
 }
 
+// ToSlice returns a slice containing all of the elements in this collection.
+func (l *LinkedList[T]) ToSlice() []T {
+	slice := make([]T, 0, l.size)
+	for node := l.head; node != nil; node = node.Next {
+		slice = append(slice, node.Value)
+	}
+	return slice
+}
+
 // Trim removes the first n elements from this list. Returns the number of elements removed.
 func (l *LinkedList[T]) Trim(n int) int {
 	removedCount := 0
@@ -474,15 +483,6 @@ func (l *LinkedList[T]) TrimLast(n int) int {
 		removedCount++
 	}
 	return removedCount
-}
-
-// ToSlice returns a slice containing all of the elements in this collection.
-func (l *LinkedList[T]) ToSlice() []T {
-	slice := make([]T, 0, l.size)
-	for node := l.head; node != nil; node = node.Next {
-		slice = append(slice, node.Value)
-	}
-	return slice
 }
 
 // MarshalJSON marshals the linked list as a JSON array.

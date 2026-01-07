@@ -18,3 +18,15 @@ func TestArrayList(t *testing.T) {
 
 	testList(a, constructor)
 }
+
+func TestLockArrayList(t *testing.T) {
+	a := assert.New(t)
+	constructor := func(initData ...[]int) collection.List[int] {
+		if len(initData) > 0 && len(initData[0]) > 0 {
+			return NewLockList[int](NewArrayListFrom(initData[0]...))
+		}
+		return NewLockList[int](NewArrayList[int]())
+	}
+
+	testList(a, constructor)
+}
