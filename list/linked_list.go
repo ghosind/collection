@@ -272,6 +272,46 @@ func (l *LinkedList[T]) RemoveAtIndex(i int) T {
 	return val
 }
 
+// RemoveFirst removes the first occurrence of the specified element from this list, if it is present.
+// Returns true if the element was removed.
+func (l *LinkedList[T]) RemoveFirst(e T) bool {
+	if l.size == 0 {
+		return false
+	}
+
+	current := l.head
+	for current != nil {
+		if internal.Equal(current.Value, e) {
+			l.removeNode(current)
+			return true
+		}
+		current = current.Next
+	}
+	return false
+}
+
+// RemoveFirstN removes the first n occurrences of the specified element from this list.
+// Returns the number of elements removed.
+func (l *LinkedList[T]) RemoveFirstN(e T, n int) int {
+	if l.size == 0 || n <= 0 {
+		return 0
+	}
+
+	removedCount := 0
+	current := l.head
+	for current != nil && removedCount < n {
+		if internal.Equal(current.Value, e) {
+			next := current.Next
+			l.removeNode(current)
+			current = next
+			removedCount++
+		} else {
+			current = current.Next
+		}
+	}
+	return removedCount
+}
+
 // RemoveIf removes all of the elements of this collection that satisfy the given predicate.
 func (l *LinkedList[T]) RemoveIf(f func(T) bool) bool {
 	if l.size == 0 {
@@ -291,6 +331,46 @@ func (l *LinkedList[T]) RemoveIf(f func(T) bool) bool {
 		}
 	}
 	return found
+}
+
+// RemoveLast removes the last occurrence of the specified element from this list, if it is present.
+// Returns true if the element was removed.
+func (l *LinkedList[T]) RemoveLast(e T) bool {
+	if l.size == 0 {
+		return false
+	}
+
+	current := l.tail
+	for current != nil {
+		if internal.Equal(current.Value, e) {
+			l.removeNode(current)
+			return true
+		}
+		current = current.Prev
+	}
+	return false
+}
+
+// RemoveLastN removes the last n occurrences of the specified element from this list.
+// Returns the number of elements removed.
+func (l *LinkedList[T]) RemoveLastN(e T, n int) int {
+	if l.size == 0 || n <= 0 {
+		return 0
+	}
+
+	removedCount := 0
+	current := l.tail
+	for current != nil && removedCount < n {
+		if internal.Equal(current.Value, e) {
+			prev := current.Prev
+			l.removeNode(current)
+			current = prev
+			removedCount++
+		} else {
+			current = current.Prev
+		}
+	}
+	return removedCount
 }
 
 // RetainAll retains only the elements in this collection that are contained in the specified
@@ -356,6 +436,44 @@ func (l *LinkedList[T]) String() string {
 	}
 	buf.WriteString("]")
 	return buf.String()
+}
+
+// SubList returns a view of the portion of this list between the specified fromIndex, inclusive,
+// and toIndex, exclusive.
+func (l *LinkedList[T]) SubList(fromIndex, toIndex int) collection.List[T] {
+	internal.CheckIndex(fromIndex, l.size)
+	internal.CheckIndex(toIndex, l.size)
+
+	subList := NewLinkedList[T]()
+	current := l.head
+	for i := 0; i < fromIndex; i++ {
+		current = current.Next
+	}
+	for i := fromIndex; i < toIndex; i++ {
+		subList.Add(current.Value)
+		current = current.Next
+	}
+	return subList
+}
+
+// Trim removes the first n elements from this list. Returns the number of elements removed.
+func (l *LinkedList[T]) Trim(n int) int {
+	removedCount := 0
+	for removedCount < n && l.size > 0 {
+		l.removeNode(l.head)
+		removedCount++
+	}
+	return removedCount
+}
+
+// TrimLast removes the last n elements from this list. Returns the number of elements removed.
+func (l *LinkedList[T]) TrimLast(n int) int {
+	removedCount := 0
+	for removedCount < n && l.size > 0 {
+		l.removeNode(l.tail)
+		removedCount++
+	}
+	return removedCount
 }
 
 // ToSlice returns a slice containing all of the elements in this collection.

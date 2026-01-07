@@ -11,6 +11,7 @@ import (
 type listConstructor func(...[]int) collection.List[int]
 
 var testData []int = []int{1, 2, 3, 4, 5}
+var dupTestData []int = []int{1, 2, 1, 2, 1, 2}
 
 func testList(a *assert.Assertion, constructor listConstructor) {
 	testListAdd(a, constructor)
@@ -30,11 +31,18 @@ func testList(a *assert.Assertion, constructor listConstructor) {
 	testListRemove(a, constructor)
 	testListRemoveAll(a, constructor)
 	testListRemoveAtIndex(a, constructor)
+	testListRemoveFirst(a, constructor)
+	testListRemoveFirstN(a, constructor)
 	testListRemoveIf(a, constructor)
+	testListRemoveLast(a, constructor)
+	testListRemoveLastN(a, constructor)
 	testListRetainAll(a, constructor)
 	testListSet(a, constructor)
 	testListSize(a, constructor)
 	testListString(a, constructor)
+	testListSubList(a, constructor)
+	testListTrim(a, constructor)
+	testListTrimLast(a, constructor)
 	testListToSlice(a, constructor)
 	testListJSON(a, constructor)
 }
@@ -260,6 +268,55 @@ func testListRemoveAtIndex(a *assert.Assertion, constructor listConstructor) {
 	a.PanicOfNow(func() { l.RemoveAtIndex(l.Size()) }, collection.ErrOutOfBounds)
 }
 
+func testListRemoveFirst(a *assert.Assertion, constructor listConstructor) {
+	l := constructor(dupTestData)
+
+	a.EqualNow(len(dupTestData), l.Size())
+	a.TrueNow(l.RemoveFirst(1))
+	a.EqualNow(len(dupTestData)-1, l.Size())
+	a.EqualNow([]int{2, 1, 2, 1, 2}, l.ToSlice())
+
+	a.TrueNow(l.RemoveFirst(2))
+	a.EqualNow(len(dupTestData)-2, l.Size())
+	a.EqualNow([]int{1, 2, 1, 2}, l.ToSlice())
+
+	a.NotTrueNow(l.RemoveFirst(100))
+	a.EqualNow(len(dupTestData)-2, l.Size())
+	a.EqualNow([]int{1, 2, 1, 2}, l.ToSlice())
+
+	l.Clear()
+	a.NotTrueNow(l.RemoveFirst(1))
+}
+
+func testListRemoveFirstN(a *assert.Assertion, constructor listConstructor) {
+	l := constructor(dupTestData)
+
+	a.EqualNow(len(dupTestData), l.Size())
+	removed := l.RemoveFirstN(1, 2)
+	a.EqualNow(2, removed)
+	a.EqualNow(len(dupTestData)-2, l.Size())
+	a.EqualNow([]int{2, 2, 1, 2}, l.ToSlice())
+
+	removed = l.RemoveFirstN(2, 5)
+	a.EqualNow(3, removed)
+	a.EqualNow(1, l.Size())
+	a.EqualNow([]int{1}, l.ToSlice())
+
+	removed = l.RemoveFirstN(100, 2)
+	a.EqualNow(0, removed)
+	a.EqualNow(1, l.Size())
+	a.EqualNow([]int{1}, l.ToSlice())
+
+	removed = l.RemoveFirstN(1, -1)
+	a.EqualNow(0, removed)
+	a.EqualNow(1, l.Size())
+	a.EqualNow([]int{1}, l.ToSlice())
+
+	l.Clear()
+	removed = l.RemoveFirstN(1, 2)
+	a.EqualNow(0, removed)
+}
+
 func testListRemoveIf(a *assert.Assertion, constructor listConstructor) {
 	l := constructor()
 
@@ -272,6 +329,55 @@ func testListRemoveIf(a *assert.Assertion, constructor listConstructor) {
 	a.NotTrueNow(l.RemoveIf(func(i int) bool { return i > 10 }))
 	a.EqualNow(3, l.Size())
 	a.EqualNow([]int{1, 3, 5}, l.ToSlice())
+}
+
+func testListRemoveLast(a *assert.Assertion, constructor listConstructor) {
+	l := constructor(dupTestData)
+
+	a.EqualNow(len(dupTestData), l.Size())
+	a.TrueNow(l.RemoveLast(2))
+	a.EqualNow(len(dupTestData)-1, l.Size())
+	a.EqualNow([]int{1, 2, 1, 2, 1}, l.ToSlice())
+
+	a.TrueNow(l.RemoveLast(1))
+	a.EqualNow(len(dupTestData)-2, l.Size())
+	a.EqualNow([]int{1, 2, 1, 2}, l.ToSlice())
+
+	a.NotTrueNow(l.RemoveLast(100))
+	a.EqualNow(len(dupTestData)-2, l.Size())
+	a.EqualNow([]int{1, 2, 1, 2}, l.ToSlice())
+
+	l.Clear()
+	a.NotTrueNow(l.RemoveLast(1))
+}
+
+func testListRemoveLastN(a *assert.Assertion, constructor listConstructor) {
+	l := constructor(dupTestData)
+
+	a.EqualNow(len(dupTestData), l.Size())
+	removed := l.RemoveLastN(2, 2)
+	a.EqualNow(2, removed)
+	a.EqualNow(len(dupTestData)-2, l.Size())
+	a.EqualNow([]int{1, 2, 1, 1}, l.ToSlice())
+
+	removed = l.RemoveLastN(1, 5)
+	a.EqualNow(3, removed)
+	a.EqualNow(1, l.Size())
+	a.EqualNow([]int{2}, l.ToSlice())
+
+	removed = l.RemoveLastN(100, 2)
+	a.EqualNow(0, removed)
+	a.EqualNow(1, l.Size())
+	a.EqualNow([]int{2}, l.ToSlice())
+
+	removed = l.RemoveLastN(2, -1)
+	a.EqualNow(0, removed)
+	a.EqualNow(1, l.Size())
+	a.EqualNow([]int{2}, l.ToSlice())
+
+	l.Clear()
+	removed = l.RemoveLastN(2, 2)
+	a.EqualNow(0, removed)
 }
 
 func testListRetainAll(a *assert.Assertion, constructor listConstructor) {
@@ -328,6 +434,59 @@ func testListString(a *assert.Assertion, constructor listConstructor) {
 	a.EqualNow("list[]", l.String())
 	l.AddAll(testData...)
 	a.EqualNow("list[1 2 3 4 5]", l.String())
+}
+
+func testListSubList(a *assert.Assertion, constructor listConstructor) {
+	l := constructor(testData)
+
+	sub := l.SubList(1, 4)
+	a.EqualNow(3, sub.Size())
+	a.EqualNow([]int{2, 3, 4}, sub.ToSlice())
+
+	sub = l.SubList(3, 2)
+	a.EqualNow(sub.Size(), 0)
+	a.EqualNow([]int{}, sub.ToSlice())
+
+	a.PanicOfNow(func() { l.SubList(-1, 3) }, collection.ErrOutOfBounds)
+	a.PanicOfNow(func() { l.SubList(2, l.Size()+1) }, collection.ErrOutOfBounds)
+}
+
+func testListTrim(a *assert.Assertion, constructor listConstructor) {
+	l := constructor(testData)
+
+	removed := l.Trim(2)
+	a.EqualNow(2, removed)
+	a.EqualNow(len(testData)-2, l.Size())
+	a.EqualNow([]int{3, 4, 5}, l.ToSlice())
+
+	removed = l.Trim(-2)
+	a.EqualNow(0, removed)
+	a.EqualNow(len(testData)-2, l.Size())
+	a.EqualNow([]int{3, 4, 5}, l.ToSlice())
+
+	removed = l.Trim(5)
+	a.EqualNow(3, removed)
+	a.EqualNow(0, l.Size())
+	a.EqualNow([]int{}, l.ToSlice())
+}
+
+func testListTrimLast(a *assert.Assertion, constructor listConstructor) {
+	l := constructor(testData)
+
+	removed := l.TrimLast(2)
+	a.EqualNow(2, removed)
+	a.EqualNow(len(testData)-2, l.Size())
+	a.EqualNow([]int{1, 2, 3}, l.ToSlice())
+
+	removed = l.TrimLast(-2)
+	a.EqualNow(0, removed)
+	a.EqualNow(len(testData)-2, l.Size())
+	a.EqualNow([]int{1, 2, 3}, l.ToSlice())
+
+	removed = l.TrimLast(5)
+	a.EqualNow(3, removed)
+	a.EqualNow(0, l.Size())
+	a.EqualNow([]int{}, l.ToSlice())
 }
 
 func testListToSlice(a *assert.Assertion, constructor listConstructor) {

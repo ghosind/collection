@@ -294,6 +294,62 @@ func (l *CopyOnWriteArrayList[T]) RemoveAtIndex(i int) T {
 	return old
 }
 
+// RemoveFirst removes the first occurrence of the specified element from this list, if it is present.
+// Returns true if the element was removed.
+func (l *CopyOnWriteArrayList[T]) RemoveFirst(e T) bool {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	if len(l.data) == 0 {
+		return false
+	}
+
+	newData := make([]T, 0, len(l.data))
+	removed := false
+
+	for _, v := range l.data {
+		if !internal.Equal(v, e) || removed {
+			newData = append(newData, v)
+		} else {
+			removed = true
+		}
+	}
+
+	if removed {
+		l.data = newData
+	}
+
+	return removed
+}
+
+// RemoveFirstN removes the first n occurrences of the specified element from this list.
+// Returns the number of elements removed.
+func (l *CopyOnWriteArrayList[T]) RemoveFirstN(e T, n int) int {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	if len(l.data) == 0 || n <= 0 {
+		return 0
+	}
+
+	newData := make([]T, 0, len(l.data))
+	removedCount := 0
+
+	for _, v := range l.data {
+		if internal.Equal(v, e) && removedCount < n {
+			removedCount++
+		} else {
+			newData = append(newData, v)
+		}
+	}
+
+	if removedCount > 0 {
+		l.data = newData
+	}
+
+	return removedCount
+}
+
 // RemoveIf removes all of the elements of this collection that satisfy the given predicate.
 func (l *CopyOnWriteArrayList[T]) RemoveIf(f func(T) bool) bool {
 	l.mu.Lock()
@@ -319,6 +375,72 @@ func (l *CopyOnWriteArrayList[T]) RemoveIf(f func(T) bool) bool {
 	}
 
 	return removed
+}
+
+// RemoveLast removes the last occurrence of the specified element from this list, if it is present.
+// Returns true if the element was removed.
+func (l *CopyOnWriteArrayList[T]) RemoveLast(e T) bool {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	if len(l.data) == 0 {
+		return false
+	}
+
+	newData := make([]T, 0, len(l.data))
+	removed := false
+
+	for i := len(l.data) - 1; i >= 0; i-- {
+		v := l.data[i]
+		if !internal.Equal(v, e) || removed {
+			newData = append(newData, v)
+		} else {
+			removed = true
+		}
+	}
+
+	if removed {
+		// Reverse newData to maintain original order
+		for i, j := 0, len(newData)-1; i < j; i, j = i+1, j-1 {
+			newData[i], newData[j] = newData[j], newData[i]
+		}
+		l.data = newData
+	}
+
+	return removed
+}
+
+// RemoveLastN removes the last n occurrences of the specified element from this list.
+// Returns the number of elements removed.
+func (l *CopyOnWriteArrayList[T]) RemoveLastN(e T, n int) int {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	if len(l.data) == 0 || n <= 0 {
+		return 0
+	}
+
+	newData := make([]T, 0, len(l.data))
+	removedCount := 0
+
+	for i := len(l.data) - 1; i >= 0; i-- {
+		v := l.data[i]
+		if internal.Equal(v, e) && removedCount < n {
+			removedCount++
+		} else {
+			newData = append(newData, v)
+		}
+	}
+
+	if removedCount > 0 {
+		// Reverse newData to maintain original order
+		for i, j := 0, len(newData)-1; i < j; i, j = i+1, j-1 {
+			newData[i], newData[j] = newData[j], newData[i]
+		}
+		l.data = newData
+	}
+
+	return removedCount
 }
 
 // RetainAll retains only the elements in this collection that are contained in the specified
@@ -407,12 +529,73 @@ func (l *CopyOnWriteArrayList[T]) String() string {
 	return buf.String()
 }
 
+// SubList returns a view of the portion of this list between the specified fromIndex, inclusive,
+// and toIndex, exclusive.
+func (l *CopyOnWriteArrayList[T]) SubList(fromIndex, toIndex int) collection.List[T] {
+	data := l.data
+	internal.CheckIndex(fromIndex, len(data)+1)
+	internal.CheckIndex(toIndex, len(data)+1)
+
+	len := toIndex - fromIndex
+	if len < 0 {
+		len = 0
+	}
+	subData := make([]T, len)
+	if len > 0 {
+		copy(subData, data[fromIndex:toIndex])
+	}
+
+	return NewCopyOnWriteArrayListFrom(subData...)
+}
+
 // ToSlice returns a slice containing all of the elements in this collection.
 func (l *CopyOnWriteArrayList[T]) ToSlice() []T {
 	slice := make([]T, len(l.data))
 	copy(slice, l.data)
 
 	return slice
+}
+
+// Trim removes the first n elements from this list. Returns the number of elements removed.
+func (l *CopyOnWriteArrayList[T]) Trim(n int) int {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	if n <= 0 || len(l.data) == 0 {
+		return 0
+	}
+
+	removedCount := n
+	if n > len(l.data) {
+		removedCount = len(l.data)
+	}
+
+	newData := make([]T, len(l.data)-removedCount)
+	copy(newData, l.data[removedCount:])
+	l.data = newData
+
+	return removedCount
+}
+
+// TrimLast removes the last n elements from this list. Returns the number of elements removed.
+func (l *CopyOnWriteArrayList[T]) TrimLast(n int) int {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	if n <= 0 || len(l.data) == 0 {
+		return 0
+	}
+
+	removedCount := n
+	if n > len(l.data) {
+		removedCount = len(l.data)
+	}
+
+	newData := make([]T, len(l.data)-removedCount)
+	copy(newData, l.data[:len(l.data)-removedCount])
+	l.data = newData
+
+	return removedCount
 }
 
 // MarshalJSON marshals the copy-on-write list as a JSON array.

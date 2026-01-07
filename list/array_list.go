@@ -211,6 +211,40 @@ func (l *ArrayList[T]) RemoveAtIndex(i int) T {
 	return old
 }
 
+// RemoveFirst removes the first occurrence of the specified element from this list, if it is present.
+// Returns true if the element was removed.
+func (l *ArrayList[T]) RemoveFirst(e T) bool {
+	i := l.IndexOf(e)
+	if i == -1 {
+		return false
+	}
+
+	*l = append((*l)[:i], (*l)[i+1:]...)
+	return true
+}
+
+func (l *ArrayList[T]) RemoveFirstN(e T, n int) int {
+	if n <= 0 {
+		return 0
+	}
+
+	removed := 0
+	i := 0
+
+	for j := 0; j < l.Size(); j++ {
+		if removed < n && internal.Equal(e, (*l)[j]) {
+			removed++
+		} else {
+			(*l)[i] = (*l)[j]
+			i++
+		}
+	}
+
+	*l = (*l)[:i]
+
+	return removed
+}
+
 // RemoveIf removes all of the elements of this list that satisfy the given predicate.
 // Returns true if any elements were removed.
 func (l *ArrayList[T]) RemoveIf(f func(T) bool) bool {
@@ -233,6 +267,41 @@ func (l *ArrayList[T]) RemoveIf(f func(T) bool) bool {
 	*l = (*l)[:i]
 
 	return found
+}
+
+// RemoveLast removes the last occurrence of the specified element from this list, if it is present.
+// Returns true if the element was removed.
+func (l *ArrayList[T]) RemoveLast(e T) bool {
+	i := l.LastIndexOf(e)
+	if i == -1 {
+		return false
+	}
+
+	*l = append((*l)[:i], (*l)[i+1:]...)
+	return true
+}
+
+// RemoveLastN removes the last n occurrences of the specified element from this list.
+// Returns the number of elements removed.
+func (l *ArrayList[T]) RemoveLastN(e T, n int) int {
+	if n <= 0 {
+		return 0
+	}
+
+	removed := 0
+	i := l.Size() - 1
+
+	for j := l.Size() - 1; j >= 0; j-- {
+		if removed < n && internal.Equal(e, (*l)[j]) {
+			removed++
+			(*l)[j] = (*l)[i]
+			i--
+		}
+	}
+
+	*l = (*l)[:i+1]
+
+	return removed
 }
 
 // RetainAll retains only the elements in this list that are contained in the specified elements.
@@ -305,6 +374,54 @@ func (l *ArrayList[T]) String() string {
 	buf.WriteString("]")
 
 	return buf.String()
+}
+
+// SubList returns a view of the portion of this list between the specified fromIndex, inclusive,
+// and toIndex, exclusive.
+func (l *ArrayList[T]) SubList(fromIndex, toIndex int) collection.List[T] {
+	internal.CheckIndex(fromIndex, l.Size()+1)
+	internal.CheckIndex(toIndex, l.Size()+1)
+
+	dest := NewArrayList[T]()
+	for i := fromIndex; i < toIndex; i++ {
+		dest.Add(l.Get(i))
+	}
+
+	return dest
+}
+
+// Trim removes the first n elements from this list. Returns the number of elements removed.
+func (l *ArrayList[T]) Trim(n int) int {
+	if n <= 0 {
+		return 0
+	}
+
+	removed := n
+	if n >= l.Size() {
+		removed = l.Size()
+		*l = (*l)[:0]
+	} else {
+		*l = (*l)[n:]
+	}
+
+	return removed
+}
+
+// TrimLast removes the last n elements from this list. Returns the number of elements removed.
+func (l *ArrayList[T]) TrimLast(n int) int {
+	if n <= 0 {
+		return 0
+	}
+
+	removed := n
+	if n >= l.Size() {
+		removed = l.Size()
+		*l = (*l)[:0]
+	} else {
+		*l = (*l)[:l.Size()-n]
+	}
+
+	return removed
 }
 
 // ToSlice returns a slice containing all of the elements in this list in proper sequence.
