@@ -74,8 +74,11 @@ func (l *ArrayList[T]) Contains(e T) bool {
 
 // ContainsAll returns true if this list contains all of the elements.
 func (l *ArrayList[T]) ContainsAll(c ...T) bool {
-	for _, e := range c {
-		if !l.Contains(e) {
+	cache := internal.MakeSliceCacheMap(*l)
+	defer internal.ReleaseCacheMap(cache)
+
+	for _, v := range c {
+		if !internal.InSlice(v, *l, cache) {
 			return false
 		}
 	}
@@ -177,16 +180,14 @@ func (l *ArrayList[T]) RemoveAll(c ...T) bool {
 	}
 
 	found := false
+	cache := internal.MakeSliceCacheMap(c)
+	defer internal.ReleaseCacheMap(cache)
 
 	i := 0
 	for j := 0; j < l.Size(); j++ {
-		shouldRemove := false
-		for _, e := range c {
-			if internal.Equal(e, (*l)[j]) {
-				shouldRemove = true
-				found = true
-				break
-			}
+		shouldRemove := internal.InSlice((*l)[j], c, cache)
+		if shouldRemove {
+			found = true
 		}
 
 		if !shouldRemove {
@@ -313,16 +314,12 @@ func (l *ArrayList[T]) RetainAll(c ...T) bool {
 	}
 
 	found := false
+	cache := internal.MakeSliceCacheMap(c)
+	defer internal.ReleaseCacheMap(cache)
 
 	i := 0
 	for j := 0; j < l.Size(); j++ {
-		shouldRetain := false
-		for _, e := range c {
-			if internal.Equal(e, (*l)[j]) {
-				shouldRetain = true
-				break
-			}
-		}
+		shouldRetain := internal.InSlice((*l)[j], c, cache)
 
 		if shouldRetain {
 			(*l)[i] = (*l)[j]

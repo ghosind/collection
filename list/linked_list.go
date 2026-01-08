@@ -9,6 +9,10 @@ import (
 	"github.com/ghosind/collection/internal"
 )
 
+const (
+	smallCollectionThreshold = 4
+)
+
 // LinkedListNode represents a node in the linked list.
 type LinkedListNode[T any] struct {
 	Value T
@@ -140,8 +144,38 @@ func (l *LinkedList[T]) Contains(e T) bool {
 // ContainsAll returns true if this collection contains all of the elements in the specified
 // collection.
 func (l *LinkedList[T]) ContainsAll(c ...T) bool {
-	for _, e := range c {
-		if !l.Contains(e) {
+	if len(c) <= smallCollectionThreshold {
+		return l.containsAllInSmallCollection(c)
+	}
+
+	slice := l.ToSlice()
+	cache := internal.MakeSliceCacheMap(slice)
+	defer internal.ReleaseCacheMap(cache)
+
+	for _, v := range c {
+		found := internal.InSlice(v, slice, cache)
+		if !found {
+			return false
+		}
+	}
+
+	return true
+}
+
+func (l *LinkedList[T]) containsAllInSmallCollection(c []T) bool {
+	if len(c) == 0 {
+		return true
+	}
+
+	for _, v := range c {
+		found := false
+		for node := l.head; node != nil; node = node.Next {
+			if internal.Equal(node.Value, v) {
+				found = true
+				break
+			}
+		}
+		if !found {
 			return false
 		}
 	}
@@ -250,11 +284,22 @@ func (l *LinkedList[T]) RemoveAll(c ...T) bool {
 	}
 
 	found := false
-	for _, e := range c {
-		if l.Remove(e) {
+	cache := internal.MakeSliceCacheMap(c)
+	defer internal.ReleaseCacheMap(cache)
+
+	node := l.head
+	for node != nil {
+		shouldRemove := internal.InSlice(node.Value, c, cache)
+		if shouldRemove {
+			next := node.Next
+			l.removeNode(node)
+			node = next
 			found = true
+		} else {
+			node = node.Next
 		}
 	}
+
 	return found
 }
 
@@ -380,16 +425,13 @@ func (l *LinkedList[T]) RetainAll(c ...T) bool {
 		return clearListForRetainAll[T](l)
 	}
 
+	cache := internal.MakeSliceCacheMap(c)
+	defer internal.ReleaseCacheMap(cache)
+
 	found := false
 	current := l.head
 	for current != nil {
-		shouldRetain := false
-		for _, e := range c {
-			if internal.Equal(current.Value, e) {
-				shouldRetain = true
-				break
-			}
-		}
+		shouldRetain := internal.InSlice(current.Value, c, cache)
 		if !shouldRetain {
 			next := current.Next
 			l.removeNode(current)

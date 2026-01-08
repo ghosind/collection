@@ -125,8 +125,11 @@ func testListContains(a *assert.Assertion, constructor listConstructor) {
 func testListContainsAll(a *assert.Assertion, constructor listConstructor) {
 	l := constructor(testData)
 
+	a.TrueNow(l.ContainsAll())
 	a.TrueNow(l.ContainsAll(1, 2, 3))
 	a.NotTrueNow(l.ContainsAll(1, 2, 100))
+	a.TrueNow(l.ContainsAll(1, 2, 3, 4, 5))
+	a.NotTrueNow(l.ContainsAll(100, 200, 300, 400, 500))
 }
 
 func testListEquals(a *assert.Assertion, constructor listConstructor) {

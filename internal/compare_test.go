@@ -6,6 +6,81 @@ import (
 	"github.com/ghosind/go-assert"
 )
 
+func TestInSlice(t *testing.T) {
+	a := assert.New(t)
+
+	testInSlice(a, []int{1, 2, 3, 4, 5}, 3, true)
+	testInSlice(a, []int{1, 2, 3, 4, 5}, 6, false)
+
+	testInSlice(a, []string{"a", "b", "c"}, "b", true)
+	testInSlice(a, []string{"a", "b", "c"}, "d", false)
+
+	testInSlice(a, []int8{1, 2, 3}, int8(2), true)
+	testInSlice(a, []int8{1, 2, 3}, int8(4), false)
+
+	testInSlice(a, []int16{10, 20, 30}, int16(20), true)
+	testInSlice(a, []int16{10, 20, 30}, int16(40), false)
+
+	testInSlice(a, []int32{100, 200, 300}, int32(200), true)
+	testInSlice(a, []int32{100, 200, 300}, int32(400), false)
+
+	testInSlice(a, []int64{1000, 2000, 3000}, int64(2000), true)
+	testInSlice(a, []int64{1000, 2000, 3000}, int64(4000), false)
+
+	testInSlice(a, []uint{1, 2, 3}, uint(2), true)
+	testInSlice(a, []uint{1, 2, 3}, uint(4), false)
+
+	testInSlice(a, []uint8{10, 20, 30}, uint8(20), true)
+	testInSlice(a, []uint8{10, 20, 30}, uint8(40), false)
+
+	testInSlice(a, []uint16{100, 200, 300}, uint16(200), true)
+	testInSlice(a, []uint16{100, 200, 300}, uint16(400), false)
+
+	testInSlice(a, []uint32{1000, 2000, 3000}, uint32(2000), true)
+	testInSlice(a, []uint32{1000, 2000, 3000}, uint32(4000), false)
+
+	testInSlice(a, []uint64{10000, 20000, 30000}, uint64(20000), true)
+	testInSlice(a, []uint64{10000, 20000, 30000}, uint64(40000), false)
+
+	testInSlice(a, []uintptr{1, 2, 3}, uintptr(2), true)
+	testInSlice(a, []uintptr{1, 2, 3}, uintptr(4), false)
+
+	testInSlice(a, []float32{1.1, 2.2, 3.3}, float32(2.2), true)
+	testInSlice(a, []float32{1.1, 2.2, 3.3}, float32(4.4), false)
+
+	testInSlice(a, []float64{1.11, 2.22, 3.33}, float64(2.22), true)
+	testInSlice(a, []float64{1.11, 2.22, 3.33}, float64(4.44), false)
+
+	testInSlice(a, []complex64{1 + 2i, 3 + 4i}, complex64(3+4i), true)
+	testInSlice(a, []complex64{1 + 2i, 3 + 4i}, complex64(5+6i), false)
+
+	testInSlice(a, []complex128{1 + 2i, 3 + 4i}, complex128(3+4i), true)
+	testInSlice(a, []complex128{1 + 2i, 3 + 4i}, complex128(5+6i), false)
+
+	testInSlice(a, []bool{true, false}, false, true)
+	testInSlice(a, []bool{true, false}, true, true)
+	testInSlice(a, []bool{true}, false, false)
+
+	type myStruct struct {
+		A int
+		B string
+	}
+
+	s1 := myStruct{A: 1, B: "a"}
+	s2 := myStruct{A: 2, B: "b"}
+	s3 := myStruct{A: 3, B: "c"}
+
+	testInSlice(a, []myStruct{s1, s2}, s2, true)
+	testInSlice(a, []myStruct{s1, s2}, s3, false)
+}
+
+func testInSlice[T any](a *assert.Assertion, slice []T, element T, expected bool) {
+	cache := MakeSliceCacheMap(slice)
+	defer ReleaseCacheMap(cache)
+	result := InSlice(element, slice, cache)
+	a.EqualNow(expected, result)
+}
+
 func TestEqual(t *testing.T) {
 	a := assert.New(t)
 

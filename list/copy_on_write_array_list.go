@@ -116,14 +116,11 @@ func (l *CopyOnWriteArrayList[T]) Contains(e T) bool {
 func (l *CopyOnWriteArrayList[T]) ContainsAll(c ...T) bool {
 	data := l.data
 
+	cache := internal.MakeSliceCacheMap(data)
+	defer internal.ReleaseCacheMap(cache)
+
 	for _, v := range c {
-		found := false
-		for _, dv := range data {
-			if internal.Equal(v, dv) {
-				found = true
-				break
-			}
-		}
+		found := internal.InSlice(v, data, cache)
 
 		if !found {
 			return false
@@ -252,14 +249,11 @@ func (l *CopyOnWriteArrayList[T]) RemoveAll(c ...T) bool {
 	newData := make([]T, 0, len(l.data))
 	removed := false
 
+	cache := internal.MakeSliceCacheMap(c)
+	defer internal.ReleaseCacheMap(cache)
+
 	for _, v := range l.data {
-		found := false
-		for _, cv := range c {
-			if internal.Equal(v, cv) {
-				found = true
-				break
-			}
-		}
+		found := internal.InSlice(v, c, cache)
 		if !found {
 			newData = append(newData, v)
 		} else {
@@ -461,14 +455,11 @@ func (l *CopyOnWriteArrayList[T]) RetainAll(c ...T) bool {
 	newData := make([]T, 0, len(l.data))
 	changed := false
 
+	cache := internal.MakeSliceCacheMap(c)
+	defer internal.ReleaseCacheMap(cache)
+
 	for _, v := range l.data {
-		found := false
-		for _, cv := range c {
-			if internal.Equal(v, cv) {
-				found = true
-				break
-			}
-		}
+		found := internal.InSlice(v, c, cache)
 		if found {
 			newData = append(newData, v)
 		} else {
