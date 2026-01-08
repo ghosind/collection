@@ -2,14 +2,15 @@ package internal
 
 import (
 	"testing"
+	"time"
 
 	"github.com/ghosind/go-assert"
 )
 
 type strType struct{}
 
-func (s strType) String() string {
-	return "custom string"
+func (s strType) MarshalText() (text []byte, err error) {
+	return []byte("custom string"), nil
 }
 
 func TestValueString(t *testing.T) {
@@ -36,4 +37,5 @@ func TestValueString(t *testing.T) {
 	a.EqualNow(ValueString([]int{1, 2, 3}), "[1 2 3]")
 	a.EqualNow(ValueString(map[string]int{"a": 1, "b": 2}), "map[a:1 b:2]")
 	a.EqualNow(ValueString(strType{}), "custom string")
+	a.EqualNow(ValueString(time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)), "2000-01-01 00:00:00 +0000 UTC")
 }

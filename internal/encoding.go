@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"encoding"
 	"fmt"
 	"strconv"
 )
@@ -45,6 +46,12 @@ func ValueString(v any) string {
 	default:
 		if sv, ok := v.(fmt.Stringer); ok {
 			return sv.String()
+		}
+		if sv, ok := v.(encoding.TextMarshaler); ok {
+			b, err := sv.MarshalText()
+			if err == nil {
+				return string(b)
+			}
 		}
 		return fmt.Sprintf("%v", v)
 	}
